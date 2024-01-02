@@ -1,26 +1,151 @@
 
 'use client'
-import Image from 'next/image'
-import styles from './page.module.css'
-import { SignIn, ISignIn, DIDWalletInfo, PortkeyProvider } from '@portkey/did-ui-react';
-import { useCallback, useRef } from 'react';
+import clsx from 'clsx';
+import { useState, useCallback, useRef, useMemo } from 'react';
+// import { Button } from 'antd';
+import { DIDWalletInfo, SignIn, ISignIn, PortkeyProvider } from '@portkey/did-ui-react';
+import BaseImage from '@/components/BaseImage';
+import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
+import logoWhite from '/public/logoWhite.svg';
+import styles from './page.module.scss';
+import QRCode from '@/components/QRCode';
+import {
+  referralWaterMark,
+  referralColorBox,
+  referralBgLines,
+  referralDiscover,
+} from '@/assets/images';
+import { useUserAgent } from '@/hooks/useUserAgent';
+import { isMobile, isAndroid, isIOS } from '@/utils/device';
+import { downloadData } from '@/constants/pageData';
+import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
+import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
 import '@portkey/did-ui-react/dist/assets/index.css'
 
-export default function Home() {
-  const signInRef = useRef<ISignIn>(null);
+export enum REFERRAL_USER_STATE {
+  REFERRAL,
+  INVITEE,
+}
 
-  const onFinish = useCallback((didWallet: DIDWalletInfo) => {
-    console.log('DIDWalletInfo', didWallet);
-  }, []);
+export default function Referral() {
+  const [userRole, setUserRole] = useState<REFERRAL_USER_STATE>(REFERRAL_USER_STATE.INVITEE);
+  const [isSignUp, setIsSignUp] = useState<boolean>(true);
+  const signInRef = useRef<ISignIn>(null);
+  const uaType = useUserAgent();
+
+  const onSignUp = () => {
+    console.log('singup');
+    signInRef.current?.setOpen(true);
+  };
 
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
+  const onFinish = useCallback((didWallet: DIDWalletInfo) => {
+    console.log('didWallet', didWallet);
+  }, []);
+
+  const getSloganCls = useMemo(() => {
+    return userRole === REFERRAL_USER_STATE.REFERRAL
+            ? styles.sloganReference
+            : styles.sloganInvitee
+  },[userRole]);
+
+  const onDownload = () => {
+    
+  };
+
   return (
-    <div>
-      <button onClick={() => signInRef.current?.setOpen(true)}>Sign up</button>
+    <div className={styles.referralPage}>
+      <div className={styles.referralBlueContainer}>
+        <header className="row-center">
+          <div className={clsx(['flex-row-center', styles.referralHeader])}>
+            <BaseImage
+              className={styles.portkeyLogo}
+              src={portkeyLogoWhite}
+              priority
+              alt="portkeyLogo"
+            />
+          </div>
+        </header>
+        <div className={styles.referalMainContainer}>
+          <BaseImage 
+            src={referralWaterMark} 
+            className={styles.bgWaterMark} 
+            alt="waterMark" 
+            priority 
+            width={253}
+            height={378}
+          />
+          <BaseImage 
+            src={referralBgLines} 
+            className={styles.bgLines} 
+            alt="bglines" 
+            priority 
+          />
+          <div className={styles.sloganWrapper}>
+            <div className={getSloganCls}></div>
+          </div>
+          { userRole === REFERRAL_USER_STATE.INVITEE && (
+            <div className={styles.inviteeText}>Seize the opportunity. Expect upcoming suprises!</div>
+          )}
+          <BaseImage 
+            src={referralColorBox} 
+            className={styles.bgColorBox} 
+            alt="bgColorBox" 
+            priority 
+          />
+        </div>
+      </div>
+
+      <div className={styles.referralBlackWrapper}>
+        {userRole === REFERRAL_USER_STATE.REFERRAL && (
+            <div className={styles.QRcodeWrapper}>
+              <QRCode value="https://www.baidu.com" size={108} quietZone={6} />
+              <div className={styles.QRcodeContent}>
+                <div className={styles.QRcodeTitle}>Referral Link</div>
+                <div className={styles.QRcodeUrlWrapper}>
+                  <div className={styles.QRcodeUrl}>
+                    http://share.portkey.com/referral/invite.friends/referral/invite/friends/invite/friends
+                  </div>
+                  <BaseImage 
+                    src={referralDiscover} 
+                    className={styles.QRcodeCopy} 
+                    alt="QRcodeCopy" 
+                    priority 
+                    width={20}
+                  />
+                </div>
+              </div>
+            </div>
+        )}
+        {!isSignUp && userRole === REFERRAL_USER_STATE.INVITEE && (
+          <button className={styles.referralBtn} onClick={onSignUp}>
+            Sign up
+          </button>
+        )}
+        
+        {isSignUp && !isMobile(uaType) && (
+          <>
+            <div className={styles.downTipsPC}>{downloadData.downloadText}</div>
+            <button className={styles.referralBtn} onClick={onDownload}>
+              Download
+            </button>
+          </>
+        )}
+
+        {isSignUp && isMobile(uaType) && (
+          <div className={clsx('ios-safe-bottom', styles.Mdownload)}>
+            <BaseImage src={logoWhite} width={32} height={32} alt='logo'/>
+            <div className={styles.downTipM}>{downloadData.downloadText}</div>
+            {isIOS(uaType) && <IOSDownloadBtn />}
+            {isAndroid(uaType) && <AndroidDownloadBtn />}
+          </div>
+        )}
+      </div>
+
       <PortkeyProvider networkType='TESTNET'>
         <SignIn uiType="Modal" ref={signInRef} onFinish={onFinish} onCancel={onCancel} />
       </PortkeyProvider>
     </div>
-  )
+  );
 }

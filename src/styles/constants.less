@@ -1,0 +1,33 @@
+/* stylelint-disable property-no-vendor-prefix */
+@divide-992: 992px;
+@divide-991: 991px;
+@divide-768: 768px;
+@divide-767: 767px;
+@divide-580: 580px;
+@divide-579: 579px;
+@divdie-500: 500px;
+@divide-440: 440px;
+
+@content-width-large-desktop: 1080px;
+@content-width-desktop: 728px;
+@content-width-tablet: 540px;
+@content-width-mobile: 320px;
+
+@page-min-width: 360px;
+
+.text-overflow(@n) {
+  text-overflow: -o-ellipsis-lastline;
+  overflow: hidden;
+  /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  line-clamp: @n;
+  -webkit-line-clamp: @n;
+}
+
+.rotate(@deg, @duration) {
+  transform: rotate(@deg);
+  -moz-transform: rotate(@deg);
+  -webkit-transform: rotate(@deg);
+  transition: transform @duration linear;
+}

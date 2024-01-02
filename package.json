@@ -11,16 +11,21 @@
   "dependencies": {
     "@portkey/did-ui-react": "1.5.3",
     "aelf-sdk": "^3.4.2-alpha",
+    "clsx": "^2.0.0",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-qrcode-logo": "^2.9.0",
+    "sass": "^1.69.5",
+    "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/ua-parser-js": "^0.7.39",
     "eslint": "^8",
-    "eslint-config-next": "14.0.4",
+    "eslint-config-next": "^14.0.4",
     "prettier": "^3.1.1",
     "stylelint": "^16.1.0",
     "stylelint-config-prettier": "^9.0.5",

@@ -1,11 +1,16 @@
 const rewrites = require('./rewrites');
 
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+// const nextConfig = {
+//     reactStrictMode: true,
+//     async rewrites() {
+//         return rewrites;
+//     },
+// }
+
+module.exports = {
     reactStrictMode: true,
     async rewrites() {
         return rewrites;
     },
-}
-
-module.exports = nextConfig
+};
