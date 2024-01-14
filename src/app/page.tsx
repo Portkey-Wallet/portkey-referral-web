@@ -2,8 +2,9 @@
 'use client'
 import clsx from 'clsx';
 import { useState, useCallback, useRef, useMemo } from 'react';
-// import { Button } from 'antd';
 import { DIDWalletInfo, SignIn, ISignIn, PortkeyProvider } from '@portkey/did-ui-react';
+import { message } from 'antd';
+import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import logoWhite from '/public/logoWhite.svg';
@@ -21,6 +22,7 @@ import { downloadData } from '@/constants/pageData';
 import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
 import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
 import '@portkey/did-ui-react/dist/assets/index.css'
+import { openWithBlank } from '@/utils/router';
 
 export enum REFERRAL_USER_STATE {
   REFERRAL,
@@ -28,8 +30,9 @@ export enum REFERRAL_USER_STATE {
 }
 
 export default function Referral() {
-  const [userRole, setUserRole] = useState<REFERRAL_USER_STATE>(REFERRAL_USER_STATE.INVITEE);
+  const [userRole, setUserRole] = useState<REFERRAL_USER_STATE>(REFERRAL_USER_STATE.REFERRAL);
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
+  const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const uaType = useUserAgent();
 
@@ -42,6 +45,7 @@ export default function Referral() {
 
   const onFinish = useCallback((didWallet: DIDWalletInfo) => {
     console.log('didWallet', didWallet);
+    setIsSignUp(true);
   }, []);
 
   const getSloganCls = useMemo(() => {
@@ -51,7 +55,16 @@ export default function Referral() {
   },[userRole]);
 
   const onDownload = () => {
-    
+    openWithBlank('https://portkey.finance/download');
+  };
+
+  const onCopyClick = () => {
+    copyToClipboard('url');
+    copyState.error ? (
+      message.error(copyState.error.message)
+    ) : (
+      copyState.value && message.success('copy success!')
+    )
   };
 
   return (
@@ -113,6 +126,7 @@ export default function Referral() {
                     alt="QRcodeCopy" 
                     priority 
                     width={20}
+                    onClick={onCopyClick}
                   />
                 </div>
               </div>
@@ -142,10 +156,10 @@ export default function Referral() {
           </div>
         )}
       </div>
-
+      
       <PortkeyProvider networkType='TESTNET'>
         <SignIn uiType="Modal" ref={signInRef} onFinish={onFinish} onCancel={onCancel} />
       </PortkeyProvider>
     </div>
   );
-}
+};
