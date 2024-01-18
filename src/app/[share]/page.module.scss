@@ -92,7 +92,7 @@ $font-white: #fff;
           height: 90px;
           width: 100%;
           max-width: 346px;
-          background-image: url('../assets/images/referral/sloganReference.png');
+          background-image: url('../../assets/images/referral/sloganReference.png');
           background-size: 100%;
           background-position: center;
           background-repeat: no-repeat;
@@ -104,7 +104,7 @@ $font-white: #fff;
         height: 86px;
         width: 461px;
         margin: auto;
-        background-image: url('../assets/images/referral/sloganInvitee.png');
+        background-image: url('../../assets/images/referral/sloganInvitee.png');
         background-size: 100%;
         background-repeat: no-repeat;
       }
@@ -205,6 +205,7 @@ $font-white: #fff;
             width: 20px;
             height: 20px;
             cursor: pointer;
+            margin-left: 8px;
           }
         }
       }
@@ -284,7 +285,7 @@ $font-white: #fff;
           height: 140px;
           width: 302px;
           margin: auto;
-          background-image: url('../assets/images/referral/sloganInviteeMobile.png');
+          background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
           background-size: 100%;
         }
 
