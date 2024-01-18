@@ -1,7 +1,14 @@
 'use client';
 import clsx from 'clsx';
 import { useState, useCallback, useRef, useMemo } from 'react';
-import { DIDWalletInfo, SignIn, ISignIn, PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
+import {
+  DIDWalletInfo,
+  SignIn,
+  ISignIn,
+  PortkeyProvider,
+  singleMessage,
+  did,
+} from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
@@ -18,13 +25,14 @@ import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 
-export enum REFERRAL_USER_STATE {
+enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
   INVITEE = 'invitee',
 }
 
-export default function Referral({ params }: { params: { share: REFERRAL_USER_STATE } }) {
-  // const [userRole, setUserRole] = useState<REFERRAL_USER_STATE>(REFERRAL_USER_STATE.INVITEE);
+type TReferralProps = { share: REFERRAL_USER_STATE };
+
+const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
@@ -38,6 +46,14 @@ export default function Referral({ params }: { params: { share: REFERRAL_USER_ST
   console.log('referralCode', referralCode);
   console.log('projectCode', projectCode);
   console.log('userRole', userRole);
+
+  did.setConfig({
+    graphQLUrl: '/graphql',
+    referralInfo: {
+      referralCode: referralCode || undefined,
+      projectCode: projectCode || undefined,
+    },
+  });
 
   const onSignUp = () => {
     console.log('singup');
@@ -145,8 +161,20 @@ export default function Referral({ params }: { params: { share: REFERRAL_USER_ST
       </div>
 
       <PortkeyProvider networkType="TESTNET">
-        <SignIn uiType="Modal" ref={signInRef} onFinish={onFinish} onCancel={onCancel} />
+        <SignIn
+          defaultLifeCycle={{
+            SignUp: undefined,
+          }}
+          termsOfService={'https://portkey.finance/terms-of-service'}
+          privacyPolicy={'https://portkey.finance/privacy-policy'}
+          uiType="Modal"
+          ref={signInRef}
+          onFinish={onFinish}
+          onCancel={onCancel}
+        />
       </PortkeyProvider>
     </div>
   );
-}
+};
+
+export default Referral;

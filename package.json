@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@portkey/did-ui-react": "2.0.0-alpha.3",
+    "@portkey/did-ui-react": "2.0.0-alpha.4",
     "aelf-sdk": "^3.4.2-alpha",
     "antd": "^5.13.0",
     "clsx": "^2.0.0",
@@ -32,5 +32,8 @@
     "stylelint-config-prettier": "^9.0.5",
     "stylelint-config-standard": "^36.0.0",
     "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
