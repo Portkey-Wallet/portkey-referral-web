@@ -1,14 +1,7 @@
 'use client';
 import clsx from 'clsx';
-import { useState, useCallback, useRef, useMemo } from 'react';
-import {
-  DIDWalletInfo,
-  SignIn,
-  ISignIn,
-  PortkeyProvider,
-  singleMessage,
-  did,
-} from '@portkey/did-ui-react';
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { DIDWalletInfo, SignIn, ISignIn, PortkeyProvider, singleMessage, did } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
@@ -18,12 +11,13 @@ import QRCode from '@/components/QRCode';
 import { referralWaterMark, referralColorBox, referralBgLines, referralDiscover } from '@/assets/images';
 import { useUserAgent } from '@/hooks/useUserAgent';
 import { isMobile, isAndroid, isIOS } from '@/utils/device';
-import { downloadData } from '@/constants/pageData';
+import { downloadData, portkeyDownloadPage, privacyPolicy, termsOfService } from '@/constants/pageData';
 import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
 import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
+import { API, get } from '@/utils/axios';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -34,6 +28,8 @@ type TReferralProps = { share: REFERRAL_USER_STATE };
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [androidStoreUrl, setAndroidStoreUrl] = useState('');
+  const [iOSStoreUrl, setIOSStoreUrl] = useState('');
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const uaType = useUserAgent();
@@ -62,9 +58,13 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
 
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
-  const onFinish = useCallback((didWallet: DIDWalletInfo) => {
+  const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
     console.log('didWallet', didWallet);
     setIsSignUp(true);
+
+    const downloadResource = await get(API.GET.DOWNLOAD);
+    setAndroidStoreUrl(downloadResource?.androidDownloadUrl || '');
+    setIOSStoreUrl(downloadResource?.iosDownloadUrl || '');
   }, []);
 
   const getSloganCls = useMemo(() => {
@@ -72,7 +72,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   }, [userRole]);
 
   const onDownload = () => {
-    openWithBlank('https://portkey.finance/download');
+    openWithBlank(portkeyDownloadPage);
   };
 
   const onCopyClick = () => {
@@ -152,8 +152,8 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
               <div className={clsx('ios-safe-bottom', styles.Mdownload)}>
                 <BaseImage src={logoWhite} width={32} height={32} alt="logo" />
                 <div className={styles.downTipM}>{downloadData.downloadText}</div>
-                {isIOS(uaType) && <IOSDownloadBtn />}
-                {isAndroid(uaType) && <AndroidDownloadBtn />}
+                {isIOS(uaType) && <IOSDownloadBtn url={iOSStoreUrl} />}
+                {isAndroid(uaType) && <AndroidDownloadBtn url={androidStoreUrl} />}
               </div>
             )}
           </>
@@ -165,8 +165,8 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
           defaultLifeCycle={{
             SignUp: undefined,
           }}
-          termsOfService={'https://portkey.finance/terms-of-service'}
-          privacyPolicy={'https://portkey.finance/privacy-policy'}
+          termsOfService={termsOfService}
+          privacyPolicy={privacyPolicy}
           uiType="Modal"
           ref={signInRef}
           onFinish={onFinish}
