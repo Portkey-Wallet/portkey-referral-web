@@ -19,7 +19,7 @@ export const privacyPolicy = 'https://portkey.finance/privacy-policy';
 export const portkeyDownloadPage = 'https://portkey.finance/download';
 
 export const downloadData: DownloadGroupData = {
-  downloadText: 'Get Portkey App and make asset magagement easier.',
+  downloadText: 'Get Portkey App and make asset management easier.',
   chrome: {
     iconSrc: chromeDownload,
     iconAlt: 'chromeDownloadLogo',
