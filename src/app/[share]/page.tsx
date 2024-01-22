@@ -1,7 +1,15 @@
 'use client';
 import clsx from 'clsx';
 import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { DIDWalletInfo, SignIn, ISignIn, PortkeyProvider, singleMessage, did } from '@portkey/did-ui-react';
+import {
+  DIDWalletInfo,
+  SignIn,
+  ISignIn,
+  PortkeyProvider,
+  singleMessage,
+  did,
+  ConfigProvider,
+} from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
@@ -27,6 +35,14 @@ enum REFERRAL_USER_STATE {
 }
 
 type TReferralProps = { share: REFERRAL_USER_STATE };
+
+ConfigProvider.setGlobalConfig({
+  graphQLUrl: '/graphql',
+  loginConfig: {
+    loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
+    recommendIndexes: [0, 1],
+  },
+});
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
@@ -61,7 +77,6 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   }, []);
 
   did.setConfig({
-    graphQLUrl: '/graphql',
     referralInfo: {
       referralCode: referralCode || undefined,
       projectCode: projectCode || undefined,
@@ -96,7 +111,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     copyToClipboard(shortLink);
     copyState.error
       ? singleMessage.error(copyState.error.message)
-      : copyState.value && singleMessage.success('copy success!');
+      : copyState.value && singleMessage.success('Copied');
   };
 
   return (
