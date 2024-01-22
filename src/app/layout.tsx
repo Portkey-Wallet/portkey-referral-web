@@ -6,7 +6,7 @@ import '../styles/constants.scss';
 import '../styles/font.scss';
 
 export const metadata: Metadata = {
-  title: 'Portkey: A User-Friendly and Secure AA Wallet for Asset Management and Web3 Experience',
+  title: 'Portkey Referral Program',
   description: `Portkey is the first account abstraction (AA) wallet from aelf's ecosystem. Users can swiftly log into Portkey via their Web2 social info with no private keys or mnemonics required. Account creation is free for all users!`,
   keywords: ['DID', 'social recovery', 'crypto wallet', 'AA wallet'],
 };
