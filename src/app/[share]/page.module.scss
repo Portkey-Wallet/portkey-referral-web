@@ -1,23 +1,5 @@
 /* stylelint-disable selector-class-pattern */
-// $import '/src/styles/constants.less';
-// $import '/src/styles/font.less';
-// @import '/src/styles/common.scss';
-
-$bg-black: #161630;
-$bg-blue: #5455ea;
-$bg-btn: #5b5cff;
-$padding-24: 0 24px;
-$page-min-width: 360px;
-$content-width-large-desktop: 1080px;
-$divide-992: 992px;
-$divide-991: 991px;
-$divide-768: 768px;
-$divide-767: 767px;
-$divide-580: 580px;
-$divide-579: 579px;
-$divdie-510: 510px;
-$divide-440: 440px;
-$font-white: #fff;
+@import 'src/styles/variable.scss';
 
 .referralPage {
   width: 100%;

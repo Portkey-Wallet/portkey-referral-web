@@ -1,4 +1,6 @@
-// @import '/src//styles/font.less';
+@import '../styles/common.scss';
+@import '../styles/constants.scss';
+@import '../styles/font.scss';
 
 html,
 body {
@@ -27,6 +29,7 @@ a {
 
 * {
   box-sizing: border-box;
+  @extend .font-family-regular;
 }
 
 .text-btn-base {

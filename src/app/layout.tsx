@@ -1,6 +1,9 @@
 import Script from 'next/script';
 import type { Metadata } from 'next';
 import './globals.scss';
+import '../styles/common.scss';
+import '../styles/constants.scss';
+import '../styles/font.scss';
 
 export const metadata: Metadata = {
   title: 'Portkey: A User-Friendly and Secure AA Wallet for Asset Management and Web3 Experience',
