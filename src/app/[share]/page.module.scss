@@ -254,6 +254,14 @@ $font-white: #fff;
     }
   }
 
+  .invitee-sign-in {
+    :global {
+      .portkey-ant-drawer-content-wrapper {
+        transition: none !important;
+      }
+    }
+  }
+
   @media screen and (max-width: $divide-768) {
     .referralBlackWrapper {
       .QRcodeWrapper {

@@ -162,6 +162,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
 
       <PortkeyProvider networkType="TESTNET">
         <SignIn
+          className={styles['invitee-sign-in']}
           defaultLifeCycle={{
             SignUp: undefined,
           }}
