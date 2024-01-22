@@ -3,7 +3,7 @@ import { BackEndNetworkType, NetworkItem } from '@/types/network';
 export const BackEndNetWorkMap: {
   [key in BackEndNetworkType]: NetworkItem;
 } = {
-  dev: {
+  test3: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
     cmsUrl: 'https://localtest-applesign.portkey.finance/cms/',
@@ -15,7 +15,10 @@ export const BackEndNetWorkMap: {
   },
   mainnet: {
     name: 'aelf Mainnet',
-    networkType: 'MAIN',
+    networkType: 'MAINNET',
     cmsUrl: 'https://cms.portkey.finance/',
   },
 };
+
+export const NetworkEnv: BackEndNetworkType = process.env.NEXT_PUBLIC_NETWORK_ENV as BackEndNetworkType;
+export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv];
