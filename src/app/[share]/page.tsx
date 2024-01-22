@@ -18,6 +18,8 @@ import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 import { API, get } from '@/utils/axios';
+import { isPortkey } from '@/utils/portkey';
+import { CurrentNetWork } from '@/constants/network';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -30,6 +32,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
   const [iOSStoreUrl, setIOSStoreUrl] = useState('');
+  const [isPortkeyApp, setIsPortkeyApp] = useState<boolean>(true);
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const uaType = useUserAgent();
@@ -42,6 +45,20 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   console.log('referralCode', referralCode);
   console.log('projectCode', projectCode);
   console.log('userRole', userRole);
+
+  useEffect(() => {
+    const isPortkeyApp = isPortkey();
+    setIsPortkeyApp(isPortkeyApp);
+
+    if (isPortkeyApp) {
+      singleMessage.error({
+        duration: 0,
+        content: 'Please open the link in browser or scan the code using camera.',
+        onClose: () => null,
+        onClick: () => null,
+      });
+    }
+  }, []);
 
   did.setConfig({
     graphQLUrl: '/graphql',
@@ -63,8 +80,8 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     setIsSignUp(true);
 
     const downloadResource = await get(API.GET.DOWNLOAD);
-    setAndroidStoreUrl(downloadResource?.androidDownloadUrl || '');
-    setIOSStoreUrl(downloadResource?.iosDownloadUrl || '');
+    setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
+    setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
   }, []);
 
   const getSloganCls = useMemo(() => {
@@ -160,20 +177,22 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
         )}
       </div>
 
-      <PortkeyProvider networkType="TESTNET">
-        <SignIn
-          className={styles['invitee-sign-in']}
-          defaultLifeCycle={{
-            SignUp: undefined,
-          }}
-          termsOfService={termsOfService}
-          privacyPolicy={privacyPolicy}
-          uiType="Modal"
-          ref={signInRef}
-          onFinish={onFinish}
-          onCancel={onCancel}
-        />
-      </PortkeyProvider>
+      {!isPortkeyApp && (
+        <PortkeyProvider networkType={CurrentNetWork.networkType}>
+          <SignIn
+            className={styles['invitee-sign-in']}
+            defaultLifeCycle={{
+              SignUp: undefined,
+            }}
+            termsOfService={termsOfService}
+            privacyPolicy={privacyPolicy}
+            uiType="Modal"
+            ref={signInRef}
+            onFinish={onFinish}
+            onCancel={onCancel}
+          />
+        </PortkeyProvider>
+      )}
     </div>
   );
 };

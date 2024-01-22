@@ -262,6 +262,30 @@ $font-white: #fff;
     }
   }
 
+  // .portkeyModal {
+  //   :global {
+  //     .portkey-ant-modal-content {
+  //       .portkey-ant-modal-body {
+  //         padding: 16px !important;
+  //         .portkey-ant-modal-confirm-body-wrapper {
+  //           .portkey-ant-modal-confirm-body {
+  //             padding: 8px 8px 24px  !important;
+  //             .portkey-ant-modal-confirm-content {
+  //               text-align: center;
+  //             }
+  //           }
+  //           .portkey-ant-modal-confirm-btns {
+  //             padding: 16px 0 0 !important;
+  //             .portkey-ant-btn-primary {
+  //               margin: 0 !important;
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
   @media screen and (max-width: $divide-768) {
     .referralBlackWrapper {
       .QRcodeWrapper {

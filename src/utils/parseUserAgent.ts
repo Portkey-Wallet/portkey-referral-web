@@ -80,7 +80,3 @@ export interface UserAgent {
   readonly isIOS: boolean;
   readonly isAndroid: boolean;
 }
-
-export function isPortkey() {
-  if (typeof window === 'object') return window.navigator.userAgent.includes('Portkey');
-}
