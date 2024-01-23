@@ -27,6 +27,8 @@ import { API, get } from '@/utils/axios';
 import { isPortkey } from '@/utils/portkey';
 import { CurrentNetWork } from '@/constants/network';
 import { devices } from '@portkey/utils';
+import OpenInBrowser from '@/components/OpenInBrowser';
+import { detectBrowserName } from '@portkey/onboarding';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -44,6 +46,7 @@ ConfigProvider.setGlobalConfig({
 });
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
+  const [isShowMask, setIsShowMask] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
@@ -64,6 +67,10 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   console.log('userRole', userRole);
 
   useEffect(() => {
+    if (detectBrowserName() === 'WeChat') {
+      setIsShowMask(true);
+      return;
+    }
     // device
     const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
     const isIOS = devices.isMobile().apple.device;
@@ -218,6 +225,9 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
           />
         </PortkeyProvider>
       )}
+
+      {/* mask */}
+      {isShowMask && <OpenInBrowser />}
     </div>
   );
 };
