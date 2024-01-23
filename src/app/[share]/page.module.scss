@@ -205,6 +205,18 @@
       cursor: pointer;
     }
 
+    .mobileReferralBtn {
+      background-color: $bg-black;
+      width: 100%;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+    }
+
     .downTipsPC {
       margin-bottom: 16px;
       color: rgba(255, 255, 255, 0.6);
@@ -239,6 +251,7 @@
   .invitee-sign-in {
     :global {
       .portkey-ant-drawer-content-wrapper {
+        height: 80vh !important;
         transition: none !important;
       }
     }

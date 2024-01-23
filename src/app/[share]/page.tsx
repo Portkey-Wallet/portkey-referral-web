@@ -17,8 +17,6 @@ import logoWhite from '/public/logoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
 import { referralWaterMark, referralColorBox, referralBgLines, referralDiscover } from '@/assets/images';
-import { useUserAgent } from '@/hooks/useUserAgent';
-import { isMobile, isAndroid, isIOS } from '@/utils/device';
 import { downloadData, portkeyDownloadPage, privacyPolicy, termsOfService } from '@/constants/pageData';
 import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
 import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
@@ -28,6 +26,7 @@ import { useSearchParams } from 'next/navigation';
 import { API, get } from '@/utils/axios';
 import { isPortkey } from '@/utils/portkey';
 import { CurrentNetWork } from '@/constants/network';
+import { devices } from '@portkey/utils';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -45,13 +44,15 @@ ConfigProvider.setGlobalConfig({
 });
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
+  const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
+  const isIOS = devices.isMobile().apple;
+  const isAndroid = devices.isMobile().android;
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
   const [iOSStoreUrl, setIOSStoreUrl] = useState('');
   const [isPortkeyApp, setIsPortkeyApp] = useState<boolean>(true);
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
-  const uaType = useUserAgent();
   const searchParams = useSearchParams();
 
   const referralCode = searchParams.get('referral_code');
@@ -109,9 +110,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
 
   const onCopyClick = () => {
     copyToClipboard(shortLink);
-    copyState.error
-      ? singleMessage.error(copyState.error.message)
-      : copyState.value && singleMessage.success('Copied');
+    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
   };
 
   return (
@@ -166,12 +165,14 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
         {userRole === REFERRAL_USER_STATE.INVITEE && (
           <>
             {!isSignUp && (
-              <button className={styles.referralBtn} onClick={onSignUp}>
-                Sign up
-              </button>
+              <div className={clsx(isMobile && styles.mobileReferralBtn)}>
+                <button className={styles.referralBtn} onClick={onSignUp}>
+                  Sign up
+                </button>
+              </div>
             )}
 
-            {isSignUp && !isMobile(uaType) && (
+            {isSignUp && !isMobile && (
               <>
                 <div className={styles.downTipsPC}>{downloadData.downloadText}</div>
                 <button className={styles.referralBtn} onClick={onDownload}>
@@ -180,12 +181,12 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
               </>
             )}
 
-            {isSignUp && isMobile(uaType) && (
+            {isSignUp && isMobile && (
               <div className={clsx('ios-safe-bottom', styles.Mdownload)}>
                 <BaseImage src={logoWhite} width={32} height={32} alt="logo" />
                 <div className={styles.downTipM}>{downloadData.downloadText}</div>
-                {isIOS(uaType) && <IOSDownloadBtn url={iOSStoreUrl} />}
-                {isAndroid(uaType) && <AndroidDownloadBtn url={androidStoreUrl} />}
+                {isIOS && <IOSDownloadBtn url={iOSStoreUrl} />}
+                {isAndroid && <AndroidDownloadBtn url={androidStoreUrl} />}
               </div>
             )}
           </>
