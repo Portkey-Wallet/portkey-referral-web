@@ -44,9 +44,9 @@ ConfigProvider.setGlobalConfig({
 });
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
-  const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
-  const isIOS = devices.isMobile().apple;
-  const isAndroid = devices.isMobile().android;
+  const [isMobile, setIsMobile] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  const [isAndroid, setIsAndroid] = useState(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
   const [iOSStoreUrl, setIOSStoreUrl] = useState('');
@@ -64,6 +64,15 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   console.log('userRole', userRole);
 
   useEffect(() => {
+    // device
+    const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
+    const isIOS = devices.isMobile().apple.device;
+    const isAndroid = devices.isMobile().android.device;
+    setIsMobile(isMobile);
+    setIsIOS(isIOS);
+    setIsAndroid(isAndroid);
+
+    // portkey app
     const isPortkeyApp = isPortkey();
     setIsPortkeyApp(isPortkeyApp);
 
