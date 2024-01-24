@@ -183,7 +183,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
 
         {userRole === REFERRAL_USER_STATE.INVITEE && (
           <>
-            {!isSignUp && (
+            {!isSignUp && !isPortkeyApp && (
               <div className={clsx(isMobile && styles.mobileReferralBtn)}>
                 <button className={styles.referralBtn} onClick={onSignUp}>
                   Sign up
