@@ -300,8 +300,15 @@
       }
     }
   }
+  @media screen and (max-width: $divide-768) {
+    .inviteeText {
+      .row2 {
+        display: block;
+      }
+    }
+  }
 
-  @media screen and (max-width: $divdie-510) {
+  @media screen and (max-width: $divide-510) {
     .referralBlueContainer {
       padding: 0;
       .referalMainContainer {

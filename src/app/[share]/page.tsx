@@ -151,7 +151,10 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
             <div className={getSloganCls}></div>
           </div>
           {userRole === REFERRAL_USER_STATE.INVITEE && (
-            <div className={styles.inviteeText}>Seize the opportunity. Expect upcoming suprises!</div>
+            <div className={styles.inviteeText}>
+              <span>{`Seize the opportunity. `}</span>
+              <span className={styles.row2}>Expect upcoming suprises!</span>
+            </div>
           )}
           <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
         </div>
