@@ -13,4 +13,18 @@ module.exports = {
   async rewrites() {
     return rewrites;
   },
+  experimental: {
+    'react-use': {
+      transform: 'react-use/lib/{{member}}',
+    },
+    lodash: {
+      transform: 'lodash/{{member}}',
+    },
+  },
+  compiler: {
+    removeConsole: {
+      exclude: ['error'],
+    },
+  },
+  productionBrowserSourceMaps: true,
 };
