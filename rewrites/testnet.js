@@ -5,5 +5,5 @@ module.exports = [
     source: '/graphql/:path*',
     destination: 'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema/graphql/:path*',
   },
-  { source: '/cms/:path*', destination: 'https://cms-test.portkey.finance/cms/:path*' },
+  { source: '/cms/:path*', destination: 'https://cms-test.portkey.finance/:path*' },
 ];
