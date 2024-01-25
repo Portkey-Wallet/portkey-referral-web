@@ -1,0 +1,70 @@
+@import '../styles/common.scss';
+@import '../styles/constants.scss';
+@import '../styles/font.scss';
+@import '../styles/variable.scss';
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background-color: $bg-black !important;
+}
+
+::selection {
+  background: rgba(104, 170, 253, 40%);
+  color: currentColor;
+}
+
+:-moz-selection {
+  background: rgba(104, 170, 253, 40%);
+  color: currentColor;
+}
+
+::-webkit-selection {
+  background: rgba(104, 170, 253, 40%);
+  color: currentColor;
+}
+
+a {
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+  @extend .font-family-regular;
+}
+
+.text-btn-base {
+  height: 24px;
+  line-height: 24px;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 0;
+  cursor: pointer;
+}
+
+.row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-row-center {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ios-safe-bottom {
+  // iOS < 11.2
+  padding-bottom: constant(safe-area-inset-bottom);
+  // iOS >= 11.2
+  padding-bottom: env(safe-area-inset-bottom);
+}
