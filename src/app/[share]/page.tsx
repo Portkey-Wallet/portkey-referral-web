@@ -39,6 +39,7 @@ type TReferralProps = { share: REFERRAL_USER_STATE };
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
+  serviceUrl: '/service',
   loginConfig: {
     loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
     recommendIndexes: [0, 1],
@@ -120,14 +121,14 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     return userRole === REFERRAL_USER_STATE.REFERRAL ? styles.sloganReference : styles.sloganInvitee;
   }, [userRole]);
 
-  const onDownload = () => {
+  const onDownload = useCallback(() => {
     openWithBlank(portkeyDownloadPage);
-  };
+  }, []);
 
-  const onCopyClick = () => {
+  const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  };
+  }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
 
   return (
     <div className={styles.referralPage}>

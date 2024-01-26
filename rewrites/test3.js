@@ -1,6 +1,7 @@
 module.exports = [
   // test3-v2
   { source: '/api/:path*', destination: 'http://192.168.67.127:5001/api/:path*' },
+  { source: '/service/:path*', destination: 'http://192.168.67.127:5001/:path*' },
   { source: '/connect/:path*', destination: 'http://192.168.67.127:8080/connect/:path*' },
   {
     source: '/graphql/:path*',

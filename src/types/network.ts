@@ -8,4 +8,5 @@ export type NetworkItem = {
   connectUrl: string;
   graphqlUrl: string;
   cmsUrl: string;
+  portkeyWebsiteUrl: string;
 };

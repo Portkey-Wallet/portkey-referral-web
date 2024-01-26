@@ -10,6 +10,7 @@ export const BackEndNetWorkMap: {
     connectUrl: 'http://192.168.66.203:8001',
     graphqlUrl: 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema',
     cmsUrl: 'https://localtest-applesign.portkey.finance',
+    portkeyWebsiteUrl: 'https://portkey-website-dev.vercel.app',
   },
   testnet: {
     name: 'aelf Testnet',
@@ -18,6 +19,7 @@ export const BackEndNetWorkMap: {
     connectUrl: 'https://auth-portkey-test.portkey.finance',
     graphqlUrl: 'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema',
     cmsUrl: 'https://cms-test.portkey.finance',
+    portkeyWebsiteUrl: 'https://test.portkey.finance',
   },
   mainnet: {
     name: 'aelf Mainnet',
@@ -26,6 +28,7 @@ export const BackEndNetWorkMap: {
     connectUrl: 'https://auth-portkey.portkey.finance',
     graphqlUrl: 'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema',
     cmsUrl: 'https://cms.portkey.finance',
+    portkeyWebsiteUrl: 'https://portkey.finance',
   },
 };
 
