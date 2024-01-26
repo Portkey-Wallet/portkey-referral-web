@@ -39,7 +39,7 @@ type TReferralProps = { share: REFERRAL_USER_STATE };
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
-  serviceUrl: '/service',
+  serviceUrl: 'https://aa-portkey-test.portkey.finance',
   loginConfig: {
     loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
     recommendIndexes: [0, 1],
