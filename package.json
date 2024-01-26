@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@portkey/did-ui-react": "2.0.0-alpha.11",
+    "@portkey/did-ui-react": "2.0.0-alpha.14",
     "aelf-sdk": "^3.4.2-alpha",
     "antd": "^5.13.0",
     "apisauce": "^2.1.6",
