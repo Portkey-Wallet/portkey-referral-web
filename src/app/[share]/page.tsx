@@ -42,6 +42,7 @@ import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
+import { StaticImageData } from 'next/image';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -74,7 +75,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
-
+  const [src, setSrc] = useState<StaticImageData>();
   const referralCode = searchParams.get('referral_code');
   const projectCode = searchParams.get('project_code');
   const shortLink = searchParams.get('shortLink') || '';
@@ -160,12 +161,14 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
   }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
 
-  const SloganDom = useMemo(() => {
-    let sourceUri = sloganReference;
+  useEffect(() => {
     const isInMobile = !isBrowser() || isMobile;
+    let sourceUri = sloganReference;
 
     // default
-    if (userRole === REFERRAL_USER_STATE.INVITEE && !isSignUp && !isInMobile) sourceUri = sloganInviteeDefault;
+    if (userRole === REFERRAL_USER_STATE.INVITEE && !isSignUp && !isInMobile) {
+      sourceUri = sloganInviteeDefault;
+    }
     if (userRole === REFERRAL_USER_STATE.INVITEE && !isSignUp && isInMobile) sourceUri = sloganInviteeDefaultMobile;
 
     // registered
@@ -178,13 +181,18 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
       sourceUri = sloganInviteeExist;
     if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && !isNewAccount && isInMobile)
       sourceUri = sloganInviteeExistMobile;
+    setSrc(sourceUri);
+  }, [isMobile, isNewAccount, isSignUp, userRole]);
+
+  const SloganDOM = useMemo(() => {
+    if (!src) return <div style={{ height: 100 }} />;
 
     return (
       <div className={styles.sloganWrapper}>
-        <BaseImage src={sourceUri} alt="waterMark" height={100} />
+        <BaseImage src={src} alt={src.src} height={100} />
       </div>
     );
-  }, [isMobile, isNewAccount, isSignUp, userRole]);
+  }, [src]);
 
   const InviteeChapterDom = useMemo(() => {
     if (userRole === REFERRAL_USER_STATE.REFERRAL) return null;
@@ -193,7 +201,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
       return (
         <div className={styles.inviteeText}>
           <span className={styles.row2}>{`Seize the opportunity.`}</span>
-          <span className={styles.row2}>{`Expect upcoming suprises!`}</span>
+          <span className={styles.row2}>{` Expect upcoming surprises!`}</span>
         </div>
       );
 
@@ -208,11 +216,11 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
       <div className={styles.inviteeText}>
         <div>
           <span className={styles.row2}>{`This is an existing account and can't`}</span>
-          <span className={styles.row2}>{`accept invitation.`}</span>
+          <span className={styles.row2}>{` accept invitation.`}</span>
         </div>
         <div>
           <span className={styles.row2}>{`You can access your own Portkey and`}</span>
-          <span className={styles.row2}>{`experience Web3 now!`}</span>
+          <span className={styles.row2}>{` experience Web3 now!`}</span>
         </div>
       </div>
     );
@@ -236,7 +244,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
             height={378}
           />
           <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
-          {SloganDom}
+          {SloganDOM}
           {InviteeChapterDom}
           <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
         </div>
