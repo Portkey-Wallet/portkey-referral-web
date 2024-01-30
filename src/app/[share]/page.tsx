@@ -37,7 +37,7 @@ import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 import { API, get } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
-import { BackEndNetWorkMap, CurrentNetWork } from '@/constants/network';
+import { ApiHost, BackEndNetWorkMap, CurrentNetWork } from '@/constants/network';
 import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
@@ -51,9 +51,9 @@ enum REFERRAL_USER_STATE {
 type TReferralProps = { share: REFERRAL_USER_STATE };
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
-  serviceUrl: 'https://aa-portkey-test.portkey.finance',
+  serviceUrl: ApiHost,
   requestDefaults: {
-    baseURL: 'https://aa-portkey-test.portkey.finance',
+    baseURL: ApiHost,
   },
   loginConfig: {
     loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
@@ -88,10 +88,10 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
 
     ConfigProvider.setGlobalConfig({
-      graphQLUrl: `${networkType ? `${window.location.origin}/${networkType}` : nodeInfo.graphqlUrl}/graphql`,
-      serviceUrl: networkType ? `${window.location.origin}/${networkType}` : nodeInfo.apiUrl,
+      graphQLUrl: `${networkType && nodeInfo ? `${window.location.origin}/${networkType}/graphql` : '/graphql'}`,
+      serviceUrl: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : ApiHost,
       requestDefaults: {
-        baseURL: networkType ? `${window.location.origin}/${networkType}` : nodeInfo.apiUrl,
+        baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
       },
       loginConfig: {
         loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
