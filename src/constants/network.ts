@@ -7,6 +7,7 @@ export const BackEndNetWorkMap: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
     apiUrl: 'http://192.168.67.127:5001',
+    domain: 'https://test3-applesign-v2.portkey.finance',
     graphqlUrl: 'http://192.168.67.99:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
     connectUrl: 'http://192.168.67.127:8080',
     cmsUrl: 'http://192.168.66.62:3005/graphql',
@@ -16,6 +17,7 @@ export const BackEndNetWorkMap: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
     apiUrl: 'http://192.168.66.117:5577',
+    domain: 'https://test4-applesign-v2.portkey.finance',
     graphqlUrl: 'http://192.168.67.214:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
     connectUrl: 'http://192.168.66.117:8080',
     cmsUrl: 'http://192.168.66.62:3005/graphql',
@@ -44,6 +46,8 @@ export const BackEndNetWorkMap: {
 export const NetworkEnv: BackEndNetworkType = process.env.NEXT_PUBLIC_NETWORK_ENV as BackEndNetworkType;
 export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv];
 export const ApiHost = CurrentNetWork.apiUrl;
+export const DomainHost = CurrentNetWork.domain || CurrentNetWork.apiUrl;
+
 export const ConnectHost = CurrentNetWork.connectUrl;
 export const GraphqlHost = CurrentNetWork.graphqlUrl;
 export const CmsHost = CurrentNetWork.cmsUrl;

@@ -37,7 +37,7 @@ import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 import { API, get } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
-import { ApiHost, BackEndNetWorkMap, CurrentNetWork } from '@/constants/network';
+import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
 import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
@@ -90,7 +90,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
 
     ConfigProvider.setGlobalConfig({
       graphQLUrl: `${networkType && nodeInfo ? `${window.location.origin}/${networkType}/graphql` : '/graphql'}`,
-      serviceUrl: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : ApiHost,
+      serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
       requestDefaults: {
         baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
       },
@@ -181,6 +181,7 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
       sourceUri = sloganInviteeExist;
     if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && !isNewAccount && isInMobile)
       sourceUri = sloganInviteeExistMobile;
+
     setSrc(sourceUri);
   }, [isMobile, isNewAccount, isSignUp, userRole]);
 
