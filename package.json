@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "PORT=3001 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@portkey/did-ui-react": "2.0.0-alpha.15",
+    "@portkey/did-ui-react": "2.0.0-alpha.19",
     "aelf-sdk": "^3.4.2-alpha",
     "antd": "^5.13.0",
     "apisauce": "^2.1.6",

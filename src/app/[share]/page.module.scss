@@ -67,18 +67,10 @@
       .sloganWrapper {
         display: flex;
         justify-content: center;
+        align-items: center;
         width: 100%;
         padding: $padding-24;
-        .sloganReference {
-          position: relative;
-          height: 90px;
-          width: 100%;
-          max-width: 346px;
-          background-image: url('../../assets/images/referral/sloganReference.png');
-          background-size: 100%;
-          background-position: center;
-          background-repeat: no-repeat;
-        }
+        margin: auto;
       }
 
       .sloganInvitee {
@@ -86,7 +78,6 @@
         height: 86px;
         width: 461px;
         margin: auto;
-        background-image: url('../../assets/images/referral/sloganInvitee.png');
         background-size: 100%;
         background-repeat: no-repeat;
       }
@@ -300,7 +291,7 @@
       }
     }
   }
-  @media screen and (max-width: $divide-768) {
+  @media screen and (max-width: $divide-510) {
     .inviteeText {
       .row2 {
         display: block;
@@ -317,12 +308,12 @@
           height: 140px;
           width: 302px;
           margin: auto;
-          background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
+          // background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
           background-size: 100%;
         }
 
         .inviteeText {
-          width: 210px;
+          width: 280px;
         }
       }
     }

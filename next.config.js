@@ -21,10 +21,10 @@ module.exports = {
       transform: 'lodash/{{member}}',
     },
   },
-  compiler: {
-    removeConsole: {
-      exclude: ['error'],
-    },
-  },
+  // compiler: {
+  //   removeConsole: {
+  //     exclude: ['error'],
+  //   },
+  // },
   productionBrowserSourceMaps: true,
 };

@@ -16,7 +16,19 @@ import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import logoWhite from '/public/logoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
-import { referralWaterMark, referralColorBox, referralBgLines, referralDiscover } from '@/assets/images';
+import {
+  referralWaterMark,
+  referralColorBox,
+  referralBgLines,
+  referralDiscover,
+  sloganReference,
+  sloganInviteeCreate,
+  sloganInviteeCreateMobile,
+  sloganInviteeExist,
+  sloganInviteeExistMobile,
+  sloganInviteeDefault,
+  sloganInviteeDefaultMobile,
+} from '@/assets/images';
 import { downloadData, portkeyDownloadPage, privacyPolicy, termsOfService } from '@/constants/pageData';
 import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
 import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
@@ -24,11 +36,13 @@ import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 import { API, get } from '@/utils/axios';
-import { isPortkey } from '@/utils/portkey';
-import { CurrentNetWork } from '@/constants/network';
+import { isPortkey, isBrowser } from '@/utils/portkey';
+import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
 import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
+import { BackEndNetworkType } from '@/types/network';
+import { StaticImageData } from 'next/image';
 
 enum REFERRAL_USER_STATE {
   REFERRAL = 'referral',
@@ -36,10 +50,12 @@ enum REFERRAL_USER_STATE {
 }
 
 type TReferralProps = { share: REFERRAL_USER_STATE };
-
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
-  serviceUrl: 'https://aa-portkey-test.portkey.finance',
+  serviceUrl: ApiHost,
+  requestDefaults: {
+    baseURL: ApiHost,
+  },
   loginConfig: {
     loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
     recommendIndexes: [0, 1],
@@ -52,20 +68,38 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const [isIOS, setIsIOS] = useState(false);
   const [isAndroid, setIsAndroid] = useState(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
   const [iOSStoreUrl, setIOSStoreUrl] = useState('');
   const [isPortkeyApp, setIsPortkeyApp] = useState<boolean>(true);
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
-
+  const [src, setSrc] = useState<StaticImageData>();
   const referralCode = searchParams.get('referral_code');
   const projectCode = searchParams.get('project_code');
   const shortLink = searchParams.get('shortLink') || '';
+  const networkType = searchParams.get('networkType') || '';
   const userRole = params.share;
   console.log('referralCode', referralCode);
   console.log('projectCode', projectCode);
   console.log('userRole', userRole);
+
+  useEffect(() => {
+    const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
+
+    ConfigProvider.setGlobalConfig({
+      graphQLUrl: `${networkType && nodeInfo ? `${window.location.origin}/${networkType}/graphql` : '/graphql'}`,
+      serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
+      requestDefaults: {
+        baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
+      },
+      loginConfig: {
+        loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
+        recommendIndexes: [0, 1],
+      },
+    });
+  }, [networkType]);
 
   useEffect(() => {
     if (detectBrowserName() === 'WeChat') {
@@ -111,15 +145,12 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
   const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
     console.log('didWallet', didWallet);
     setIsSignUp(true);
+    setIsNewAccount(didWallet.createType === 'register');
 
     const downloadResource = await get(API.GET.DOWNLOAD);
     setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
     setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
   }, []);
-
-  const getSloganCls = useMemo(() => {
-    return userRole === REFERRAL_USER_STATE.REFERRAL ? styles.sloganReference : styles.sloganInvitee;
-  }, [userRole]);
 
   const onDownload = useCallback(() => {
     openWithBlank(portkeyDownloadPage);
@@ -129,6 +160,72 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
     copyToClipboard(shortLink);
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
   }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
+
+  useEffect(() => {
+    const isInMobile = !isBrowser() || isMobile;
+    let sourceUri = sloganReference;
+
+    // default
+    if (userRole === REFERRAL_USER_STATE.INVITEE && !isSignUp && !isInMobile) {
+      sourceUri = sloganInviteeDefault;
+    }
+    if (userRole === REFERRAL_USER_STATE.INVITEE && !isSignUp && isInMobile) sourceUri = sloganInviteeDefaultMobile;
+
+    // registered
+    if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && !isInMobile) sourceUri = sloganInviteeCreate;
+    if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && isNewAccount && isInMobile)
+      sourceUri = sloganInviteeCreateMobile;
+
+    // others
+    if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && !isNewAccount && !isInMobile)
+      sourceUri = sloganInviteeExist;
+    if (userRole === REFERRAL_USER_STATE.INVITEE && isSignUp && !isNewAccount && isInMobile)
+      sourceUri = sloganInviteeExistMobile;
+
+    setSrc(sourceUri);
+  }, [isMobile, isNewAccount, isSignUp, userRole]);
+
+  const SloganDOM = useMemo(() => {
+    if (!src) return <div style={{ height: 100 }} />;
+
+    return (
+      <div className={styles.sloganWrapper}>
+        <BaseImage src={src} alt={src.src} height={100} />
+      </div>
+    );
+  }, [src]);
+
+  const InviteeChapterDom = useMemo(() => {
+    if (userRole === REFERRAL_USER_STATE.REFERRAL) return null;
+
+    if (!isSignUp)
+      return (
+        <div className={styles.inviteeText}>
+          <span className={styles.row2}>{`Seize the opportunity.`}</span>
+          <span className={styles.row2}>{` Expect upcoming surprises!`}</span>
+        </div>
+      );
+
+    if (isNewAccount)
+      return (
+        <div className={styles.inviteeText}>
+          <span>{`You have signed up on Portkey successfully!`}</span>
+        </div>
+      );
+
+    return (
+      <div className={styles.inviteeText}>
+        <div>
+          <span className={styles.row2}>{`This is an existing account and can't`}</span>
+          <span className={styles.row2}>{` accept invitation.`}</span>
+        </div>
+        <div>
+          <span className={styles.row2}>{`You can access your own Portkey and`}</span>
+          <span className={styles.row2}>{` experience Web3 now!`}</span>
+        </div>
+      </div>
+    );
+  }, [isNewAccount, isSignUp, userRole]);
 
   return (
     <div className={styles.referralPage}>
@@ -148,15 +245,8 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
             height={378}
           />
           <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
-          <div className={styles.sloganWrapper}>
-            <div className={getSloganCls}></div>
-          </div>
-          {userRole === REFERRAL_USER_STATE.INVITEE && (
-            <div className={styles.inviteeText}>
-              <span>{`Seize the opportunity. `}</span>
-              <span className={styles.row2}>Expect upcoming suprises!</span>
-            </div>
-          )}
+          {SloganDOM}
+          {InviteeChapterDom}
           <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
         </div>
       </div>
