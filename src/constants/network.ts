@@ -6,28 +6,39 @@ export const BackEndNetWorkMap: {
   test3: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
-    apiUrl: 'http://192.168.66.203:5001',
-    connectUrl: 'http://192.168.66.203:8001',
-    graphqlUrl: 'http://192.168.66.203:8083/AElfIndexer_DApp/PortKeyIndexerCASchema',
-    cmsUrl: 'https://localtest-applesign.portkey.finance',
+    apiUrl: 'http://192.168.67.127:5001',
+    domain: 'https://test3-applesign-v2.portkey.finance',
+    graphqlUrl: 'http://192.168.67.99:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
+    connectUrl: 'http://192.168.67.127:8080',
+    cmsUrl: 'http://192.168.66.62:3005/graphql',
+    portkeyWebsiteUrl: 'https://portkey-website-dev.vercel.app',
+  },
+  test4: {
+    name: 'aelf Testnet',
+    networkType: 'TESTNET',
+    apiUrl: 'http://192.168.66.117:5577',
+    domain: 'https://test4-applesign-v2.portkey.finance',
+    graphqlUrl: 'http://192.168.67.214:8083/AElfIndexer_DApp/PortKeyIndexerCASchema/graphql',
+    connectUrl: 'http://192.168.66.117:8080',
+    cmsUrl: 'http://192.168.66.62:3005/graphql',
     portkeyWebsiteUrl: 'https://portkey-website-dev.vercel.app',
   },
   testnet: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
-    apiUrl: 'https://did-portkey-test.portkey.finance',
-    connectUrl: 'https://auth-portkey-test.portkey.finance',
-    graphqlUrl: 'https://dapp-portkey-test.portkey.finance/Portkey_DID/PortKeyIndexerCASchema',
-    cmsUrl: 'https://cms-test.portkey.finance',
+    apiUrl: 'https://aa-portkey-test.portkey.finance',
+    graphqlUrl: 'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
+    connectUrl: 'https://auth-aa-portkey-test.portkey.finance',
+    cmsUrl: 'https://cms-test-aa.portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://test.portkey.finance',
   },
   mainnet: {
     name: 'aelf Mainnet',
     networkType: 'MAINNET',
-    apiUrl: 'https://did-portkey.portkey.finance',
-    connectUrl: 'https://auth-portkey.portkey.finance',
-    graphqlUrl: 'https://dapp-portkey.portkey.finance/Portkey_DID/PortKeyIndexerCASchema',
-    cmsUrl: 'https://cms.portkey.finance',
+    apiUrl: 'https://aa-portkey.portkey.finance',
+    connectUrl: 'https://auth-aa-portkey.portkey.finance',
+    graphqlUrl: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
+    cmsUrl: 'https://cms-aa-portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://portkey.finance',
   },
 };
@@ -35,6 +46,8 @@ export const BackEndNetWorkMap: {
 export const NetworkEnv: BackEndNetworkType = process.env.NEXT_PUBLIC_NETWORK_ENV as BackEndNetworkType;
 export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv];
 export const ApiHost = CurrentNetWork.apiUrl;
+export const DomainHost = CurrentNetWork.domain || CurrentNetWork.apiUrl;
+
 export const ConnectHost = CurrentNetWork.connectUrl;
 export const GraphqlHost = CurrentNetWork.graphqlUrl;
 export const CmsHost = CurrentNetWork.cmsUrl;
