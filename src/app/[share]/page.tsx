@@ -56,10 +56,6 @@ ConfigProvider.setGlobalConfig({
   requestDefaults: {
     baseURL: ApiHost,
   },
-  loginConfig: {
-    loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
-    recommendIndexes: [0, 1],
-  },
 });
 
 const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
@@ -93,10 +89,6 @@ const Referral: React.FC<{ params: TReferralProps }> = ({ params }) => {
       serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
       requestDefaults: {
         baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
-      },
-      loginConfig: {
-        loginMethodsOrder: ['Google', 'Telegram', 'Apple', 'Phone', 'Email'],
-        recommendIndexes: [0, 1],
       },
     });
   }, [networkType]);
