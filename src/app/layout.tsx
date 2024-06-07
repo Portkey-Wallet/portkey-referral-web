@@ -23,14 +23,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       {/* Global site tag (gtag.js) - Google Analytics  */}
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-9SJ4NVZV74" strategy="afterInteractive" />
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-TE9REMNJM7" strategy="afterInteractive" />
       <Script id="google-analytics" strategy="afterInteractive">
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
 
-          gtag('config', 'G-9SJ4NVZV74');
+          gtag('config', 'G-TE9REMNJM7');
         `}
       </Script>
 
