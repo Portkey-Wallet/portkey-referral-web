@@ -1,0 +1,462 @@
+/* stylelint-disable selector-class-pattern */
+@import 'src/styles/variable.scss';
+
+.referralPage {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: $bg-light-blue;
+  min-width: $page-min-width;
+  box-sizing: border-box;
+
+  .referralBlueContainer {
+    width: 100%;
+    height: 100%;
+    padding: $padding-24;
+
+    .referralHeader {
+      position: relative;
+      z-index: 1000;
+      width: 100%;
+      height: 80px;
+      max-width: $content-width-large-desktop;
+      padding: $padding-24;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+
+      .portkeyLogo {
+        width: 142px;
+        height: 32px;
+        cursor: pointer;
+      }
+
+      .userLogo {
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+    }
+
+    .referralMainContainer {
+      position: relative;
+      z-index: 100;
+      max-width: 375px;
+      padding: 0 16px;
+      width: 100%;
+      height: calc(100vh - 80px);
+      margin: auto;
+
+      .bgWrap {
+        position: absolute;
+        z-index: -1;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+
+        .bgPortkeyLogo {
+          position: absolute;
+          left: 0;
+          top: -20px;
+          width: 269px;
+          height: 278px;
+        }
+
+        .bgLine1 {
+          position: absolute;
+          right: -25px;
+          top: -80px;
+          width: 88px;
+          height: 250px;
+        }
+        .bgLine2 {
+          position: absolute;
+          top: 350px;
+          left: -50px;
+          width: 104px;
+          height: 250px;
+        }
+        .bgLine3 {
+          position: absolute;
+          top: 550px;
+          right: 30px;
+          width: 104;
+          height: 72px;
+          z-index: 0;
+        }
+      }
+
+      .cryptoGiftSenderImg {
+        margin: 0 auto;
+        width: 36px;
+        height: 36px;
+        border-radius: 18px;
+        overflow: hidden;
+      }
+
+      .cryptoGiftSenderTitle {
+        margin-top: 12px;
+        font-size: 16px;
+        line-height: 24px;
+        text-align: center;
+        color: #101114;
+      }
+
+      .cryptoGiftSenderMemo {
+        margin-top: 4px;
+        font-size: 14px;
+        line-height: 22px;
+        text-align: center;
+        color: #979aa1;
+      }
+
+      .cryptoGiftImg {
+        margin-top: 12px;
+        width: 343px;
+        height: 240px;
+      }
+
+      .cryptoGiftTips {
+        margin-top: 12px;
+        line-height: 26px;
+        font-size: 18px;
+        color: #101114;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .claimBtn {
+        width: 343px;
+        height: 48px;
+        background-color: $bg-btn;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        border: 0;
+      }
+
+      .giftDetailWrap {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 24px 12px;
+
+        .willGet {
+          font-size: 14px;
+          line-height: 20px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .symbol {
+          margin-top: 12px;
+          font-size: 30px;
+          font-weight: 500;
+          line-height: 38px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .usdtAmount {
+          margin-top: 4px;
+          line-height: 20px;
+          font-size: 14px;
+          color: $font-color-secondary;
+        }
+
+        .usdtAmount {
+          line-height: 20px;
+          font-size: 14px;
+          color: $font-color-secondary;
+          text-align: center;
+        }
+
+        .nftWrap {
+          position: relative;
+          margin: 12px auto 0;
+          width: 98px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .nftItem {
+            border-radius: 6px;
+          }
+
+          .nftName {
+            position: absolute;
+            left: 8px;
+            bottom: 22px;
+            font-size: 14px;
+            line-height: 20px;
+            color: #ffffff;
+          }
+
+          .nftId {
+            position: absolute;
+            left: 8px;
+            bottom: 6px;
+            font-size: 12px;
+            line-height: 16px;
+            color: #ffffff;
+          }
+        }
+
+        .nftCount {
+          font-size: 30px;
+          margin-top: 4px;
+          font-weight: 500;
+          line-height: 38px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .alarmWrap {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin: 32px auto 0;
+          color: $font-color-yellow;
+          .alarmText {
+            margin-left: 8px;
+            font-size: 14px;
+            line-height: 20px;
+          }
+        }
+      }
+
+      .mobileClaimBtn {
+        background-color: $bg-btn;
+        width: 100%;
+        position: fixed;
+        // bottom: env(safe-area-inset-bottom);
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 10px;
+        border: none;
+        z-index: 100;
+      }
+
+      .btnTips {
+        margin-top: 16px;
+        color: $font-color-primary;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+      }
+
+      .successSectionWrap {
+        max-width: 375px;
+
+        .successWrap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          width: 100%;
+          .amount-symbol {
+            color: $primary-color;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 24px;
+          }
+          .toAddress {
+            color: $font-color-primary;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 24px;
+          }
+        }
+        .viewDetails {
+          width: 100%;
+          border: 0;
+          background-color: transparent;
+          text-align: center;
+          font-size: 14px;
+          line-height: 22px;
+          color: $primary-color;
+          margin-top: 8px;
+        }
+
+        .shareBtnWrap {
+          width: 343px;
+          height: 48px;
+          border: 1px solid $primary-color;
+          background-color: transparent;
+          color: $primary-color;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 6px;
+          margin-top: 40px;
+
+          .buttonText {
+            margin-left: 8px;
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: 500;
+          }
+        }
+      }
+
+      .sloganWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: $padding-24;
+        margin: auto;
+      }
+
+      .sloganInvitee {
+        position: relative;
+        height: 86px;
+        width: 461px;
+        margin: auto;
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+
+      .bgSlogan {
+        max-width: 480px;
+        height: 100px;
+      }
+
+      .inviteeText {
+        margin: auto;
+        margin-top: 18px;
+        color: #fff;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 22px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .bgColorBox {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+        width: 100%;
+        bottom: -50px;
+
+        > img {
+          width: 100%;
+          min-width: $divide-440;
+        }
+      }
+    }
+  }
+
+  .downloadWrap {
+    position: relative;
+    bottom: 0;
+    left: -4px;
+    z-index: 100;
+    margin: 0 auto;
+    width: 351px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 16px 12px;
+    border-radius: 6px;
+    border: 1px solid #d7d6ff;
+    z-index: 100;
+
+    .portkeyLogo {
+      width: 40px;
+      height: 40px;
+    }
+    .downloadTips {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 500;
+      margin: 0 8px;
+    }
+    .downloadBtn {
+      height: 24px;
+      line-height: 24px;
+      padding: 0 12px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: center;
+      border-radius: 4px;
+      background-color: $bg-btn;
+    }
+  }
+
+  .invitee-sign-in {
+    :global {
+      .portkey-ant-drawer-content-wrapper {
+        height: 80vh !important;
+        transition: none !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: $divide-768) {
+    .referralBlackWrapper {
+      .QRcodeWrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .QRcodeImg {
+          margin-right: 0;
+        }
+
+        .QRcodeContent {
+          margin-top: 24px;
+          max-width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+  }
+  @media screen and (max-width: $divide-510) {
+    .inviteeText {
+      .row2 {
+        display: block;
+      }
+    }
+  }
+
+  @media screen and (max-width: $divide-510) {
+    .referralBlueContainer {
+      padding: 0;
+      .referralMainContainer {
+        .sloganInvitee {
+          position: relative;
+          height: 140px;
+          width: 302px;
+          margin: auto;
+          // background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
+          background-size: 100%;
+        }
+
+        .inviteeText {
+          width: 280px;
+        }
+      }
+    }
+  }
+
+  :global {
+    .social-login-title {
+      .backleft-icon {
+        display: none;
+      }
+    }
+  }
+}
