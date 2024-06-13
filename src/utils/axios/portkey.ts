@@ -34,5 +34,11 @@ const portkeyGet = async (url: string, params?: any, config?: any) => {
     return res.data as any;
   }
 };
+const portkeyPost = async (url: string, params?: any, config?: any) => {
+  const res = await api.post(url, params, config);
+  if (res.ok) {
+    return res.data as any;
+  }
+};
 
-export { PORTKEY_API, portkeyGet };
+export { PORTKEY_API, portkeyGet, portkeyPost };

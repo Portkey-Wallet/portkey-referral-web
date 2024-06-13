@@ -16,39 +16,42 @@ import portkeyLogoBlack from '/public/portkeyLogoBlack.svg';
 import styles from './page.module.scss';
 import {
   referralDiscover,
-  sloganReference,
-  sloganInviteeCreate,
-  sloganInviteeCreateMobile,
-  sloganInviteeExist,
-  sloganInviteeExistMobile,
-  sloganInviteeDefault,
-  sloganInviteeDefaultMobile,
   bgLine1,
   bgLine2,
   bgLine3,
   bgPortkeyLogo,
   boxCannotClaimed,
+  boxClosed,
+  boxEmpty,
+  boxOpened,
   portkeyLogo,
   logoutIcon,
   cryptoSuccess,
   cryptoShare,
 } from '@/assets/images';
-import { portkeyDownloadPage, privacyPolicy, termsOfService } from '@/constants/pageData';
-import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
-import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn';
+import { privacyPolicy, termsOfService } from '@/constants/pageData';
 import '@portkey/did-ui-react/dist/assets/index.css';
-import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
-import { CMS_API, PORTKEY_API, cmsGet, portkeyGet } from '@/utils/axios/index';
-import { isPortkey, isBrowser } from '@/utils/portkey';
+import { CMS_API, PORTKEY_API, cmsGet, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
-import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
-import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
 import { StaticImageData } from 'next/image';
-import { Dropdown, MenuProps } from 'antd';
+import { Dropdown, MenuProps, Image, Alert } from 'antd';
 import BreakWord from '@/components/BreakWord';
+import { isLogin } from '@/utils/wallet';
+import {
+  CRYPTO_GIFT_CA_HOLDER_INFO,
+  CRYPTO_GIFT_USER_ID_CODE,
+  DEFAULT_CRYPTO_GIFT_WALLET_KEY,
+  DEFAULT_CRYPTO_GIFT_WALLET_PIN,
+} from '@/constants/storage';
+import { useFetchAndStoreCaHolderInfo } from '@/hooks/giftWallet';
+import { getItem, removeItem, setItem } from '@/utils/storage';
+import { useEnvironment } from '@/hooks/environment';
+import { useDownload } from '@/hooks/download';
+import { CryptoGiftPhase, TCryptoDetail } from '@/types/cryptoGift';
+import { CRYPTO_GIFT_PROJECT_CODE } from '@/constants/project';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -59,23 +62,22 @@ ConfigProvider.setGlobalConfig({
 });
 
 const Referral: React.FC = () => {
+  const { walletInfo, setWalletInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
+  const { isMobile, isIOS, isAndroid, isPortkeyApp, isWeChat } = useEnvironment();
+  const { onJumpToPortkeyWeb, onJumpToStore } = useDownload();
   const [isShowMask, setIsShowMask] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
+
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
-  const [androidStoreUrl, setAndroidStoreUrl] = useState('');
-  const [iOSStoreUrl, setIOSStoreUrl] = useState('');
-  const [isPortkeyApp, setIsPortkeyApp] = useState<boolean>(true);
+
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
   const [src, setSrc] = useState<StaticImageData>();
   const networkType = searchParams.get('networkType') || '';
   const cryptoGiftId = searchParams.get('id') || '';
-
-  useEffect(() => {}, []);
+  const [cryptoDetail, setCryptoGiftDetail] = useState<TCryptoDetail>();
+  const [identityCode, setIdentityCode] = useState('');
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -90,21 +92,7 @@ const Referral: React.FC = () => {
   }, [networkType]);
 
   useEffect(() => {
-    if (detectBrowserName() === 'WeChat') {
-      setIsShowMask(true);
-      return;
-    }
-    // device
-    const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
-    const isIOS = devices.isMobile().apple.device;
-    const isAndroid = devices.isMobile().android.device;
-    setIsMobile(isMobile);
-    setIsIOS(isIOS);
-    setIsAndroid(isAndroid);
-
-    // portkey app
-    const isPortkeyApp = isPortkey();
-    setIsPortkeyApp(isPortkeyApp);
+    if (isWeChat) return setIsShowMask(true);
 
     if (isPortkeyApp) {
       singleMessage.error({
@@ -114,61 +102,85 @@ const Referral: React.FC = () => {
         onClick: () => null,
       });
     }
+  }, [isPortkeyApp, isWeChat]);
+
+  useEffect(() => {
+    const idCode = getItem(cryptoGiftId);
+
+    did.setConfig({
+      referralInfo: {
+        referralCode: `${cryptoGiftId}#${idCode}`,
+        projectCode: CRYPTO_GIFT_PROJECT_CODE,
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  did.setConfig({
-    referralInfo: {
-      projectCode: '200000',
-    },
-  });
+  useEffect(() => {
+    (async () => {
+      const result = await portkeyGet(PORTKEY_API.GET.CRYPTO_GIFT_DETAIL, {
+        id: '7d911f61-0511-4121-8cf3-1443d057999e',
+      });
+      console.log('setCryptoGiftDetail', result);
+      setCryptoGiftDetail(result);
+    })();
+  }, []);
 
   const onSignUp = () => {
-    console.log('singup');
     signInRef.current?.setOpen(true);
   };
 
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
-  const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
-    console.log('didWallet', didWallet);
-    setIsSignUp(true);
-    setIsNewAccount(didWallet.createType === 'register');
+  const onFinish = useCallback(
+    async (didWallet: DIDWalletInfo) => {
+      console.log('didWallet', didWallet);
+      await did.save(DEFAULT_CRYPTO_GIFT_WALLET_PIN, DEFAULT_CRYPTO_GIFT_WALLET_KEY);
+      fetchAndStoreCaHolderInfo();
+      // setIsSignUp(true);
+      // setIsNewAccount(didWallet.createType === 'register');
+    },
+    [fetchAndStoreCaHolderInfo],
+  );
 
-    const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
-    setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
-    setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
-  }, []);
+  const onClaim = useCallback(async () => {
+    // TODo： change
+    try {
+      const { identityCode = '' } = await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId });
+      // todo: delete it
+      let tmpIdCode = identityCode.replaceAll(`\"`, '');
+      did.setConfig({
+        referralInfo: {
+          referralCode: `${cryptoGiftId}#${tmpIdCode}`,
+          projectCode: CRYPTO_GIFT_PROJECT_CODE,
+        },
+      });
 
+      setItem(cryptoGiftId, tmpIdCode);
+      alert(tmpIdCode);
+      setIdentityCode(tmpIdCode);
+    } catch (error) {
+      alert('ERROR' + error);
+    }
+  }, [cryptoGiftId]);
 
-  const onDownload = useCallback(() => {
-    openWithBlank(portkeyDownloadPage);
-  }, []);
+  const onLogout = useCallback(async () => {
+    // todo: check is AELF
+    try {
+      await did.logout({ chainId: 'AELF' });
+      removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
+      removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
+      setWalletInfo(undefined);
+      console.log('success!');
+    } catch (error) {
+      console.log('onLogout', error);
+    }
+  }, [setWalletInfo]);
 
   const onCopyClick = useCallback(() => {
     copyToClipboard('XXX');
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
   }, [copyState.error, copyState.value, copyToClipboard]);
-
-  useEffect(() => {
-    const isInMobile = !isBrowser() || isMobile;
-    let sourceUri = sloganReference;
-
-    // default
-    if (!isSignUp && !isInMobile) {
-      sourceUri = sloganInviteeDefault;
-    }
-    if (!isSignUp && isInMobile) sourceUri = sloganInviteeDefaultMobile;
-
-    // registered
-    if (isSignUp && !isInMobile) sourceUri = sloganInviteeCreate;
-    if (isSignUp && isNewAccount && isInMobile) sourceUri = sloganInviteeCreateMobile;
-
-    // others
-    if (isSignUp && !isNewAccount && !isInMobile) sourceUri = sloganInviteeExist;
-    if (isSignUp && !isNewAccount && isInMobile) sourceUri = sloganInviteeExistMobile;
-
-    setSrc(sourceUri);
-  }, [isMobile, isNewAccount, isSignUp]);
 
   const SloganDOM = useMemo(() => {
     if (!src) return <div style={{ height: 100 }} />;
@@ -216,50 +228,89 @@ const Referral: React.FC = () => {
         key: '1',
         label: 'Log Out',
         icon: <BaseImage src={logoutIcon} alt={'logout'} width={16} height={16} />,
-        onclick: () => {
-          console.log('log out !!');
+        onClick: () => {
+          onLogout();
         },
         styles: { color: 'red' },
       },
     ],
-    [],
+    [onLogout],
   );
 
   const CryptoBoxHeaderDom = useMemo(
     () => (
       <>
-        <BaseImage src={referralDiscover} className={styles.cryptoGiftSenderImg} alt="bgLines" priority />
-        <div className={styles.cryptoGiftSenderTitle}>Rachel Wei sent to you a Crypto Gift</div>
-        <div className={styles.cryptoGiftSenderMemo}>Best wishes!</div>
+        <Image
+          alt={cryptoDetail?.sender?.nickname || ''}
+          wrapperClassName={styles.cryptoGiftSenderImg}
+          src={cryptoDetail?.sender?.avatar || ''}
+          width={48}
+          height={48}
+          preview={false}
+          onClick={() => {
+            onSignUp();
+          }}
+        />
+        <div className={styles.cryptoGiftSenderTitle}>{cryptoDetail?.prompt || ''}</div>
+        <div className={styles.cryptoGiftSenderMemo}>{`"${cryptoDetail?.memo || ''}"`}</div>
       </>
     ),
-    [],
+    [cryptoDetail?.memo, cryptoDetail?.prompt, cryptoDetail?.sender?.avatar, cryptoDetail?.sender?.nickname],
   );
 
-  const CryptoBoxImgDom = useMemo(
-    () => (
-      <BaseImage
-        src={boxCannotClaimed}
-        className={styles.cryptoGiftImg}
-        alt="bgLines"
-        priority
-        width={343}
-        height={240}
-      />
-    ),
-    [],
-  );
-  const CryptoGiftTipsDom = useMemo(
-    () => (
-      <div className={styles.cryptoGiftTips}>
-        Sorry, you miss the claim expiration time.Sorry, you miss the claim expiration time.Sorry, you miss the claim
-        expiration time.Sorry, you miss the claim expiration time.Sorry, you miss the claim expiration time.
-      </div>
-    ),
-    [],
-  );
+  const renderCryptoBoxImgDom = useCallback(() => {
+    let src = boxClosed;
 
-  const ActionButtonDom = useMemo(() => {
+    console.log('cryptoDetail?.cryptoGiftPhase', cryptoDetail?.cryptoGiftPhase);
+    switch (cryptoDetail?.cryptoGiftPhase) {
+      case CryptoGiftPhase.NoneLeft:
+        src = boxEmpty;
+        break;
+
+      case CryptoGiftPhase.Expired:
+        src = boxClosed;
+        break;
+
+      case CryptoGiftPhase.Expired:
+        src = boxClosed;
+        break;
+
+      case CryptoGiftPhase.Expired:
+        src = boxClosed;
+        break;
+
+      default:
+        break;
+    }
+
+    return (
+      <BaseImage src={src} className={styles.cryptoGiftImg} alt="boxCannotClaimed" priority width={343} height={240} />
+    );
+  }, [cryptoDetail?.cryptoGiftPhase]);
+
+  const renderCryptoGiftTipsDom = useCallback(() => {
+    let text = '';
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoneLeft) text = `Oops! None left...`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) text = `Oops! The crypto gift has been Expired`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ValidityPeriodExpired)
+      text = `Don't worry, it hasn't been claimed yet! You can keep trying to claim after the countdown ends`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired)
+      text = `Don't worry, it hasn't been claimed yet! You can keep trying to claim after`;
+
+    return <div className={styles.cryptoGiftTips}>{text}</div>;
+  }, [cryptoDetail?.cryptoGiftPhase]);
+
+  const renderActionButtonDom = useCallback(() => {
+    if (!isLogin())
+      return (
+        <>
+          <button className={styles.claimBtn} onClick={onClaim}>
+            Claim Crypto Gift
+          </button>
+          {cryptoDetail?.isNewUsersOnly && <p className={styles.btnTips}>Create a new Portkey account to claim</p>}
+        </>
+      );
+
     return (
       <>
         <div className={clsx(isMobile && styles.mobileClaimBtn)}>
@@ -270,7 +321,7 @@ const Referral: React.FC = () => {
         <p className={styles.btnTips}>Claim to your Portkey address</p>
       </>
     );
-  }, [isMobile]);
+  }, [cryptoDetail?.isNewUsersOnly, isMobile, onClaim]);
 
   const DownLoadDom = useMemo(() => {
     return (
@@ -348,16 +399,18 @@ const Referral: React.FC = () => {
           <div className={clsx(['flex-row-center', styles.referralHeader])}>
             <BaseImage className={styles.portkeyLogo} src={portkeyLogoBlack} priority alt="portkeyLogo" />
 
-            <Dropdown overlayClassName="logout-drop-down" trigger={['click']} menu={{ items: dropDownItems }}>
-              <BaseImage
-                className={styles.userLogo}
-                src={portkeyLogo}
-                priority
-                alt="portkeyLogo"
-                width={24}
-                height={24}
-              />
-            </Dropdown>
+            {walletInfo?.avatar && (
+              <Dropdown overlayClassName="logout-drop-down" trigger={['click']} menu={{ items: dropDownItems }}>
+                <Image
+                  alt="avatar"
+                  wrapperClassName={styles.userLogo}
+                  src={walletInfo?.avatar || ''}
+                  width={24}
+                  height={24}
+                  preview={false}
+                />
+              </Dropdown>
+            )}
           </div>
         </header>
         <div className={styles.referralMainContainer}>
@@ -369,9 +422,9 @@ const Referral: React.FC = () => {
           </div>
 
           {CryptoBoxHeaderDom}
-          {CryptoBoxImgDom}
-          {CryptoGiftTipsDom}
-          {ActionButtonDom}
+          {renderCryptoBoxImgDom()}
+          {renderCryptoGiftTipsDom()}
+          {renderActionButtonDom()}
           {GiftDetailDom}
           {SuccessFullDom}
           {DownLoadDom}
@@ -389,12 +442,20 @@ const Referral: React.FC = () => {
             termsOfService={termsOfService}
             privacyPolicy={privacyPolicy}
             uiType="Modal"
+            pin={DEFAULT_CRYPTO_GIFT_WALLET_PIN}
             ref={signInRef}
             onFinish={onFinish}
             onCancel={onCancel}
           />
         </PortkeyProvider>
       )}
+
+      {/* <div
+        onClick={async () => {
+          fetchCaHolderInfo();
+        }}>
+        GET WALLET
+      </div> */}
 
       {/* mask */}
       {isShowMask && <OpenInBrowser />}

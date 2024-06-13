@@ -16,7 +16,10 @@ export const CMS_API = {
 
 export const PORTKEY_API = {
   GET: {
-    CRYPTO_GIFT_DETAIL:
-      'cryptogift/detail',
+    CA_HOLDER_INDEX: '/search/caholderindex',
+    CRYPTO_GIFT_DETAIL: '/cryptogift/detail',
+  },
+  POST: {
+    GRAB: '/cryptogift/grab',
   },
 };

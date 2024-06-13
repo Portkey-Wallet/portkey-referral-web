@@ -33,7 +33,7 @@ import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn'
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
-import { CMS_API, cmsGet} from '@/utils/axios';
+import { CMS_API, cmsGet } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
 import { devices } from '@portkey/utils';
@@ -68,7 +68,7 @@ const Referral: React.FC = () => {
   const projectCode = searchParams.get('project_code');
   const shortLink = searchParams.get('shortLink') || '';
   const networkType = searchParams.get('networkType') || '';
-
+  const [walletInfo, setWalletInfo] = useState();
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -87,13 +87,7 @@ const Referral: React.FC = () => {
       setIsShowMask(true);
       return;
     }
-    // device
-    const isMobile = devices.isMobile().tablet || devices.isMobile().phone;
-    const isIOS = devices.isMobile().apple.device;
-    const isAndroid = devices.isMobile().android.device;
-    setIsMobile(isMobile);
-    setIsIOS(isIOS);
-    setIsAndroid(isAndroid);
+
 
     // portkey app
     const isPortkeyApp = isPortkey();
@@ -124,9 +118,9 @@ const Referral: React.FC = () => {
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
   const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
-    console.log('didWallet', didWallet);
-    setIsSignUp(true);
-    setIsNewAccount(didWallet.createType === 'register');
+    // console.log('didWallet', didWallet);
+    // setIsSignUp(true);
+    // setIsNewAccount(didWallet.createType === 'register');
 
     const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
     setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');

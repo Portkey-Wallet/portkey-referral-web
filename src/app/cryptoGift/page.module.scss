@@ -7,7 +7,7 @@
   overflow: auto;
   background-color: $bg-light-blue;
   min-width: $page-min-width;
-  box-sizing: border-box;
+  overflow-x: hidden;
 
   .referralBlueContainer {
     width: 100%;
@@ -23,11 +23,10 @@
       padding: $padding-24;
       display: flex;
       flex-direction: row;
+      align-items: center;
       justify-content: space-between;
 
       .portkeyLogo {
-        width: 142px;
-        height: 32px;
         cursor: pointer;
       }
 
@@ -90,6 +89,7 @@
       }
 
       .cryptoGiftSenderImg {
+        display: block;
         margin: 0 auto;
         width: 36px;
         height: 36px;
@@ -126,18 +126,6 @@
         color: #101114;
         font-weight: 500;
         text-align: center;
-      }
-
-      .claimBtn {
-        width: 343px;
-        height: 48px;
-        background-color: $bg-btn;
-        margin-bottom: 16px;
-        border-radius: 8px;
-        color: #fff;
-        cursor: pointer;
-        font-size: 16px;
-        border: 0;
       }
 
       .giftDetailWrap {
@@ -232,20 +220,29 @@
 
       .mobileClaimBtn {
         background-color: $bg-btn;
-        width: 100%;
-        position: fixed;
-        // bottom: env(safe-area-inset-bottom);
-        left: 0;
-        right: 0;
+        width: 343px;
+        height: 48px;
         display: flex;
         justify-content: center;
         padding-top: 10px;
         border: none;
         z-index: 100;
+        border-radius: 6px;
+      }
+
+      .claimBtn {
+        width: 343px;
+        height: 48px;
+        background-color: $bg-btn;
+        margin-bottom: 16px;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        border: 0;
       }
 
       .btnTips {
-        margin-top: 16px;
         color: $font-color-primary;
         font-size: 14px;
         line-height: 20px;
@@ -253,7 +250,7 @@
       }
 
       .successSectionWrap {
-        max-width: 375px;
+        max-width: 343px;
 
         .successWrap {
           display: flex;
@@ -424,31 +421,10 @@
       }
     }
   }
-  @media screen and (max-width: $divide-510) {
-    .inviteeText {
-      .row2 {
-        display: block;
-      }
-    }
-  }
 
   @media screen and (max-width: $divide-510) {
     .referralBlueContainer {
       padding: 0;
-      .referralMainContainer {
-        .sloganInvitee {
-          position: relative;
-          height: 140px;
-          width: 302px;
-          margin: auto;
-          // background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
-          background-size: 100%;
-        }
-
-        .inviteeText {
-          width: 280px;
-        }
-      }
     }
   }
 
