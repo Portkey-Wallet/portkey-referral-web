@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import {  useCallback, useMemo } from 'react';
+import {  useCallback, useEffect, useMemo } from 'react';
 import { singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -16,13 +16,16 @@ import {
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
+import referralApi from '@/utils/axios/referral';
 
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
-
+  useEffect(() => {
+    referralApi.referralRecordList({caHash: ''});
+  })
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
