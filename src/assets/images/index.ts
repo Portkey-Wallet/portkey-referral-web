@@ -10,9 +10,15 @@ import sloganInviteeExist from './referral/sloganInviteeExist.png';
 import sloganInviteeExistMobile from './referral/sloganInviteeExistMobile.png';
 import referralColorBox from './referral/colorBox.svg';
 import referralDiscover from './referral/discover.png';
+import myInvitationHeaderBg from './referral/myInvitationHeaderBg.svg';
+import invitationRankFirst from './referral/invitationRankFirst.png'
+import invitationRankSecond from './referral/invitationRankSecond.png'
+import invitationRankThird from './referral/invitationRankThird.png'
+
 import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
 import googleGetIt from './common/googleGetIt.svg';
+import directionRight from './common/directionRight.svg';
 
 import bgPortkeyLogo from './cryptoGift/bgPortkeyLogo.svg';
 import bgLine1 from './cryptoGift/bgLine1.svg';
@@ -39,9 +45,14 @@ export {
   sloganInviteeExistMobile,
   referralColorBox,
   referralDiscover,
+  myInvitationHeaderBg,
+  invitationRankFirst,
+  invitationRankSecond,
+  invitationRankThird,
   QRCodeLogo,
   appStoreDownload,
   googleGetIt,
+  directionRight,
   sloganReference,
   bgPortkeyLogo,
   bgLine1,
