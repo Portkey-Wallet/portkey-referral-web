@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import  * as devices from '../utils/device';
+import * as devices from '../utils/device';
 import { isBrowser, isPortkey } from '@/utils/portkey';
 import { detectBrowserName } from '@portkey/onboarding';
 
