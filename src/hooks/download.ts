@@ -29,7 +29,8 @@ export const useDownload = () => {
         const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
         setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
         setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
-        setExtensionStoreUrl(downloadResource?.data?.extensionDownLoadUrl || '');
+        setExtensionStoreUrl(downloadResource?.data?.extensionDownloadUrl || '');
+        console.log('getDownLoadSource', downloadResource);
       }
     },
     [androidStoreUrl, extensionStoreUrl, iOSStoreUrl],

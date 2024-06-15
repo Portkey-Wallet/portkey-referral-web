@@ -91,9 +91,9 @@
       .cryptoGiftSenderImg {
         display: block;
         margin: 0 auto;
-        width: 36px;
-        height: 36px;
-        border-radius: 18px;
+        width: 48px;
+        height: 48px;
+        border-radius: 24px;
         overflow: hidden;
       }
 
@@ -123,15 +123,21 @@
         margin-top: 12px;
         line-height: 26px;
         font-size: 18px;
-        color: #101114;
         font-weight: 500;
         text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        .symbol{
+          color: $primary-color;
+        }
       }
 
       .giftDetailWrap {
         background-color: #ffffff;
         border-radius: 12px;
         padding: 24px 12px;
+        margin-top: 12px;
 
         .willGet {
           font-size: 14px;
@@ -172,7 +178,8 @@
           align-items: center;
 
           .nftItem {
-            border-radius: 6px;
+            border-radius: 8px;
+            overflow: hidden;
           }
 
           .nftName {
@@ -182,6 +189,9 @@
             font-size: 14px;
             line-height: 20px;
             color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
 
           .nftId {
@@ -211,6 +221,7 @@
           margin: 32px auto 0;
           color: $font-color-yellow;
           .alarmText {
+            margin-top: 2px;
             margin-left: 8px;
             font-size: 14px;
             line-height: 20px;
@@ -230,16 +241,20 @@
         border-radius: 6px;
       }
 
-      .claimBtn {
+      .actionBtn {
         width: 343px;
         height: 48px;
         background-color: $bg-btn;
-        margin-bottom: 16px;
+        margin: 40px 0 16px;
         border-radius: 8px;
         color: #fff;
         cursor: pointer;
         font-size: 16px;
         border: 0;
+      }
+      .disabledBtn {
+        background-color: $bg-disabled-btn-color;
+        cursor: not-allowed;
       }
 
       .btnTips {
@@ -355,11 +370,10 @@
   }
 
   .downloadWrap {
-    position: relative;
+    position: absolute;
     bottom: 0;
-    left: -4px;
     z-index: 100;
-    margin: 0 auto;
+    margin: 0 auto 8px;
     width: 351px;
     height: 72px;
     display: flex;
@@ -369,6 +383,7 @@
     border-radius: 6px;
     border: 1px solid #d7d6ff;
     z-index: 100;
+    cursor: pointer;
 
     .portkeyLogo {
       width: 40px;

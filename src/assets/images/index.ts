@@ -26,6 +26,7 @@ import portkeyLogo from './cryptoGift/portkeyLogo.svg';
 import logoutIcon from './cryptoGift/logout.svg';
 import cryptoShare from './cryptoGift/share.svg';
 import cryptoSuccess from './cryptoGift/success.svg';
+import alarm from './cryptoGift/alarm.svg';
 
 export {
   referralWaterMark,
@@ -55,4 +56,5 @@ export {
   logoutIcon,
   cryptoShare,
   cryptoSuccess,
+  alarm,
 };

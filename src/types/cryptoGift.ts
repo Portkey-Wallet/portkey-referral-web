@@ -1,17 +1,22 @@
-export type TCryptoGiftInfoType = {
-  identityCode: string;
-  giftInfo: {
-    avatar: string;
-  };
-};
+export enum RedPackageDisplayType {
+  Common = 'Common', // chat redPackage
+  CryptoGift = 'CryptoGift',
+}
+
+export enum AssetsType {
+  ft = 1,
+  nft = 2,
+}
 
 export enum CryptoGiftPhase {
+  Available = 0,
   Expired = 1,
-  ReceivedSuccessfully = 2,
-  ValidityPeriodExpired = 3,
-  NoneLeft = 4,
+  Claimed = 2,
+  ExpiredReleased = 3,
+  FullyClaimed = 4,
   OnlyNewUsers = 5,
-  ClaimedByMe = 6,
+  GrabbedQuota = 6,
+  NoQuota = 7,
 }
 
 export type TCryptoDetail = {
@@ -24,4 +29,11 @@ export type TCryptoDetail = {
   sender: { avatar: string; nickname: string };
   subPrompt: string;
   isNewUsersOnly: boolean;
+  symbol: string;
+  decimals: number;
+  dollarValue: string;
+  nftAlias: string;
+  nftImageUrl: string;
+  nftTokenId: string;
+  assetType: AssetsType;
 };

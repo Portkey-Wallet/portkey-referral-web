@@ -36,7 +36,6 @@ import { useSearchParams } from 'next/navigation';
 import { CMS_API, cmsGet } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
-import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
