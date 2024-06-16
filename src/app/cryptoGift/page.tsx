@@ -247,7 +247,7 @@ const CryptoGift: React.FC = () => {
       setLoading(true);
       const originChainId = getItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID);
       await did.logout({ chainId: originChainId });
-      DEFAULT_CRYPTO_GIFT_WALLET_KEY;
+      removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
       removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
       removeItem(CRYPTO_GIFT_CA_ADDRESS);
       setCaHolderInfo(undefined);
@@ -289,6 +289,7 @@ const CryptoGift: React.FC = () => {
     return (
       <>
         <Avatar
+          onClick={() => onSignUp()}
           alt={cryptoDetail?.sender?.nickname || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ''}>
