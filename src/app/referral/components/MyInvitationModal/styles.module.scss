@@ -1,0 +1,30 @@
+@import 'src/styles/common.scss';
+
+.container {
+  max-width: 440px;
+  width: 100%;
+
+  .titleWrap {
+    width: 100%;
+    height: 60px;
+    padding-left: 48px;
+    padding-right: 16px;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    display: inline-flex;
+    .titleText {
+      flex: 1 1 0;
+      text-align: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 26px;
+      word-wrap: break-word;
+    }
+    .closeImage {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

@@ -19,6 +19,7 @@ import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
 import googleGetIt from './common/googleGetIt.svg';
 import directionRight from './common/directionRight.svg';
+import close from './common/close.svg';
 
 import bgPortkeyLogo from './cryptoGift/bgPortkeyLogo.svg';
 import bgLine1 from './cryptoGift/bgLine1.svg';
@@ -53,6 +54,7 @@ export {
   appStoreDownload,
   googleGetIt,
   directionRight,
+  close,
   sloganReference,
   bgPortkeyLogo,
   bgLine1,

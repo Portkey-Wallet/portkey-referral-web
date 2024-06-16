@@ -7,8 +7,8 @@ import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
-import MyInvitation from './components/MyInvitation';
-import AllRanks from './components/AllRanks';
+import MyInvitationBlock from './components/MyInvitationBlock';
+import leaderboardModal from './components/LeaderboardModal';
 import TopRank from './components/TopRank';
 import {
   referralWaterMark,
@@ -88,7 +88,7 @@ const Referral: React.FC = () => {
         </div>
       </div>
       <div className={styles.referralBlackWrapper}>
-        <MyInvitation invitationAmount={12}/>
+        <MyInvitationBlock invitationAmount={12}/>
         {shortLink && (
           <div className={styles.QRcodeWrapper}>
             <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />

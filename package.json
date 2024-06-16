@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@portkey/did-ui-react": "2.0.0-alpha.24",
+    "@ebay/nice-modal-react": "^1.2.13",
     "aelf-sdk": "^3.4.2-alpha",
     "antd": "^5.13.0",
     "apisauce": "^2.1.6",

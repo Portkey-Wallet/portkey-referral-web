@@ -3,15 +3,16 @@ import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';
 import { myInvitationHeaderBg, directionRight } from '@/assets/images';
 import Image from 'next/image';
+import myInvitationModal from '../MyInvitationModal';
 
-interface MyInvitationProps {
+interface MyInvitationBlockProps {
   invitationAmount: number;
 }
 
-const MyInvitation: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
-
+const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount }) => {
   const onClickViewAll = useCallback(() => {
     console.log('view all');
+    myInvitationModal.show();
   }, []);
 
   return (
@@ -26,4 +27,4 @@ const MyInvitation: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
   );
 };
 
-export default MyInvitation;
+export default MyInvitationBlock;
