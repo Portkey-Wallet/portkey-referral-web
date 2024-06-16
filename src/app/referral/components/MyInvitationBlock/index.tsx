@@ -15,9 +15,18 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
   const onClickViewAll = useCallback(() => {
     console.log('view all');
     myInvitationModal.show({
-      invitationAmount: 0,
-      items: [],
-    })
+      invitationAmount: 12,
+      sections: [
+        {
+          date: '2024.06.01',
+          items: [
+            { caHash: '0x123456', directlyInvite: true, walletName: 'Alice' },
+            { caHash: '0x123456', directlyInvite: true, walletName: 'Alice' },
+          ],
+        },
+        { date: '2024.06.02', items: [{ caHash: '0x123123', directlyInvite: false, walletName: 'Bob' }] },
+      ],
+    });
     console.log('after view all');
   }, [myInvitationModal]);
 

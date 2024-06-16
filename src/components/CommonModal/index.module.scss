@@ -1,0 +1,19 @@
+@import 'src/styles/common.scss';
+.modal-wrap {
+  // @apply flex justify-center items-center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .modal {
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+  }
+  .modal-mobile {
+    background-color: #161630;
+  }
+
+
+  .modal-full-screen {
+    background-color: #161630;
+  }
+}

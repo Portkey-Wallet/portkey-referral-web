@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
-import styles from './index.module.css';
+import styles from './index.module.scss';
 import { close } from '@/assets/images';
 import Image from 'next/image';
 import useResponsive from '@/hooks/useResponsive';
