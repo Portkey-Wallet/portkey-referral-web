@@ -1,7 +1,9 @@
-import React from 'react';
-import { List, Image } from 'antd';
+import React, { useCallback } from 'react';
+import { List } from 'antd';
 import styles from './styles.module.scss';
 import RankItem from '../RankItem';
+import { directionRight } from '@/assets/images';
+import Image from 'next/image';
 
 interface Item {
   rank: number;
@@ -21,6 +23,10 @@ interface TopRanksProps {
 
 const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
   const { myRank } = data;
+
+  const onViewAll = useCallback(() => {
+    console.log('View All Clicked');
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -47,6 +53,7 @@ const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
                 <Image
                   className={styles.list_item_image}
                   width={20}
+                  height={20}
                   src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                   alt="avatar"
                 />
@@ -62,6 +69,10 @@ const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
             <RankItem rank={item.rank} avatar={item.avatar} caAddress={item.caAddress} count={item.count} />
           )}
         />
+      </div>
+      <div className={styles.view_all_wrap} onClick={onViewAll}>
+        <div className={styles.view_all_text}>View More</div>
+        <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </div>
     </div>
   );

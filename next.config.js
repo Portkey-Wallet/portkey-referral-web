@@ -27,4 +27,14 @@ module.exports = {
   //   },
   // },
   productionBrowserSourceMaps: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'zos.alipayobjects.com', // todo_wade: remove this hostname
+        port: '',
+        pathname: '/rmsportal/**',
+      },
+    ],
+  },
 };
