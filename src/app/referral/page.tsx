@@ -1,6 +1,7 @@
 'use client';
 import clsx from 'clsx';
 import { useCallback, useMemo } from 'react';
+import NiceModal from '@ebay/nice-modal-react';
 import { singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -66,51 +67,53 @@ const Referral: React.FC = () => {
   };
 
   return (
-    <div className={styles.referralPage}>
-      <div className={styles.referralBlueContainer}>
-        <header className="row-center">
-          <div className={clsx(['flex-row-center', styles.referralHeader])}>
-            <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+    <NiceModal.Provider>
+      <div className={styles.referralPage}>
+        <div className={styles.referralBlueContainer}>
+          <header className="row-center">
+            <div className={clsx(['flex-row-center', styles.referralHeader])}>
+              <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+            </div>
+          </header>
+          <div className={styles.referralMainContainer}>
+            <BaseImage
+              src={referralWaterMark}
+              className={styles.bgWaterMark}
+              alt="waterMark"
+              priority
+              width={253}
+              height={378}
+            />
+            <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
+            {SloganDOM}
+            <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
           </div>
-        </header>
-        <div className={styles.referralMainContainer}>
-          <BaseImage
-            src={referralWaterMark}
-            className={styles.bgWaterMark}
-            alt="waterMark"
-            priority
-            width={253}
-            height={378}
-          />
-          <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
-          {SloganDOM}
-          <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
         </div>
-      </div>
-      <div className={styles.referralBlackWrapper}>
-        <MyInvitationBlock invitationAmount={12}/>
-        {shortLink && (
-          <div className={styles.QRcodeWrapper}>
-            <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />
-            <div className={styles.QRcodeContent}>
-              <div className={styles.QRcodeTitle}>Referral Link</div>
-              <div className={styles.QRcodeUrlWrapper}>
-                <div className={styles.QRcodeUrl}>{shortLink}</div>
-                <BaseImage
-                  src={referralDiscover}
-                  className={styles.QRcodeCopy}
-                  alt="QRcodeCopy"
-                  priority
-                  width={20}
-                  onClick={onCopyClick}
-                />
+        <div className={styles.referralBlackWrapper}>
+          <MyInvitationBlock invitationAmount={12} />
+          {shortLink && (
+            <div className={styles.QRcodeWrapper}>
+              <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />
+              <div className={styles.QRcodeContent}>
+                <div className={styles.QRcodeTitle}>Referral Link</div>
+                <div className={styles.QRcodeUrlWrapper}>
+                  <div className={styles.QRcodeUrl}>{shortLink}</div>
+                  <BaseImage
+                    src={referralDiscover}
+                    className={styles.QRcodeCopy}
+                    alt="QRcodeCopy"
+                    priority
+                    width={20}
+                    onClick={onCopyClick}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <TopRank data={topRankData} />
+          )}
+          <TopRank data={topRankData} />
+        </div>
       </div>
-    </div>
+    </NiceModal.Provider>
   );
 };
 

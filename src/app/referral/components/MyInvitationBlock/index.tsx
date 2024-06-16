@@ -3,17 +3,23 @@ import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';
 import { myInvitationHeaderBg, directionRight } from '@/assets/images';
 import Image from 'next/image';
-import myInvitationModal from '../MyInvitationModal';
+import { useModal } from '@ebay/nice-modal-react';
+import MyInvitationModal from '../MyInvitationModal';
 
 interface MyInvitationBlockProps {
   invitationAmount: number;
 }
 
 const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount }) => {
+  const myInvitationModal = useModal(MyInvitationModal);
   const onClickViewAll = useCallback(() => {
     console.log('view all');
-    myInvitationModal.show();
-  }, []);
+    myInvitationModal.show({
+      invitationAmount: 0,
+      items: [],
+    })
+    console.log('after view all');
+  }, [myInvitationModal]);
 
   return (
     <div className={styles.container}>

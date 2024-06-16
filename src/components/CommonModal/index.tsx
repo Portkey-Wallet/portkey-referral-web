@@ -21,6 +21,7 @@ function CommonModal(props: ModalProps) {
       destroyOnClose={true}
       closeIcon={<Image src={close} width={24} height={24} alt='close' />}
       width={width}
+      footer={null}
       centered
       {...props}
       className={`${styles.modal} ${isLG && styles['modal-mobile']} ${
