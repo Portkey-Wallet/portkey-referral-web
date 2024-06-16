@@ -3,6 +3,7 @@ export const setItem = (key: string, value: string) => {
 };
 
 export const removeItem = (key: string) => {
+  if (localStorage.getItem(key) === null) return;
   return localStorage.removeItem(key);
 };
 

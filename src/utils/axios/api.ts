@@ -22,6 +22,6 @@ export const PORTKEY_API = {
   },
   POST: {
     GRAB: '/cryptogift/grab',
-    LOGIN_USER_GRAB: '/redpackage/grab',
+    LOGIN_USER_GRAB: '/redpackage/logged/grab',
   },
 };

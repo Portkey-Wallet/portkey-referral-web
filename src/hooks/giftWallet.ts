@@ -26,7 +26,6 @@ export const useFetchAndStoreCaHolderInfo = () => {
     const caHolderInfo = getItem(CRYPTO_GIFT_CA_HOLDER_INFO);
     setCaHolderInfo(caHolderInfo);
     fetchAndStoreCaHolderInfo();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

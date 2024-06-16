@@ -2,6 +2,10 @@ export enum RedPackageDisplayType {
   Common = 'Common', // chat redPackage
   CryptoGift = 'CryptoGift',
 }
+export enum RedPackageGrabStatus {
+  Success = 1,
+  Fail = 2,
+}
 
 export enum AssetsType {
   ft = 1,

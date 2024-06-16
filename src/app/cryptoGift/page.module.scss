@@ -20,6 +20,7 @@
       width: 100%;
       height: 80px;
       max-width: $content-width-large-desktop;
+      max-width: $content-width-large-desktop;
       padding: $padding-24;
       display: flex;
       flex-direction: row;
@@ -28,12 +29,15 @@
 
       .portkeyLogo {
         cursor: pointer;
+        width: 142px;
+        height: 32px;
       }
 
       .userLogo {
-        width: 24px;
-        height: 24px;
-        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        border-radius: 24px;
         overflow: hidden;
         cursor: pointer;
       }
@@ -59,7 +63,7 @@
         .bgPortkeyLogo {
           position: absolute;
           left: 0;
-          top: -20px;
+          top: -100px;
           width: 269px;
           height: 278px;
         }
@@ -75,16 +79,17 @@
           position: absolute;
           top: 350px;
           left: -50px;
-          width: 104px;
-          height: 250px;
+          width: 363px;
+          height: 104px;
         }
         .bgLine3 {
           position: absolute;
-          top: 550px;
-          right: 30px;
-          width: 104;
-          height: 72px;
+          bottom: 10px;
+          right: -25px;
+          width: 72px;
+          height: 104px;
           z-index: 0;
+          overflow: hidden;
         }
       }
 
@@ -93,6 +98,7 @@
         margin: 0 auto;
         width: 48px;
         height: 48px;
+        line-height: 48px;
         border-radius: 24px;
         overflow: hidden;
       }
@@ -128,7 +134,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
-        .symbol{
+        .symbol {
           color: $primary-color;
         }
       }
@@ -440,6 +446,23 @@
   @media screen and (max-width: $divide-510) {
     .referralBlueContainer {
       padding: 0;
+
+      .referralHeader {
+        .portkeyLogo {
+          cursor: pointer;
+          width: 106.5 px;
+          height: 24px;
+        }
+
+        .userLogo {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
     }
   }
 
