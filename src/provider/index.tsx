@@ -6,10 +6,9 @@ import { ConfigProvider } from 'antd';
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const bridgeAPI = init(config); // upper config
-  // return <div>{children}</div>
   return (
     <ConfigProvider autoInsertSpaceInButton={false}>
-      <WebLoginProvider bridgeAPI={bridgeAPI}>
+      <WebLoginProvider bridgeAPI={bridgeAPI} >
         {children}
       </WebLoginProvider>
     </ConfigProvider>
