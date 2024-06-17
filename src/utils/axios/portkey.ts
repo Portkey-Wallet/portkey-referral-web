@@ -22,10 +22,12 @@ export default function initAxios() {
   const cache = new LRU({ max: 10 });
 
   configure({ axios, cache });
+  return axios
 }
 
 const api = create({
   baseURL: BASE_PORTKEY_URL,
+  axiosInstance: initAxios(),
 });
 
 const portkeyGet = async (url: string, params?: any, config?: any) => {
