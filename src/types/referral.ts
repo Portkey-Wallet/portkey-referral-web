@@ -1,9 +1,10 @@
 interface IReferralRecordResponseDto {
+  hasNextPage: boolean;
   lastDayReferralTotalCount: number;
   referralRecords: IReferralRecordDetailDto[];
 }
 interface IReferralRecordDetailDto {
-  referralTime: string;
+  referralDate: string;
   caHash: string;
   walletName: string;
   isDirectlyInvite: boolean;
@@ -16,6 +17,8 @@ interface IReferralRecordsRankResponseDto {
 interface IReferralRecordsRankDetail {
   caAddress: string;
   referralTotalCount: number;
+  avatar: string;
+  rank: number;
 }
 
 

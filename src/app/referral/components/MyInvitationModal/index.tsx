@@ -8,7 +8,7 @@ import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
 import { useEffectOnce } from '@/hooks/commonHooks';
 
-const ContainerHeight = 400;
+const ContainerHeight = 434;
 
 interface MyInvitationItem {
   isDirectlyInvite: boolean;

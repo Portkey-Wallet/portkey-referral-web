@@ -3,39 +3,28 @@ import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
-import RankItem from '../RankItem';
+import RankItem from '../LeaderBoardRankItem';
 import { List, Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
+import { useReferralRank } from '../../hook';
+import { formatStr2EllipsisStr } from '@/utils';
 
 const LeaderBoardModal: React.FC = () => {
   const modal = useModal();
-  const list = [
-    { rank: 1, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 2, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 3, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 4, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 5, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 6, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 7, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 8, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 9, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 10, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 11, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 12, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 13, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 14, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 15, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    { rank: 16, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-  ];
+  const {
+    referralRankList: list,
+    myRank,
+    loading,
+    error,
+  } = useReferralRank('2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167');
 
   const onCancel = useCallback(() => {
-    console.log('onCancel');
     modal.hide();
   }, [modal]);
 
   const selectorDom = useMemo(() => {
-    const selectItems = ['All', 'My Invitations'];
+    const selectItems = ['All'];
     const items: MenuProps['items'] = selectItems.map((item, index) => {
       return {
         key: index.toString(),
@@ -55,9 +44,7 @@ const LeaderBoardModal: React.FC = () => {
         {/* <a onClick={(e) => e.preventDefault()}>Hover me</a> */}
         <div className={styles.dropdownWrap}>
           <div className={styles.dropdown}>
-            <div className={styles.text}>
-              All
-            </div>
+            <div className={styles.text}>All</div>
             <Image className={styles.down_arrow} src={directionDown} alt="rank" />
           </div>
         </div>
@@ -75,18 +62,52 @@ const LeaderBoardModal: React.FC = () => {
     );
   }, []);
 
+  const myRankDom = useMemo(() => {
+    return (
+      myRank && <div className={styles.myRankWrap}>
+        <div className={styles.myRankTextWrap}>
+          <div className={styles.myRankText}>18</div>
+        </div>
+        <div className={styles.myRankMiddleWrap}>
+          <Image
+            className={styles.list_item_image}
+            width={20}
+            height={20}
+            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+            alt="avatar"
+          />
+          <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+          <div className={styles.me_wrap}>
+            <div className={styles.me_text}>Me</div>
+          </div>
+        </div>
+        <div className={styles.myInvitationWrap}>
+          <div className={styles.myInvitationText}>12</div>
+        </div>
+      </div>
+    );
+  }, [myRank]);
+
   return (
     <CommonModal title={'LeaderBoard'} open={modal.visible} onCancel={onCancel} afterClose={modal.remove}>
       <div className={styles.container}>
         {selectorDom}
         {headerDom}
-        <List
-          className={styles.list}
-          dataSource={list}
-          renderItem={(item) => (
-            <RankItem rank={item.rank} avatar={item.avatar} caAddress={item.caAddress} count={item.count} />
-          )}
-        />
+        {list && (
+          <List
+            className={styles.list}
+            dataSource={list}
+            header={myRankDom}
+            renderItem={(item, index) => (
+              <RankItem
+                rank={item.rank ?? index + 1}
+                avatar={item.avatar}
+                caAddress={item.caAddress}
+                count={item.referralTotalCount}
+              />
+            )}
+          />
+        )}
       </div>
     </CommonModal>
   );

@@ -20,6 +20,9 @@ function CommonModal(props: ModalProps) {
     },
     content: {
       backgroundColor: '#161630',
+      paddingLeft: 0,
+      paddingRight: 0,
+      paddingBottom: 0,
     },
   };
   return (
