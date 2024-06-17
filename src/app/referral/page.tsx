@@ -1,7 +1,7 @@
 'use client';
 import clsx from 'clsx';
 import NiceModal from '@ebay/nice-modal-react';
-import {  useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -9,7 +9,6 @@ import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
 import MyInvitationBlock from './components/MyInvitationBlock';
-import leaderboardModal from './components/LeaderBoardModal';
 import TopRank from './components/TopRank';
 import {
   referralWaterMark,
@@ -21,14 +20,32 @@ import {
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
 import referralApi from '@/utils/axios/referral';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
+  const { isLG } = useResponsive();
+  const [myInvitedCount, setMyInvitedCount] = useState(0);
   useEffect(() => {
-    referralApi.referralRecordList({caHash: ''});
-  })
+    (async () => {
+      const res = await referralApi.referralRecordList({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57', skip: 0, limit: 10});
+      // const res = await referralApi.referralTotalCount({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57' });
+      console.log('referralRecordList : ', res);
+    })();
+    fetchTotalCount();
+  });
+
+  const fetchTotalCount = useCallback(async () => {
+    try {
+      const totalCount = await referralApi.referralTotalCount({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57' });
+      setMyInvitedCount(totalCount);
+    } catch (error) {
+      console.error('referralTotalCount error : ', error);
+    }
+  }, []);
+  
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
@@ -54,12 +71,6 @@ const Referral: React.FC = () => {
       { rank: 8, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
       { rank: 9, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
       { rank: 10, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 11, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 12, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 13, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 14, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 15, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 16, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
     ],
     myRank: {
       rank: 3,
@@ -68,6 +79,36 @@ const Referral: React.FC = () => {
       count: 1000,
     },
   };
+
+  const qrcodeDom = useMemo(() => {
+    return (
+      <div className={styles.QRcodeWrapper}>
+        <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />
+        <div className={styles.QRcodeContent}>
+          <div className={styles.QRcodeTitle}>Referral Link</div>
+          <div className={styles.QRcodeUrlWrapper}>
+            <div className={styles.QRcodeUrl}>{shortLink}</div>
+            <BaseImage
+              src={referralDiscover}
+              className={styles.QRcodeCopy}
+              alt="QRcodeCopy"
+              priority
+              width={20}
+              onClick={onCopyClick}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }, [onCopyClick, shortLink]);
+
+  const inviteButton = useMemo(() => {
+    return (
+      <div className={styles.inviteButton}>
+        <div className={styles.inviteText}>Invite Friends</div>
+      </div>
+    );
+  }, []);
 
   return (
     <NiceModal.Provider>
@@ -93,26 +134,8 @@ const Referral: React.FC = () => {
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
-          <MyInvitationBlock invitationAmount={12} />
-          {shortLink && (
-            <div className={styles.QRcodeWrapper}>
-              <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />
-              <div className={styles.QRcodeContent}>
-                <div className={styles.QRcodeTitle}>Referral Link</div>
-                <div className={styles.QRcodeUrlWrapper}>
-                  <div className={styles.QRcodeUrl}>{shortLink}</div>
-                  <BaseImage
-                    src={referralDiscover}
-                    className={styles.QRcodeCopy}
-                    alt="QRcodeCopy"
-                    priority
-                    width={20}
-                    onClick={onCopyClick}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          <MyInvitationBlock invitationAmount={myInvitedCount} />
+          {shortLink && isLG ? inviteButton : qrcodeDom}
           <TopRank data={topRankData} />
         </div>
       </div>

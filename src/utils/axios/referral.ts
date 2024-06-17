@@ -2,16 +2,16 @@ import { portkeyGet } from "./portkey"
 import { AxiosRequestConfig } from 'axios'
 const ReferralPath ={
   referralRecordList: {
-    path: '/api/app/growth/referralRecordList',
+    path: '/growth/referralRecordList',
   },
   referralTotalCount: {
-    path: '/api/app/growth/referralTotalCount',
+    path: '/growth/referralTotalCount',
   },
   referralRecordRank: {
-    path: '/api/app/growth/referralRecordRank',
+    path: '/growth/referralRecordRank',
   },
   activityDateRange: {
-    path: '/api/app/growth/activityDateRange',
+    path: '/growth/activityDateRange',
   },
 }
 interface IApiConfig{
@@ -46,7 +46,7 @@ class ReferralApi {
     this.referralRecordRankConfig = ReferralPath.referralRecordRank;
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
   }
-  referralRecordList(params: {caHash: string}){
+  referralRecordList(params: {caHash: string, skip: number, limit: number}){
     return portkeyGet(this.referralRecordListConfig.path, {...this.referralRecordListConfig.params, ...params}, this.referralRecordListConfig.config)
   }
   referralTotalCount(params: {caHash: string}){

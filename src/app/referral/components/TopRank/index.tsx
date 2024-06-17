@@ -36,7 +36,7 @@ const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
     <div className={styles.container}>
       <div className={styles.header_wrap}>
         <div className={styles.header_left}></div>
-        <div className={styles.header_title}>Invite Rank</div>
+        <div className={styles.header_title}>Leaderboard</div>
         <div className={styles.header_right}></div>
       </div>
       <div className={styles.list_wrap}>

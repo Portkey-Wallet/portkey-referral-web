@@ -1,12 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
-import { directionRight } from '@/assets/images';
+import referralApi from '@/utils/axios/referral';
 
 interface MyInvitationItem {
-  caHash: string;
   directlyInvite: boolean;
   walletName: string;
 }
@@ -18,11 +17,11 @@ interface MyInvitationSection {
 
 interface MyInvitationProps {
   invitationAmount: number;
-  sections: MyInvitationSection[];
 }
 
-const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, sections }) => {
+const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
   const modal = useModal();
+  const [sections, setSections] = useState<MyInvitationSection[]>([]);
 
   const showInvitation = useMemo(() => {
     return invitationAmount > 0 && sections.length > 0;

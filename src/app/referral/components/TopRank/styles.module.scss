@@ -23,17 +23,16 @@
     }
     .header_left {
       flex: 1 1 0;
-      height: 0px;
-      background: #161630;
-      border-radius: 6px;
-      border: 2px #7684ff solid;
+      height: 4px;
+      background-image: linear-gradient(to right, rgba(118, 132, 255, 0), rgba(118, 132, 255, 1));
+      border-radius: 2px;
     }
     .header_right {
       flex: 1 1 0;
-      height: 0px;
+      height: 4px;
       background: #161630;
-      border-radius: 6px;
-      border: 2px #7684ff solid;
+      background-image: linear-gradient(to right, rgba(118, 132, 255, 1), rgba(118, 132, 255, 0));
+      border-radius: 2px;
     }
   }
 

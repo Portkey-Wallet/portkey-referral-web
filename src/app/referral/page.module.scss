@@ -124,7 +124,7 @@
     margin-top: 96px;
 
     .QRcodeWrapper {
-      margin: 16px auto 80px;
+      margin: 16px auto 48px;
       display: flex;
       align-items: center;
       max-width: 600px;
@@ -181,6 +181,27 @@
             margin-left: 8px;
           }
         }
+      }
+    }
+
+    .inviteButton {
+      max-width: 600px;
+      margin: 16px auto 48px;
+      width: 100%;
+      height: 48px;
+      padding: 8px;
+      background: #5b5cff;
+      border-radius: 8px;
+      border-bottom: 3px #3334ba solid;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      display: inline-flex;
+      .inviteText {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 22px;
       }
     }
 
