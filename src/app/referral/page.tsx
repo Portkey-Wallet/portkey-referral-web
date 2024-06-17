@@ -19,7 +19,7 @@ import {
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
-import referralApi from '@/utils/axios/referral';
+import referralApi, { ActivityCycleEnums, ActivityEnums } from '@/utils/axios/referral';
 import { useResponsive } from '@/hooks/useResponsive';
 
 const Referral: React.FC = () => {
@@ -30,22 +30,35 @@ const Referral: React.FC = () => {
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   useEffect(() => {
     (async () => {
-      const res = await referralApi.referralRecordList({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57', skip: 0, limit: 10});
+      const res = await referralApi.referralRecordList({
+        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
+        skip: 0,
+        limit: 10,
+      });
       // const res = await referralApi.referralTotalCount({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57' });
       console.log('referralRecordList : ', res);
+
+      const referralRecordRank = await referralApi.referralRecordRank({
+        activityEnums: ActivityEnums.Invition,
+        activityCycleEnums: ActivityCycleEnums.Day,
+        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
+      });
+      console.log('referralRecordRank : ', referralRecordRank);
     })();
     fetchTotalCount();
   });
 
   const fetchTotalCount = useCallback(async () => {
     try {
-      const totalCount = await referralApi.referralTotalCount({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57' });
+      const totalCount = await referralApi.referralTotalCount({
+        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
+      });
       setMyInvitedCount(totalCount);
     } catch (error) {
       console.error('referralTotalCount error : ', error);
     }
   }, []);
-  
+
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');

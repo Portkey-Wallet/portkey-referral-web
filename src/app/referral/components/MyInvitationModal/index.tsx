@@ -1,13 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
 import referralApi from '@/utils/axios/referral';
+import { useEffectOnce } from '@/hooks/commonHooks';
 
 interface MyInvitationItem {
-  directlyInvite: boolean;
+  isDirectlyInvite: boolean;
   walletName: string;
+  referralDate: string;
 }
 
 interface MyInvitationSection {
@@ -19,9 +21,54 @@ interface MyInvitationProps {
   invitationAmount: number;
 }
 
+interface MyInvitationList {
+  skip: number;
+  hasNextPage: boolean;
+}
+
 const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
   const modal = useModal();
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
+  const currentList = useRef<MyInvitationList>({
+    skip: 0,
+    hasNextPage: true,
+  });
+
+  const fetchInvitationList = useCallback(async () => {
+    if (!currentList.current.hasNextPage) {
+      return;
+    }
+    try {
+      const res = await referralApi.referralRecordList({ caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167', skip: currentList.current.skip, limit: 10 });
+      const { hasNextPage = true, referralRecords = []} = res;
+      currentList.current.skip += referralRecords.length;
+      currentList.current.hasNextPage = hasNextPage;
+
+      if (!referralRecords.length) {
+        return;
+      }
+      referralRecords.forEach((record: MyInvitationItem) => {
+        const date = record.referralDate;
+        const sectionIndex = sections.findIndex((section) => section.date === date);
+        if (sectionIndex === -1) {
+          sections.push({
+            date,
+            items: [record],
+          });
+        } else {
+          sections[sectionIndex].items.push(record);
+        }
+      });
+      setSections([...sections]);
+      console.log('sections : ', sections);
+    } catch (error) {
+      console.error('referralRecordList error : ', error);
+    }
+  }, [sections]);
+
+  useEffectOnce(() => {
+    fetchInvitationList();
+  });
 
   const showInvitation = useMemo(() => {
     return invitationAmount > 0 && sections.length > 0;
@@ -55,7 +102,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
           src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
           alt="avatar"
         />
-        <div className={styles.inviteMethod}>{item.directlyInvite? 'Invite' : 'Indirectly invite'}</div>
+        <div className={styles.inviteMethod}>{item.isDirectlyInvite? 'Invite' : 'Indirectly invite'}</div>
         <div className={styles.walletName}>{item.walletName}</div>
       </div>
     );
