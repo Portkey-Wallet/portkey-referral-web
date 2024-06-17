@@ -240,7 +240,7 @@ const CryptoGift: React.FC = () => {
       console.log('ERROR', error);
       singleMessage.error(error?.message || 'Claim failed');
     } finally {
-      await sleep(1000);
+      await sleep(500);
       await latestOnRefreshCryptoGiftDetail.current();
       setBtnLoading(false);
     }
@@ -388,6 +388,11 @@ const CryptoGift: React.FC = () => {
     }
 
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers && isSignUp) {
+      text = '';
+      subText = '';
+    }
+
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) {
       text = '';
       subText = '';
     }
