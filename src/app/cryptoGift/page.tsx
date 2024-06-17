@@ -289,8 +289,6 @@ const CryptoGift: React.FC = () => {
     return (
       <>
         <Avatar
-          // todo: delete it
-          onClick={() => onSignUp()}
           alt={cryptoDetail?.sender?.nickname || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ''}>
