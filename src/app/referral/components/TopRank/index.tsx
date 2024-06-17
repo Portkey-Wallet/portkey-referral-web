@@ -4,6 +4,8 @@ import styles from './styles.module.scss';
 import RankItem from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
+import { useModal } from '@ebay/nice-modal-react';
+import LeaderBoardModal from '../LeaderBoardModal';
 
 interface Item {
   rank: number;
@@ -23,10 +25,12 @@ interface TopRanksProps {
 
 const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
   const { myRank } = data;
+  const leaderBoardModal = useModal(LeaderBoardModal);
 
   const onViewAll = useCallback(() => {
     console.log('View All Clicked');
-  }, []);
+    leaderBoardModal.show();
+  }, [leaderBoardModal]);
 
   return (
     <div className={styles.container}>

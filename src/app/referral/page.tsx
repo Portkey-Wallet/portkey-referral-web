@@ -9,7 +9,7 @@ import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
 import MyInvitationBlock from './components/MyInvitationBlock';
-import leaderboardModal from './components/LeaderboardModal';
+import leaderboardModal from './components/LeaderBoardModal';
 import TopRank from './components/TopRank';
 import {
   referralWaterMark,
