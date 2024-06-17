@@ -392,7 +392,7 @@ const CryptoGift: React.FC = () => {
       subText = '';
     }
 
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) {
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed ) {
       text = '';
       subText = '';
     }
