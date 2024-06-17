@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
+import { ConfigProvider, Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
 import styles from './index.module.scss';
 import { close } from '@/assets/images';
 import Image from 'next/image';
@@ -14,27 +14,40 @@ function CommonModal(props: ModalProps) {
 
   const { isLG } = useResponsive();
 
+  const modalStyles = {
+    header: {
+      backgroundColor: '#161630',
+    },
+    content: {
+      backgroundColor: '#161630',
+    },
+  };
   return (
-    <AntdModal
-      keyboard={false}
-      maskClosable={false}
-      destroyOnClose={true}
-      closeIcon={<Image src={close} width={24} height={24} alt='close' />}
-      width={width}
-      footer={null}
-      centered
-      {...props}
-      className={`${styles.modal} ${isLG && styles['modal-mobile']} ${
-        isLG && !disableMobileLayout && styles['modal-full-screen']
-      } ${className || ''}`}
-      wrapClassName={`${styles['modal-wrap']} ${wrapClassName}`}
-      title={
-        <div>
-          <div className="pr-8 break-words">{title}</div>
-        </div>
-      }>
-      {children}
-    </AntdModal>
+    <ConfigProvider
+      modal={{
+        styles: modalStyles,
+      }}>
+      <AntdModal
+        keyboard={false}
+        maskClosable={false}
+        destroyOnClose={true}
+        closeIcon={<Image src={close} width={20} height={20} alt="close" />}
+        width={width}
+        footer={null}
+        centered
+        {...props}
+        className={`${styles.modal} ${isLG && styles['modal-mobile']} ${
+          isLG && !disableMobileLayout && styles['modal-full-screen']
+        } ${className || ''}`}
+        wrapClassName={`${styles['modal-wrap']} ${wrapClassName}`}
+        title={
+          <div className={styles.titleWrap}>
+            <div className={styles.titleText}>{title}</div>
+          </div>
+        }>
+        {children}
+      </AntdModal>
+    </ConfigProvider>
   );
 }
 
