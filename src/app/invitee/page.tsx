@@ -117,9 +117,8 @@ const Referral: React.FC = () => {
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
   const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
-    // console.log('didWallet', didWallet);
-    // setIsSignUp(true);
-    // setIsNewAccount(didWallet.createType === 'register');
+    setIsSignUp(true);
+    setIsNewAccount(didWallet.createType === 'register');
 
     const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
     setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');

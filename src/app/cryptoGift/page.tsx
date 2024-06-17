@@ -64,7 +64,8 @@ import { useLoading } from '@/hooks/global';
 import { divDecimalsStr } from '@/utils/converter';
 import CommonButton from '@/components/CommonButton';
 import { sleep } from '@/utils';
-import { useLatestRef } from '@/hooks/commonHooks';
+import { useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
+import googleAnalytics from '@/utils/googleAnalytics';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -120,6 +121,10 @@ const CryptoGift: React.FC = () => {
   );
 
   const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
+
+  useEffectOnce(() => {
+    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift');
+  });
 
   useEffect(() => {
     if (!cryptoDetail?.sender.nickname) return;
@@ -195,6 +200,8 @@ const CryptoGift: React.FC = () => {
   const onFinish = useCallback(
     async (didWallet: DIDWalletInfo) => {
       console.log('didWallet', didWallet);
+
+      googleAnalytics.portkeyLoginEvent(didWallet.createType, didWallet.accountInfo.accountType);
 
       await did.save(DEFAULT_CRYPTO_GIFT_WALLET_PIN, DEFAULT_CRYPTO_GIFT_WALLET_KEY);
       setItem(CRYPTO_GIFT_CA_ADDRESS, didWallet.caInfo.caAddress);
