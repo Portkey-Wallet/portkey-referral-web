@@ -18,6 +18,7 @@ import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
 import referralApi from '@/utils/axios/referral';
 import detectProvider, { TProviderName } from '@portkey/detect-provider';
+import detectProviderInstance from '@/utils/detectProvide';
 
 
 const Referral: React.FC = () => {
@@ -25,7 +26,11 @@ const Referral: React.FC = () => {
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
   useEffect(() => {
-    referralApi.referralRecordList({caHash: 'b95be3fd206ad11bcae3bf5093f2c87a6da40b58c91ddffeaa8cad47ac30b434'});
+    referralApi.referralRecordList({
+      caHash: 'b95be3fd206ad11bcae3bf5093f2c87a6da40b58c91ddffeaa8cad47ac30b434',
+      skip: 0,
+      limit: 20
+    });
   })
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
@@ -42,13 +47,9 @@ const Referral: React.FC = () => {
   return (
     <div className={styles.referralPage}>
        <button className={styles.claimBtn} onClick={async ()=>{
-        const provider = await detectProvider({
-          providerName: 'Portkey',
-        });
-        const accounts = await provider?.request({ method: 'Share', payload: {
-          url: 'fengfeiyang',
-          title: 'title',
-        } });
+        setTimeout(()=>{
+          detectProviderInstance.share({url: 'https://doc.portkey.finance', title: 'tile'});
+        }, 200);
        }}>
             Share
           </button>
