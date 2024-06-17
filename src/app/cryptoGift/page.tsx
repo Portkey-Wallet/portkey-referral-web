@@ -64,7 +64,7 @@ import { useLoading } from '@/hooks/global';
 import { divDecimalsStr } from '@/utils/converter';
 import CommonButton from '@/components/CommonButton';
 import { sleep } from '@/utils';
-import { useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
+import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
 import googleAnalytics from '@/utils/googleAnalytics';
 
 ConfigProvider.setGlobalConfig({
@@ -96,7 +96,7 @@ const CryptoGift: React.FC = () => {
   const [expiredTime, setExpiredTime] = useState(0);
   const [btnLoading, setBtnLoading] = useState(false);
 
-  const onRefreshCryptoGiftDetail = useCallback(
+  const onRefreshCryptoGiftDetail = useDebounceCallback(
     async (init?: boolean) => {
       try {
         init && setInitializing(true);
@@ -244,6 +244,7 @@ const CryptoGift: React.FC = () => {
       console.log('ERROR', error);
       singleMessage.error(error?.message || 'Claim failed');
     } finally {
+      await sleep(1000)
       await latestOnRefreshCryptoGiftDetail.current();
       setBtnLoading(false);
     }
@@ -258,6 +259,7 @@ const CryptoGift: React.FC = () => {
       removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
       removeItem(CRYPTO_GIFT_CA_ADDRESS);
       setCaHolderInfo(undefined);
+      setIsSignUp(false);
 
       await latestOnRefreshCryptoGiftDetail.current();
       setSuccessClaimCurrentPage(false);
@@ -322,6 +324,7 @@ const CryptoGift: React.FC = () => {
     let src = boxClosed;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) src = boxEmpty;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) src = boxOpened;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) src = boxCannotClaimed;
 
     return (
       <BaseImage src={src} className={styles.cryptoGiftImg} alt="boxCannotClaimed" priority width={343} height={240} />
