@@ -1,3 +1,4 @@
+"use client";
 import { WebLoginProvider, init, useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { config } from './config';
 import React from 'react';

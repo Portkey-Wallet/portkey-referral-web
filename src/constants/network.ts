@@ -44,7 +44,7 @@ export const BackEndNetWorkMap: {
 };
 
 export const NetworkEnv: BackEndNetworkType = process.env.NEXT_PUBLIC_NETWORK_ENV as BackEndNetworkType;
-export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv];
+export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv] ?? {};
 export const ApiHost = CurrentNetWork.apiUrl;
 export const DomainHost = CurrentNetWork.domain || CurrentNetWork.apiUrl;
 
