@@ -3,16 +3,17 @@ export const setItem = (key: string, value: string) => {
 };
 
 export const removeItem = (key: string) => {
+  if (localStorage.getItem(key) === null) return;
   return localStorage.removeItem(key);
 };
 
 export const getItem = (key: string): any => {
   let result = localStorage.getItem(key) || '';
+
   try {
     result = JSON.parse(result);
     return result;
   } catch (error) {
-    console.log('not obj');
+    return result;
   }
-  return result;
 };

@@ -1,4 +1,5 @@
 export const CRYPTO_GIFT_CA_HOLDER_INFO = 'crypto_gift_caHolderInfo';
-export const CRYPTO_GIFT_USER_ID_CODE = 'crypto_gift_identityCode';
+export const CRYPTO_GIFT_ORIGIN_CHAIN_ID = 'crypto_gift_origin_chainId';
+export const CRYPTO_GIFT_CA_ADDRESS = 'crypto_gift_caAddress';
 export const DEFAULT_CRYPTO_GIFT_WALLET_PIN = process.env.NEXT_PUBLIC_DEFAULT_CRYPTO_GIFT_WALLET_PIN || '';
 export const DEFAULT_CRYPTO_GIFT_WALLET_KEY = process.env.NEXT_PUBLIC_DEFAULT_CRYPTO_GIFT_WALLET_KEY || '';

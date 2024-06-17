@@ -1,7 +1,7 @@
 import { CRYPTO_GIFT_CA_HOLDER_INFO } from '@/constants/storage';
 import { getItem, setItem } from '@/utils/storage';
 import { fetchCaHolderInfo, isLogin } from '@/utils/wallet';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
 type THolderInfo = {
   avatar: string;
@@ -10,23 +10,24 @@ type THolderInfo = {
 };
 
 export const useFetchAndStoreCaHolderInfo = () => {
-  const [walletInfo, setWalletInfo] = useState<THolderInfo>();
+  const [caHolderInfo, setCaHolderInfo] = useState<THolderInfo>();
 
   const fetchAndStoreCaHolderInfo = useCallback(async () => {
     try {
       const result = (await fetchCaHolderInfo()) as unknown as THolderInfo;
-      setWalletInfo(result);
+      setCaHolderInfo(result);
       setItem(CRYPTO_GIFT_CA_HOLDER_INFO, JSON.stringify(result));
     } catch (error) {
       console.log('fetchCaHolderInfo err', error);
     }
   }, []);
 
-  useEffect(() => {
-    const walletInfo = getItem(CRYPTO_GIFT_CA_HOLDER_INFO);
-    setWalletInfo(walletInfo);
+  useLayoutEffect(() => {
+    const caHolderInfo = getItem(CRYPTO_GIFT_CA_HOLDER_INFO);
+    setCaHolderInfo(caHolderInfo);
     fetchAndStoreCaHolderInfo();
-  }, [fetchAndStoreCaHolderInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  return { walletInfo, setWalletInfo, fetchAndStoreCaHolderInfo };
+  return { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo };
 };

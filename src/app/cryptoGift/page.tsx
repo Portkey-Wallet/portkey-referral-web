@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useState, useCallback, useRef, useMemo, useEffect } from 'react';
+import { useState, useCallback, useRef, useMemo, useEffect, useLayoutEffect } from 'react';
 import {
   DIDWalletInfo,
   SignIn,
@@ -10,12 +10,12 @@ import {
   did,
   ConfigProvider,
 } from '@portkey/did-ui-react';
+
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoBlack from '/public/portkeyLogoBlack.svg';
 import styles from './page.module.scss';
 import {
-  referralDiscover,
   bgLine1,
   bgLine2,
   bgLine3,
@@ -28,21 +28,22 @@ import {
   logoutIcon,
   cryptoSuccess,
   cryptoShare,
+  alarm,
 } from '@/assets/images';
 import { privacyPolicy, termsOfService } from '@/constants/pageData';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
-import { CMS_API, PORTKEY_API, cmsGet, portkeyGet, portkeyPost } from '@/utils/axios/index';
+import { PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { BackEndNetworkType } from '@/types/network';
-import { StaticImageData } from 'next/image';
-import { Dropdown, MenuProps, Image, Alert } from 'antd';
+import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
 import BreakWord from '@/components/BreakWord';
 import { isLogin } from '@/utils/wallet';
 import {
+  CRYPTO_GIFT_CA_ADDRESS,
   CRYPTO_GIFT_CA_HOLDER_INFO,
-  CRYPTO_GIFT_USER_ID_CODE,
+  CRYPTO_GIFT_ORIGIN_CHAIN_ID,
   DEFAULT_CRYPTO_GIFT_WALLET_KEY,
   DEFAULT_CRYPTO_GIFT_WALLET_PIN,
 } from '@/constants/storage';
@@ -50,8 +51,15 @@ import { useFetchAndStoreCaHolderInfo } from '@/hooks/giftWallet';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 import { useEnvironment } from '@/hooks/environment';
 import { useDownload } from '@/hooks/download';
-import { CryptoGiftPhase, TCryptoDetail } from '@/types/cryptoGift';
+import { AssetsType, CryptoGiftPhase, RedPackageGrabStatus, TCryptoDetail } from '@/types/cryptoGift';
 import { CRYPTO_GIFT_PROJECT_CODE } from '@/constants/project';
+import { formatSecond2CountDownTime } from '@/utils/time';
+import { useLoading } from '@/hooks/global';
+import { divDecimalsStr } from '@/utils/converter';
+import CommonButton from '@/components/CommonButton';
+import { sleep } from '@/utils';
+import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
+import googleAnalytics from '@/utils/googleAnalytics';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -61,23 +69,75 @@ ConfigProvider.setGlobalConfig({
   },
 });
 
-const Referral: React.FC = () => {
-  const { walletInfo, setWalletInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
-  const { isMobile, isIOS, isAndroid, isPortkeyApp, isWeChat } = useEnvironment();
+const CryptoGift: React.FC = () => {
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
+  const { isPortkeyApp, isWeChat, isMobile } = useEnvironment();
   const { onJumpToPortkeyWeb, onJumpToStore } = useDownload();
   const [isShowMask, setIsShowMask] = useState(false);
-
+  const { setLoading } = useLoading();
+  const [initializing, setInitializing] = useState(true);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
+  const [successClaimCurrentPage, setSuccessClaimCurrentPage] = useState(true);
 
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
-  const [src, setSrc] = useState<StaticImageData>();
   const networkType = searchParams.get('networkType') || '';
   const cryptoGiftId = searchParams.get('id') || '';
   const [cryptoDetail, setCryptoGiftDetail] = useState<TCryptoDetail>();
-  const [identityCode, setIdentityCode] = useState('');
+  const [claimAgainCountdownSecond, setClaimAgainCountdownSecond] = useState(0);
+  const [expiredTime, setExpiredTime] = useState(0);
+  const [btnLoading, setBtnLoading] = useState(false);
+
+  const onRefreshCryptoGiftDetail = useDebounceCallback(
+    async (init?: boolean) => {
+      try {
+        init && setInitializing(true);
+        const path = isSignUp ? PORTKEY_API.GET.LOGIN_CRYPTO_GIFT_DETAIL : PORTKEY_API.GET.CRYPTO_GIFT_DETAIL;
+
+        const params: { id: string; caHash?: string } = { id: cryptoGiftId };
+        if (caHolderInfo?.caHash) params.caHash = caHolderInfo?.caHash;
+        const result: TCryptoDetail = await portkeyGet(path, params);
+
+        if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
+
+        result?.remainingWaitingSeconds && setClaimAgainCountdownSecond(result?.remainingWaitingSeconds);
+        result?.remainingExpirationSeconds && setExpiredTime(result.remainingExpirationSeconds);
+        setCryptoGiftDetail(result);
+      } catch (error) {
+        console.log('error', error);
+      } finally {
+        init && setInitializing(false);
+      }
+    },
+    [caHolderInfo?.caHash, cryptoGiftId, isSignUp],
+  );
+
+  const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
+
+  useEffectOnce(() => {
+    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift');
+  });
+
+  useEffect(() => {
+    if (!cryptoDetail?.sender.nickname) return;
+    if (!cryptoDetail?.remainingWaitingSeconds && !cryptoDetail?.remainingExpirationSeconds) return;
+
+    timerRef.current = setInterval(() => {
+      if (cryptoDetail?.remainingWaitingSeconds) setClaimAgainCountdownSecond((pre) => (pre - 1 > 0 ? pre - 1 : 0));
+      if (cryptoDetail?.remainingExpirationSeconds) setExpiredTime((pre) => (pre - 1 > 0 ? pre - 1 : 0));
+    }, 1000);
+
+    return () => {
+      timerRef.current && clearInterval(timerRef.current);
+    };
+  }, [
+    cryptoDetail,
+    cryptoDetail?.remainingExpirationSeconds,
+    cryptoDetail?.remainingWaitingSeconds,
+    cryptoDetail?.sender.nickname,
+  ]);
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -93,7 +153,6 @@ const Referral: React.FC = () => {
 
   useEffect(() => {
     if (isWeChat) return setIsShowMask(true);
-
     if (isPortkeyApp) {
       singleMessage.error({
         duration: 0,
@@ -102,9 +161,14 @@ const Referral: React.FC = () => {
         onClick: () => null,
       });
     }
-  }, [isPortkeyApp, isWeChat]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    latestOnRefreshCryptoGiftDetail.current(true);
+  }, [latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
+
+  useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
 
     did.setConfig({
@@ -116,17 +180,12 @@ const Referral: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    (async () => {
-      const result = await portkeyGet(PORTKEY_API.GET.CRYPTO_GIFT_DETAIL, {
-        id: '7d911f61-0511-4121-8cf3-1443d057999e',
-      });
-      console.log('setCryptoGiftDetail', result);
-      setCryptoGiftDetail(result);
-    })();
+  useLayoutEffect(() => {
+    console.log('isLogin', isLogin());
+    setIsSignUp(isLogin());
   }, []);
 
-  const onSignUp = () => {
+  const onSignUp = async () => {
     signInRef.current?.setOpen(true);
   };
 
@@ -135,92 +194,85 @@ const Referral: React.FC = () => {
   const onFinish = useCallback(
     async (didWallet: DIDWalletInfo) => {
       console.log('didWallet', didWallet);
+
+      googleAnalytics.portkeyLoginEvent(didWallet.createType, didWallet.accountInfo.accountType);
+
       await did.save(DEFAULT_CRYPTO_GIFT_WALLET_PIN, DEFAULT_CRYPTO_GIFT_WALLET_KEY);
-      fetchAndStoreCaHolderInfo();
-      // setIsSignUp(true);
-      // setIsNewAccount(didWallet.createType === 'register');
+      setItem(CRYPTO_GIFT_CA_ADDRESS, didWallet.caInfo.caAddress);
+      setItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID, didWallet.chainId);
+
+      await fetchAndStoreCaHolderInfo();
+      await sleep(10);
+      await latestOnRefreshCryptoGiftDetail.current();
+      setIsSignUp(true);
+      setSuccessClaimCurrentPage(true);
     },
-    [fetchAndStoreCaHolderInfo],
+    [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail],
   );
 
   const onClaim = useCallback(async () => {
-    // TODo： change
     try {
-      const { identityCode = '' } = await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId });
-      // todo: delete it
-      let tmpIdCode = identityCode.replaceAll(`\"`, '');
-      did.setConfig({
-        referralInfo: {
-          referralCode: `${cryptoGiftId}#${tmpIdCode}`,
-          projectCode: CRYPTO_GIFT_PROJECT_CODE,
-        },
-      });
+      setBtnLoading(true);
+      if (isSignUp) {
+        const result = await portkeyPost(PORTKEY_API.POST.LOGIN_USER_GRAB, {
+          id: cryptoGiftId,
+          caHash: caHolderInfo?.caHash,
+          userCaAddress: getItem(CRYPTO_GIFT_CA_ADDRESS) || '',
+        });
 
-      setItem(cryptoGiftId, tmpIdCode);
-      alert(tmpIdCode);
-      setIdentityCode(tmpIdCode);
-    } catch (error) {
-      alert('ERROR' + error);
+        if (result.result === RedPackageGrabStatus.Success) setSuccessClaimCurrentPage(true);
+
+        console.log('result', result);
+      } else {
+        const { identityCode } = (await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId })) || {};
+
+        if (!identityCode) throw Error('Claim failed');
+
+        did.setConfig({
+          referralInfo: {
+            referralCode: `${cryptoGiftId}#${identityCode}`,
+            projectCode: CRYPTO_GIFT_PROJECT_CODE,
+          },
+        });
+        setItem(cryptoGiftId, identityCode);
+      }
+    } catch (error: any) {
+      console.log('ERROR', error);
+      singleMessage.error(error?.message || 'Claim failed');
+    } finally {
+      await sleep(500);
+      await latestOnRefreshCryptoGiftDetail.current();
+      setBtnLoading(false);
     }
-  }, [cryptoGiftId]);
+  }, [caHolderInfo?.caHash, cryptoGiftId, isSignUp, latestOnRefreshCryptoGiftDetail]);
 
   const onLogout = useCallback(async () => {
-    // todo: check is AELF
     try {
-      await did.logout({ chainId: 'AELF' });
+      setLoading(true);
+      const originChainId = getItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID);
+      await did.logout({ chainId: originChainId });
       removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
       removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
-      setWalletInfo(undefined);
-      console.log('success!');
-    } catch (error) {
-      console.log('onLogout', error);
+      removeItem(CRYPTO_GIFT_CA_ADDRESS);
+      setCaHolderInfo(undefined);
+      setIsSignUp(false);
+
+      await latestOnRefreshCryptoGiftDetail.current();
+      setSuccessClaimCurrentPage(false);
+    } catch (error: any) {
+      console.log('onLogout error', error);
+      singleMessage.error(error?.message || 'fail');
+    } finally {
+      setLoading(false);
     }
-  }, [setWalletInfo]);
+  }, [latestOnRefreshCryptoGiftDetail, setCaHolderInfo, setLoading]);
 
   const onCopyClick = useCallback(() => {
-    copyToClipboard('XXX');
+    const fullUrl = window?.location?.href;
+    copyToClipboard(fullUrl);
+
     copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
   }, [copyState.error, copyState.value, copyToClipboard]);
-
-  const SloganDOM = useMemo(() => {
-    if (!src) return <div style={{ height: 100 }} />;
-
-    return (
-      <div className={styles.sloganWrapper}>
-        <BaseImage src={src} alt={src.src} height={100} />
-      </div>
-    );
-  }, [src]);
-
-  const InviteeChapterDom = useMemo(() => {
-    if (!isSignUp)
-      return (
-        <div className={styles.inviteeText}>
-          <span className={styles.row2}>{`Seize the opportunity.`}</span>
-          <span className={styles.row2}>{` Expect upcoming surprises!`}</span>
-        </div>
-      );
-
-    if (isNewAccount)
-      return (
-        <div className={styles.inviteeText}>
-          <span>{`You have signed up on Portkey successfully!`}</span>
-        </div>
-      );
-
-    return (
-      <div className={styles.inviteeText}>
-        <div>
-          <span className={styles.row2}>{`This is an existing account and can't`}</span>
-          <span className={styles.row2}>{` accept invitation.`}</span>
-        </div>
-        <div>
-          <span className={styles.row2}>{`You can access your own Portkey and`}</span>
-          <span className={styles.row2}>{` experience Web3 now!`}</span>
-        </div>
-      </div>
-    );
-  }, [isNewAccount, isSignUp]);
 
   const dropDownItems: MenuProps['items'] = useMemo(
     () => [
@@ -231,147 +283,229 @@ const Referral: React.FC = () => {
         onClick: () => {
           onLogout();
         },
-        styles: { color: 'red' },
       },
     ],
     [onLogout],
   );
 
-  const CryptoBoxHeaderDom = useMemo(
-    () => (
+  const renderCryptoBoxHeaderDom = useCallback(() => {
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && successClaimCurrentPage) return null;
+
+    return (
       <>
-        <Image
+        <Avatar
           alt={cryptoDetail?.sender?.nickname || ''}
-          wrapperClassName={styles.cryptoGiftSenderImg}
-          src={cryptoDetail?.sender?.avatar || ''}
-          width={48}
-          height={48}
-          preview={false}
-          onClick={() => {
-            onSignUp();
-          }}
-        />
+          className={styles.cryptoGiftSenderImg}
+          src={cryptoDetail?.sender?.avatar || ''}>
+          {cryptoDetail?.sender?.nickname?.[0] || ''}
+        </Avatar>
+
         <div className={styles.cryptoGiftSenderTitle}>{cryptoDetail?.prompt || ''}</div>
         <div className={styles.cryptoGiftSenderMemo}>{`"${cryptoDetail?.memo || ''}"`}</div>
       </>
-    ),
-    [cryptoDetail?.memo, cryptoDetail?.prompt, cryptoDetail?.sender?.avatar, cryptoDetail?.sender?.nickname],
-  );
+    );
+  }, [
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.memo,
+    cryptoDetail?.prompt,
+    cryptoDetail?.sender?.avatar,
+    cryptoDetail?.sender?.nickname,
+    successClaimCurrentPage,
+  ]);
 
   const renderCryptoBoxImgDom = useCallback(() => {
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && successClaimCurrentPage) return null;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) return null;
+
     let src = boxClosed;
-
-    console.log('cryptoDetail?.cryptoGiftPhase', cryptoDetail?.cryptoGiftPhase);
-    switch (cryptoDetail?.cryptoGiftPhase) {
-      case CryptoGiftPhase.NoneLeft:
-        src = boxEmpty;
-        break;
-
-      case CryptoGiftPhase.Expired:
-        src = boxClosed;
-        break;
-
-      case CryptoGiftPhase.Expired:
-        src = boxClosed;
-        break;
-
-      case CryptoGiftPhase.Expired:
-        src = boxClosed;
-        break;
-
-      default:
-        break;
-    }
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) src = boxEmpty;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) src = boxOpened;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) src = boxCannotClaimed;
 
     return (
       <BaseImage src={src} className={styles.cryptoGiftImg} alt="boxCannotClaimed" priority width={343} height={240} />
     );
-  }, [cryptoDetail?.cryptoGiftPhase]);
+  }, [cryptoDetail?.cryptoGiftPhase, successClaimCurrentPage]);
 
   const renderCryptoGiftTipsDom = useCallback(() => {
     let text = '';
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoneLeft) text = `Oops! None left...`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) text = `Oops! None left...`;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) text = `Oops! The crypto gift has been Expired`;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ValidityPeriodExpired)
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota)
       text = `Don't worry, it hasn't been claimed yet! You can keep trying to claim after the countdown ends`;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired)
-      text = `Don't worry, it hasn't been claimed yet! You can keep trying to claim after`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased)
+      text = `Sorry, you miss the claim expiration time.`;
+    if (isSignUp && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
+      text = `Oops, only newly registered Portkey users can claim this crypto gift.`;
 
-    return <div className={styles.cryptoGiftTips}>{text}</div>;
-  }, [cryptoDetail?.cryptoGiftPhase]);
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed)
+      return (
+        <div className={styles.cryptoGiftTips}>
+          <BreakWord text="You have already claimed " />
+          <BreakWord
+            className={styles.symbol}
+            text={`${divDecimalsStr(cryptoDetail.amount, cryptoDetail.decimals)} ${cryptoDetail.symbol}`}
+          />
+          <BreakWord text={`of this Crypto Gift and can't reclaim it.`} />
+        </div>
+      );
+
+    return text ? <div className={styles.cryptoGiftTips}>{text}</div> : null;
+  }, [cryptoDetail?.amount, cryptoDetail?.cryptoGiftPhase, cryptoDetail?.decimals, cryptoDetail?.symbol, isSignUp]);
 
   const renderActionButtonDom = useCallback(() => {
-    if (!isLogin())
-      return (
-        <>
-          <button className={styles.claimBtn} onClick={onClaim}>
-            Claim Crypto Gift
-          </button>
-          {cryptoDetail?.isNewUsersOnly && <p className={styles.btnTips}>Create a new Portkey account to claim</p>}
-        </>
-      );
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
+
+    let disabled = false;
+    let text = 'Claim Crypto Gift';
+    let subText = '';
+    let onAction = onClaim;
+
+    // sub title
+    if (cryptoDetail?.isNewUsersOnly) {
+      if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available)
+        subText = 'Create a new Portkey account to claim';
+      if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) subText = 'Claim to your Portkey address';
+    }
+
+    // others
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
+      text = `Signup to Claim`;
+      onAction = onSignUp;
+    }
+
+    if (claimAgainCountdownSecond || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota) {
+      disabled = !!claimAgainCountdownSecond;
+      text = !!claimAgainCountdownSecond
+        ? `Try to Claim Again (${formatSecond2CountDownTime(claimAgainCountdownSecond)})`
+        : 'Try to Claim Again';
+      subText = '';
+      onAction = onClaim;
+    }
+
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
+      text = 'Signup to Claim';
+    }
+
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers && isSignUp) {
+      text = '';
+      subText = '';
+    }
+
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) {
+      text = '';
+      subText = '';
+    }
 
     return (
       <>
-        <div className={clsx(isMobile && styles.mobileClaimBtn)}>
-          <button className={styles.claimBtn} onClick={onSignUp}>
-            Sign up
-          </button>
-        </div>
-        <p className={styles.btnTips}>Claim to your Portkey address</p>
+        {text && (
+          <CommonButton
+            loading={btnLoading}
+            disabled={disabled}
+            className={clsx([styles.actionBtn, disabled && styles.disabledBtn])}
+            onClick={onAction}>
+            {text}
+          </CommonButton>
+        )}
+        {subText && <p className={styles.btnTips}>{subText}</p>}
       </>
     );
-  }, [cryptoDetail?.isNewUsersOnly, isMobile, onClaim]);
+  }, [
+    btnLoading,
+    claimAgainCountdownSecond,
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.isNewUsersOnly,
+    isSignUp,
+    onClaim,
+  ]);
 
-  const DownLoadDom = useMemo(() => {
-    return (
-      <div className={styles.downloadWrap}>
+  const renderDownLoadDom = useCallback(() => {
+    let isShow = false;
+    if (
+      !isSignUp &&
+      (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired ||
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed)
+    )
+      isShow = true;
+
+    if (
+      isSignUp &&
+      (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired ||
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed ||
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed ||
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased ||
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
+    )
+      isShow = true;
+
+    return isShow ? (
+      <div className={styles.downloadWrap} onClick={onJumpToStore}>
         <BaseImage className={styles.portkeyLogo} src={portkeyLogo} priority alt="portkeyLogo" />
-        <div className={styles.downloadTips}>Download and signup to claim more Crypto Gift!</div>
+        <div className={styles.downloadTips}>Download Portkey and stay tuned for more gifts.</div>
         <div className={styles.downloadBtn}>Download</div>
       </div>
-    );
-  }, []);
+    ) : null;
+  }, [cryptoDetail?.cryptoGiftPhase, isSignUp, onJumpToStore]);
 
-  const GiftDetailDom = useMemo(() => {
+  const renderGiftDetailDom = useCallback(() => {
+    if (cryptoDetail?.cryptoGiftPhase !== CryptoGiftPhase.GrabbedQuota) return null;
+
     return (
       <div className={styles.giftDetailWrap}>
         <div className={styles.willGet}>You will get</div>
-        {isAndroid ? (
+        {cryptoDetail?.assetType === AssetsType.ft ? (
           <>
-            <div className={styles.symbol}>0.000008</div>
-            <div className={styles.usdtAmount}>=$12321223</div>
+            <div className={styles.symbol}>{`${divDecimalsStr(cryptoDetail.amount, cryptoDetail.decimals)} ${
+              cryptoDetail.symbol
+            }`}</div>
+            <div className={styles.usdtAmount}>{cryptoDetail.dollarValue}</div>
           </>
         ) : (
           <>
             <div className={styles.nftWrap}>
-              <BaseImage
-                className={styles.nftItem}
-                src={portkeyLogo}
-                priority
-                alt="portkeyLogo"
+              <Image
+                alt={cryptoDetail?.sender?.nickname || ''}
+                wrapperClassName={styles.nftItem}
+                src={cryptoDetail?.nftImageUrl || ''}
                 width={98}
                 height={98}
+                preview={false}
               />
-              <p className={styles.nftName}>WitchyBean</p>
-              <p className={styles.nftId}>#2</p>
+              <p className={styles.nftName}>{cryptoDetail?.nftAlias || ''}</p>
+              <p className={styles.nftId}>{`# ${cryptoDetail?.nftTokenId || ''}`}</p>
             </div>
-            <div className={styles.nftCount}>0.000008</div>
+            <div className={styles.nftCount}>{divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)}</div>
           </>
         )}
         <div className={styles.alarmWrap}>
-          <BaseImage src={portkeyLogo} priority alt="portkeyLogo" width={14} height={14} />
-          <p className={styles.alarmText}>Expiration: 19:56</p>
+          <BaseImage src={alarm} priority alt="alarm" width={14} height={14} />
+          <p className={styles.alarmText}>Expiration: {formatSecond2CountDownTime(expiredTime)}</p>
         </div>
       </div>
     );
-  }, [isAndroid]);
+  }, [
+    cryptoDetail?.amount,
+    cryptoDetail?.assetType,
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.decimals,
+    cryptoDetail?.dollarValue,
+    cryptoDetail?.nftAlias,
+    cryptoDetail?.nftImageUrl,
+    cryptoDetail?.nftTokenId,
+    cryptoDetail?.sender?.nickname,
+    cryptoDetail?.symbol,
+    expiredTime,
+  ]);
 
-  const SuccessFullDom = useMemo(() => {
+  const renderSuccessFullDomFirstTime = useCallback(() => {
+    if (cryptoDetail?.cryptoGiftPhase !== CryptoGiftPhase.Claimed) return null;
+    if (!successClaimCurrentPage) return null;
+
     return (
       <div className={styles.successSectionWrap}>
         <BaseImage
-          src={boxCannotClaimed}
+          src={boxOpened}
           className={styles.cryptoGiftImg}
           alt="cryptoGiftImg"
           priority
@@ -380,14 +514,39 @@ const Referral: React.FC = () => {
         />
         <div className={styles.successWrap}>
           <BaseImage src={cryptoSuccess} alt="cryptoSuccess" priority width={20} height={20} />
-          <BreakWord className={styles['amount-symbol']} text={`100 ELF 100 ELF 100 ELF 100 ELF 100 ELF`} />
+          <BreakWord
+            className={styles['amount-symbol']}
+            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${cryptoDetail?.symbol || ''}`}
+          />
           <BreakWord className={styles.toAddress} text={`has sent to your address`} />
         </div>
-        <button className={styles.viewDetails}>View Details</button>
-        <button className={styles.shareBtnWrap}>
+        <button onClick={onJumpToStore} className={styles.viewDetails}>
+          View Details
+        </button>
+
+        <button className={styles.shareBtnWrap} onClick={onCopyClick}>
           <BaseImage src={cryptoShare} alt="cryptoShare" priority width={20} height={20} />
           <p className={styles.buttonText}>Share with your friends</p>
         </button>
+      </div>
+    );
+  }, [
+    cryptoDetail?.amount,
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.decimals,
+    cryptoDetail?.symbol,
+    onCopyClick,
+    onJumpToStore,
+    successClaimCurrentPage,
+  ]);
+
+  const BGDOM = useMemo(() => {
+    return (
+      <div className={styles.bgWrap}>
+        <BaseImage src={bgPortkeyLogo} className={styles.bgPortkeyLogo} alt="bgLines" priority />
+        <BaseImage src={bgLine1} className={styles.bgLine1} alt="bgLines" priority />
+        <BaseImage src={bgLine2} className={styles.bgLine2} alt="bgLines" priority />
+        <BaseImage src={bgLine3} className={styles.bgLine3} alt="bgLines" priority />
       </div>
     );
   }, []);
@@ -397,38 +556,34 @@ const Referral: React.FC = () => {
       <div className={styles.referralBlueContainer}>
         <header className="row-center">
           <div className={clsx(['flex-row-center', styles.referralHeader])}>
-            <BaseImage className={styles.portkeyLogo} src={portkeyLogoBlack} priority alt="portkeyLogo" />
+            <BaseImage
+              className={styles.portkeyLogo}
+              innerClassName={styles.portkeyLogo}
+              src={portkeyLogoBlack}
+              priority
+              alt="portkeyLogo"
+              onClick={onJumpToPortkeyWeb}
+            />
 
-            {walletInfo?.avatar && (
+            {caHolderInfo?.caHash && (
               <Dropdown overlayClassName="logout-drop-down" trigger={['click']} menu={{ items: dropDownItems }}>
-                <Image
-                  alt="avatar"
-                  wrapperClassName={styles.userLogo}
-                  src={walletInfo?.avatar || ''}
-                  width={24}
-                  height={24}
-                  preview={false}
-                />
+                <Avatar alt="avatar" className={styles.userLogo} src={caHolderInfo?.avatar || ''}>
+                  {caHolderInfo?.nickName?.[0] || ''}
+                </Avatar>
               </Dropdown>
             )}
           </div>
         </header>
-        <div className={styles.referralMainContainer}>
-          <div className={styles.bgWrap}>
-            <BaseImage src={bgPortkeyLogo} className={styles.bgPortkeyLogo} alt="bgLines" priority />
-            <BaseImage src={bgLine1} className={styles.bgLine1} alt="bgLines" priority />
-            <BaseImage src={bgLine2} className={styles.bgLine2} alt="bgLines" priority />
-            <BaseImage src={bgLine3} className={styles.bgLine3} alt="bgLines" priority />
-          </div>
 
-          {CryptoBoxHeaderDom}
+        <div className={styles.referralMainContainer}>
+          {BGDOM}
+          {!initializing && renderCryptoBoxHeaderDom()}
           {renderCryptoBoxImgDom()}
-          {renderCryptoGiftTipsDom()}
-          {renderActionButtonDom()}
-          {GiftDetailDom}
-          {SuccessFullDom}
-          {DownLoadDom}
-          {/* <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority /> */}
+          {!initializing && renderCryptoGiftTipsDom()}
+          {!initializing && renderGiftDetailDom()}
+          {!initializing && renderActionButtonDom()}
+          {!initializing && renderSuccessFullDomFirstTime()}
+          {!initializing && renderDownLoadDom()}
         </div>
       </div>
 
@@ -450,17 +605,10 @@ const Referral: React.FC = () => {
         </PortkeyProvider>
       )}
 
-      {/* <div
-        onClick={async () => {
-          fetchCaHolderInfo();
-        }}>
-        GET WALLET
-      </div> */}
-
       {/* mask */}
       {isShowMask && <OpenInBrowser />}
     </div>
   );
 };
 
-export default Referral;
+export default CryptoGift;
