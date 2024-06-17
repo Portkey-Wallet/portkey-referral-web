@@ -207,9 +207,9 @@ const CryptoGift: React.FC = () => {
       setItem(CRYPTO_GIFT_CA_ADDRESS, didWallet.caInfo.caAddress);
       setItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID, didWallet.chainId);
 
-      await sleep(3000);
+      await fetchAndStoreCaHolderInfo();
+      await sleep(10);
       await latestOnRefreshCryptoGiftDetail.current();
-      fetchAndStoreCaHolderInfo();
       setIsSignUp(true);
       setSuccessClaimCurrentPage(true);
     },
