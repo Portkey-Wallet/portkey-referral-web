@@ -1,6 +1,4 @@
-import {Button} from 'antd'
+'use client';
 export default function Referral() {
-  return <div>
-    <Button>Referral</Button>
-  </div>;
+  return <div></div>
 }

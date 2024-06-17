@@ -31,7 +31,8 @@ export enum ActivityEnums
     Invition = 1
 }
 interface IReferralRecordRankParams {
-  activityEnums: ActivityEnums;
+  activityCycleEnums?: ActivityCycleEnums;
+  activityEnums?: ActivityEnums;
   caHash: string;
 }
 class ReferralApi {
@@ -45,17 +46,17 @@ class ReferralApi {
     this.referralRecordRankConfig = ReferralPath.referralRecordRank;
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
   }
-  referralRecordList(params: {caHash: string, skip: number, limit: number}){
-    return portkeyGet(this.referralRecordListConfig.path, {...this.referralRecordListConfig.params, ...params}, this.referralRecordListConfig.config)
+  async referralRecordList(params: {caHash: string, skip: number, limit: number}): Promise<IReferralRecordResponseDto>{
+    return await portkeyGet(this.referralRecordListConfig.path, {...this.referralRecordListConfig.params, ...params}, this.referralRecordListConfig.config)
   }
-  referralTotalCount(params: {caHash: string}){
-    return portkeyGet(this.referralTotalCountConfig.path, {...this.referralTotalCountConfig.params, ...params}, this.referralTotalCountConfig.config)
+  async referralTotalCount(params: {caHash: string}): Promise<number>{
+    return await portkeyGet(this.referralTotalCountConfig.path, {...this.referralTotalCountConfig.params, ...params}, this.referralTotalCountConfig.config)
   }
-  referralRecordRank(params: IReferralRecordRankParams){
-    return portkeyGet(this.referralRecordRankConfig.path, {...this.referralRecordRankConfig.params, ...params}, this.referralRecordRankConfig.config)
+  async referralRecordRank(params: IReferralRecordRankParams): Promise<IReferralRecordsRankResponseDto>{
+    return await portkeyGet(this.referralRecordRankConfig.path, {...this.referralRecordRankConfig.params, ...params}, this.referralRecordRankConfig.config)
   }
-  activityDateRange(params: {activityEnums: ActivityEnums}){
-    return portkeyGet(this.activityDateRangeConfig.path, {...this.activityDateRangeConfig.params, ...params}, this.activityDateRangeConfig.config)
+  async activityDateRange(params: {activityEnums: ActivityEnums}): Promise<IActivityDateRange>{
+    return await portkeyGet(this.activityDateRangeConfig.path, {...this.activityDateRangeConfig.params, ...params}, this.activityDateRangeConfig.config)
   }
 }
 const referralApi = new ReferralApi();
