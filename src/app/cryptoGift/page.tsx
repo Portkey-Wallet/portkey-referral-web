@@ -37,7 +37,7 @@ import { PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { BackEndNetworkType } from '@/types/network';
-import { Dropdown, MenuProps, Image, Avatar } from 'antd';
+import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
 import BreakWord from '@/components/BreakWord';
 import { isLogin } from '@/utils/wallet';
 import {
@@ -51,13 +51,7 @@ import { useFetchAndStoreCaHolderInfo } from '@/hooks/giftWallet';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 import { useEnvironment } from '@/hooks/environment';
 import { useDownload } from '@/hooks/download';
-import {
-  AssetsType,
-  CryptoGiftPhase,
-  RedPackageDisplayType,
-  RedPackageGrabStatus,
-  TCryptoDetail,
-} from '@/types/cryptoGift';
+import { AssetsType, CryptoGiftPhase, RedPackageGrabStatus, TCryptoDetail } from '@/types/cryptoGift';
 import { CRYPTO_GIFT_PROJECT_CODE } from '@/constants/project';
 import { formatSecond2CountDownTime } from '@/utils/time';
 import { useLoading } from '@/hooks/global';
@@ -230,7 +224,9 @@ const CryptoGift: React.FC = () => {
 
         console.log('result', result);
       } else {
-        const { identityCode = '' } = await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId });
+        const { identityCode } = (await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId })) || {};
+
+        if (!identityCode) throw Error('Claim failed');
 
         did.setConfig({
           referralInfo: {
@@ -244,7 +240,7 @@ const CryptoGift: React.FC = () => {
       console.log('ERROR', error);
       singleMessage.error(error?.message || 'Claim failed');
     } finally {
-      await sleep(1000)
+      await sleep(1000);
       await latestOnRefreshCryptoGiftDetail.current();
       setBtnLoading(false);
     }
