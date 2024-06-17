@@ -17,7 +17,6 @@ import {
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
 import referralApi from '@/utils/axios/referral';
-import detectProvider, { TProviderName } from '@portkey/detect-provider';
 import detectProviderInstance from '@/utils/detectProvide';
 
 
