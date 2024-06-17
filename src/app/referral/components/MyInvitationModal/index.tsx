@@ -3,8 +3,12 @@ import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
+import { List } from 'antd';
+import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
 import { useEffectOnce } from '@/hooks/commonHooks';
+
+const ContainerHeight = 400;
 
 interface MyInvitationItem {
   isDirectlyInvite: boolean;
@@ -39,8 +43,12 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
       return;
     }
     try {
-      const res = await referralApi.referralRecordList({ caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167', skip: currentList.current.skip, limit: 10 });
-      const { hasNextPage = true, referralRecords = []} = res;
+      const res = await referralApi.referralRecordList({
+        caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167',
+        skip: currentList.current.skip,
+        limit: 10,
+      });
+      const { hasNextPage = true, referralRecords = [] } = res;
       currentList.current.skip += referralRecords.length;
       currentList.current.hasNextPage = hasNextPage;
 
@@ -102,27 +110,34 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
           src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
           alt="avatar"
         />
-        <div className={styles.inviteMethod}>{item.isDirectlyInvite? 'Invite' : 'Indirectly invite'}</div>
+        <div className={styles.inviteMethod}>{item.isDirectlyInvite ? 'Invite' : 'Indirectly invite'}</div>
         <div className={styles.walletName}>{item.walletName}</div>
       </div>
     );
   }, []);
 
+  const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
+    // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+    if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+      // fetchInvitationList();
+    }
+  };
+
   const invitationListDom = useMemo(() => {
     return (
-      <div className={styles.listWrap}>
-        {sections.map((section, index) => {
-          return (
-            <div key={index}>
+      <List className={styles.listWrap}>
+        <VirtualList data={sections} height={ContainerHeight} itemHeight={47} itemKey="email" onScroll={onScroll}>
+          {(section: MyInvitationSection) => (
+            <div key={section.date}>
               {invitationSectionHeaderDom(section.date)}
               {section.items.map((item, index) => {
                 return invitationItemDom(item);
               })}
               <div className={styles.divider}></div>
             </div>
-          );
-        })}
-      </div>
+          )}
+        </VirtualList>
+      </List>
     );
   }, [invitationItemDom, invitationSectionHeaderDom, sections]);
 

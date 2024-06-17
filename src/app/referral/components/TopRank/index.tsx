@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { List } from 'antd';
 import styles from './styles.module.scss';
 import RankItem from '../RankItem';
@@ -6,26 +6,36 @@ import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import { useModal } from '@ebay/nice-modal-react';
 import LeaderBoardModal from '../LeaderBoardModal';
+import referralApi from '@/utils/axios/referral';
+import { formatStr2EllipsisStr } from '@/utils';
+import { useEffectOnce } from '@/hooks/commonHooks';
 
 interface Item {
   rank: number;
   avatar: string;
   caAddress: string;
-  count: number;
+  referralTotalCount: number;
 }
 
 interface TopRanksResponse {
-  items: Item[];
-  myRank: Item;
+  referralRecordsRank: Item[];
+  currentUserReferralRecordsRankDetail: Item;
 }
 
-interface TopRanksProps {
-  data: TopRanksResponse;
-}
-
-const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
-  const { myRank } = data;
+const TopRanks: React.FC = () => {
+  const [data, setData] = useState<TopRanksResponse | null>(null);
+  const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
   const leaderBoardModal = useModal(LeaderBoardModal);
+
+  useEffectOnce(() => {
+    (async () => {
+      const res = await referralApi.referralRecordRank({
+        activityEnums: 1,
+        caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167',
+      });
+      setData(res);
+    })();
+  });
 
   const onViewAll = useCallback(() => {
     console.log('View All Clicked');
@@ -49,10 +59,10 @@ const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
         </div>
         <List
           className={styles.list}
-          dataSource={data.items}
+          dataSource={data?.referralRecordsRank}
           header={
-            <div className={styles.list_header_wrap}>
-              <div className={styles.list_item_left}>{myRank.rank}</div>
+            myRank  && <div className={styles.list_header_wrap}>
+              <div className={styles.list_item_left}>{myRank?.rank ?? '--'}</div>
               <div className={styles.list_item_middle}>
                 <Image
                   className={styles.list_item_image}
@@ -61,16 +71,21 @@ const TopRanks: React.FC<TopRanksProps> = ({ data }) => {
                   src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
                   alt="avatar"
                 />
-                <div className={styles.list_item_title}>{myRank.caAddress}</div>
+                <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
                 <div className={styles.me_wrap}>
                   <div className={styles.me_text}>Me</div>
                 </div>
               </div>
-              <div className={styles.list_item_right}>{myRank.count}</div>
+              <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
             </div>
           }
-          renderItem={(item) => (
-            <RankItem rank={item.rank} avatar={item.avatar} caAddress={item.caAddress} count={item.count} />
+          renderItem={(item, index) => (
+            <RankItem
+              rank={item.rank ?? index + 1}
+              avatar={item.avatar}
+              caAddress={item.caAddress}
+              count={item.referralTotalCount}
+            />
           )}
         />
       </div>

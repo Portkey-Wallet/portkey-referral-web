@@ -40,7 +40,6 @@ const Referral: React.FC = () => {
 
       const referralRecordRank = await referralApi.referralRecordRank({
         activityEnums: ActivityEnums.Invition,
-        activityCycleEnums: ActivityCycleEnums.Day,
         caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
       });
       console.log('referralRecordRank : ', referralRecordRank);

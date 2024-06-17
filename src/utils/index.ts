@@ -6,3 +6,23 @@ export const sleep = (time: number) => {
     }, time);
   });
 };
+
+/**
+ * this function is to format address,just like "formatStr2EllipsisStr" ---> "for...ess"
+ * @param address
+ * @param digit
+ * @param type
+ * @returns
+ */
+export const formatStr2EllipsisStr = (address = '', digit = 8, type: 'middle' | 'tail' = 'middle'): string => {
+  if (!address) return '';
+
+  const len = address.length;
+
+  if (type === 'tail') return len > digit ? `${address.slice(0, digit)}...` : address;
+
+  if (len < 2 * digit) return address;
+  const pre = address.substring(0, digit);
+  const suffix = address.substring(len - digit - 1);
+  return `${pre}...${suffix}`;
+};
