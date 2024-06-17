@@ -584,11 +584,11 @@ const CryptoGift: React.FC = () => {
           {BGDOM}
           {!initializing && renderCryptoBoxHeaderDom()}
           {renderCryptoBoxImgDom()}
-          {!initializing && renderCryptoGiftTipsDom()}
+          {!initializing && !isWeChat && !isPortkeyApp && renderCryptoGiftTipsDom()}
           {!initializing && renderGiftDetailDom()}
-          {!initializing && renderActionButtonDom()}
-          {!initializing && renderSuccessFullDomFirstTime()}
-          {!initializing && renderDownLoadDom()}
+          {!initializing && !isWeChat && !isPortkeyApp && renderActionButtonDom()}
+          {!initializing && !isWeChat && !isPortkeyApp && renderSuccessFullDomFirstTime()}
+          {!initializing && !isWeChat && !isPortkeyApp && renderDownLoadDom()}
         </div>
       </div>
 
