@@ -154,15 +154,15 @@ const CryptoGift: React.FC = () => {
   useEffect(() => {
     if (isWeChat) return setIsShowMask(true);
     if (isPortkeyApp) {
+      setIsShowMask(true);
       singleMessage.error({
         duration: 0,
-        content: 'Please open the link in browser or scan the code using camera.',
+        content: 'Please open the link in browser',
         onClose: () => null,
         onClick: () => null,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isPortkeyApp, isWeChat]);
 
   useLayoutEffect(() => {
     if (!initializing) return;
@@ -611,7 +611,7 @@ const CryptoGift: React.FC = () => {
       )}
 
       {/* mask */}
-      {isShowMask && <OpenInBrowser />}
+      {isShowMask && <OpenInBrowser isWeChat={isWeChat} />}
     </div>
   );
 };
