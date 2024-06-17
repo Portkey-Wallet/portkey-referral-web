@@ -190,6 +190,7 @@
           }
 
           .nftName {
+            max-width: 80px;
             position: absolute;
             left: 8px;
             bottom: 22px;
@@ -202,12 +203,16 @@
           }
 
           .nftId {
+            max-width: 80px;
             position: absolute;
             left: 8px;
             bottom: 6px;
             font-size: 12px;
             line-height: 16px;
             color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
 
