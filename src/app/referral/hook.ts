@@ -1,7 +1,8 @@
 import referralApi from "@/utils/axios/referral";
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
-export const useReferralRecordList = (caHash: string) => {
+export const useReferralHome = (caHash: string) => {
+  const [viewTotal, setViewTotal] = useState<string>('--');
   const [referralRecords, setReferralRecords] = useState<IReferralRecordDetailDto[]>();
   const pageRef = useRef<{skip: number, limit: number}>({skip: 0, limit: 20});
   const next = useCallback(async () => {
@@ -12,5 +13,34 @@ export const useReferralRecordList = (caHash: string) => {
     pageRef.current = {skip: 0, limit: 20};
     return await next();
   }, [next]);
-  return {referralRecords, init, next};
+  useEffect(() => {
+    (async () => {
+      const result = await referralApi.referralTotalCount({caHash});
+      setViewTotal(result+'')
+    })();
+  }, [caHash]);
+  return {referralRecords, viewTotal, init, next};
+};
+
+export const useReferralRank = (caHash: string) => {
+  const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string>('');
+  const init = useCallback(async () => {
+    const result = await referralApi.referralRecordRank({caHash});
+    setReferralRankList(result.referralRecordsRank);
+  }, [caHash]);
+  useEffect(() => {
+    (async () => {
+      try{
+        setLoading(true);
+        const result = await init();
+      }catch(e){
+        setError(e?.message);
+      }finally{
+        setLoading(false);
+      }
+    })();
+  }, [caHash, init]);
+  return {referralRankList, loading, error};
 };

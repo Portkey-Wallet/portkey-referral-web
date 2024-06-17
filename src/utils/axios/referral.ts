@@ -31,8 +31,8 @@ enum ActivityEnums
     Invition = 1
 }
 interface IReferralRecordRankParams {
-  activityCycleEnums: ActivityCycleEnums;
-  activityEnums: ActivityEnums;
+  activityCycleEnums?: ActivityCycleEnums;
+  activityEnums?: ActivityEnums;
   caHash: string;
 }
 class ReferralApi {
