@@ -165,8 +165,9 @@ const CryptoGift: React.FC = () => {
   }, []);
 
   useLayoutEffect(() => {
+    if (!initializing) return;
     latestOnRefreshCryptoGiftDetail.current(true);
-  }, [latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
+  }, [initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
@@ -201,11 +202,12 @@ const CryptoGift: React.FC = () => {
       setItem(CRYPTO_GIFT_CA_ADDRESS, didWallet.caInfo.caAddress);
       setItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID, didWallet.chainId);
 
-      await fetchAndStoreCaHolderInfo();
-      await sleep(10);
-      await latestOnRefreshCryptoGiftDetail.current();
       setIsSignUp(true);
       setSuccessClaimCurrentPage(true);
+
+      await fetchAndStoreCaHolderInfo();
+      await sleep(300);
+      latestOnRefreshCryptoGiftDetail.current();
     },
     [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail],
   );
@@ -392,7 +394,10 @@ const CryptoGift: React.FC = () => {
       subText = '';
     }
 
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed ) {
+    if (
+      cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired ||
+      cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed
+    ) {
       text = '';
       subText = '';
     }
