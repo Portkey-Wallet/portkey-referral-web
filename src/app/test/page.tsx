@@ -25,7 +25,7 @@ const Referral: React.FC = () => {
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
   useEffect(() => {
-    referralApi.referralRecordList({caHash: ''});
+    referralApi.referralRecordList({caHash: 'b95be3fd206ad11bcae3bf5093f2c87a6da40b58c91ddffeaa8cad47ac30b434'});
   })
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
