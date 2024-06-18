@@ -45,7 +45,7 @@ const { getSignatureAndPublicKey } = useDiscoverProvider();
      <Button onClick={onDisConnectBtnClickHandler}>DisConnect</Button>
      <Button onClick={async () => {
       const status = await login();
-      // const caHash = await sync();
+      const caHash = await sync();
       console.log('login success! caHash', caHash);
      }}>Login And Sync</Button>
       <Button onClick={async () => {
