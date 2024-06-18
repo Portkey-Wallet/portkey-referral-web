@@ -3,8 +3,12 @@ import styles from './styles.module.scss';
 import { close } from '@/assets/images';
 import Image from 'next/image';
 import BaseImage from '@/components/BaseImage';
-import { referralWaterMark, referralDiscover, } from '@/assets/images';
+import { interactiveCopy } from '@/assets/images';
 import QRCode from '@/components/QRCode';
+import { useEnvironment } from '@/hooks/environment';
+import { useCopyToClipboard } from 'react-use';
+import { singleMessage } from '@portkey/did-ui-react';
+import detectProviderInstance from '@/utils/detectProvide';
 
 interface QrcodeModalProps {
   shortLink: string;
@@ -12,24 +16,26 @@ interface QrcodeModalProps {
 }
 
 const QrcodeModal: React.FC<QrcodeModalProps> = ({ shortLink, handleCancel }) => {
-  useEffect(() => {
-    console.log('qrcode modal mounted');
-  }, []);
+  const { isPortkeyApp } = useEnvironment();
+  const [copyState, copyToClipboard] = useCopyToClipboard();
 
   const onCopyClick = useCallback(() => {
-    console.log('onCopyClick');
-  }, []);
+    copyToClipboard(shortLink);
+    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
+  }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
 
-  const onShare = useCallback(() => {}, []);
+  const onShare = useCallback(async () => {
+    detectProviderInstance.share({ url: shortLink, title: shortLink });
+  }, [shortLink]);
 
   const headerDom = useMemo(() => {
     return (
       <div className={styles.headerWrap}>
         <div className={styles.headerTextWrap}>
           <div className={styles.headerText}>Referral Code</div>
-          <div className={styles.headerImageWrap} onClick={handleCancel}>
-            <Image src={close} width={20} height={20} alt="close" />
-          </div>
+        </div>
+        <div className={styles.headerImageWrap} onClick={handleCancel}>
+          <Image className={styles.headerImage} src={close} width={22} height={22} alt="close" />
         </div>
       </div>
     );
@@ -46,32 +52,23 @@ const QrcodeModal: React.FC<QrcodeModalProps> = ({ shortLink, handleCancel }) =>
   const linkDom = useMemo(() => {
     return (
       <div className={styles.linkWrap}>
-        <div className={styles.titleText}>
-          Referral Link
-        </div>
+        <div className={styles.titleText}>Referral Link</div>
         <div className={styles.linkAndCopyWrap}>
-          <div className={styles.linkText}>
-            https://aa-portkey-test.portkey.finance/api/app/account/4uzgvA
+          <div className={styles.linkText}>{shortLink}</div>
+          <div onClick={onCopyClick} className={styles.copyImageWrap}>
+            <BaseImage src={interactiveCopy} className={styles.copyImage} alt="QRcodeCopy" priority width={16} />
           </div>
-          <BaseImage
-              src={referralDiscover}
-              className={styles.QRcodeCopy}
-              alt="QRcodeCopy"
-              priority
-              width={20}
-              onClick={onCopyClick}
-            />
         </div>
       </div>
     );
-  }, [onCopyClick]);
+  }, [onCopyClick, shortLink]);
 
   const shareButton = useMemo(() => {
-      return (
-        <div className={styles.shareButton} onClick={onShare}>
-          <div className={styles.shareText}>Share</div>
-        </div>
-      );
+    return (
+      <div className={styles.shareButton} onClick={onShare}>
+        <div className={styles.shareText}>Share</div>
+      </div>
+    );
   }, [onShare]);
 
   return (
@@ -80,7 +77,7 @@ const QrcodeModal: React.FC<QrcodeModalProps> = ({ shortLink, handleCancel }) =>
         {headerDom}
         {qrcodeImageDom}
         {linkDom}
-        {shareButton}
+        {isPortkeyApp && shareButton}
       </div>
     </div>
   );

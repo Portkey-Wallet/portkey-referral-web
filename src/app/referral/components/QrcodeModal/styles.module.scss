@@ -48,7 +48,6 @@
       align-self: stretch;
       padding-top: 10px;
       padding-bottom: 10px;
-      padding-left: 32px;
       justify-content: flex-end;
       align-items: center;
       gap: 12px;
@@ -61,19 +60,30 @@
         font-weight: 500;
         line-height: 24px;
       }
-      .headerImageWrap {
-        justify-content: flex-end;
-        align-items: center;
-        gap: 16px;
-        display: flex;
+    }
+    .headerImageWrap {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      justify-content: flex-end;
+      align-items: center;
+      display: flex;
+      .headerImage {
+        margin-right: 16px;
       }
     }
   }
   .qrcodeImageWrap {
     margin-top: 8px;
+    width: 160px;
+    height: 160px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .linkWrap {
     width: 100%;
+    margin-top: 24px;
     padding: 12px;
     border-radius: 6px;
     border: 0.5px #dcdee1 solid;
@@ -102,11 +112,25 @@
         line-height: 20px;
         word-wrap: break-word;
       }
+      .copyImageWrap {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f5f6f7;
+        border-radius: 6px;
+        .copyImage {
+          width: 16px;
+          height: 16px;
+        }
+      }
     }
   }
   .shareButton {
     max-width: 600px;
-    margin: 16px auto 48px;
+    margin-top: 24px;
+    margin-bottom: 48px;
     width: 100%;
     height: 48px;
     padding: 8px;

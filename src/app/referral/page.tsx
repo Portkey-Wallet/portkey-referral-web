@@ -27,6 +27,7 @@ import referralApi from '@/utils/axios/referral';
 import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
+import { useEnvironment } from '@/hooks/environment';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -34,6 +35,7 @@ const Referral: React.FC = () => {
   const [copyState, copyToClipboard] = useCopyToClipboard();
   const { isConnected, login, walletInfo, logout, caHash } = useAccount();
   const { isLG } = useResponsive();
+  const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -135,7 +137,7 @@ const Referral: React.FC = () => {
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
-              {isConnected && (
+              {isConnected && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
                   <div className={styles.profileButton}>
                     <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
