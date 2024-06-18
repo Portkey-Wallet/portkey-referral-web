@@ -34,6 +34,7 @@ export type TCryptoDetail = {
   subPrompt: string;
   isNewUsersOnly: boolean;
   symbol: string;
+  label?: string;
   decimals: number;
   dollarValue: string;
   nftAlias: string;

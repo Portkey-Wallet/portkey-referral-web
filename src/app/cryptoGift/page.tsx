@@ -60,6 +60,7 @@ import CommonButton from '@/components/CommonButton';
 import { sleep } from '@/utils';
 import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
 import googleAnalytics from '@/utils/googleAnalytics';
+import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -86,8 +87,10 @@ const CryptoGift: React.FC = () => {
   const networkType = searchParams.get('networkType') || '';
   const cryptoGiftId = searchParams.get('id') || '';
   const [cryptoDetail, setCryptoGiftDetail] = useState<TCryptoDetail>();
-  const [claimAgainCountdownSecond, setClaimAgainCountdownSecond] = useState(0);
-  const [expiredTime, setExpiredTime] = useState(0);
+  const { claimAgainCountdownSecond, expiredTime, rootTime } = useCryptoDetailTimer();
+  // const [claimAgainCountdownSecond, setClaimAgainCountdownSecond] = useState(0);
+  // const [expiredTime, setExpiredTime] = useState(0);
+
   const [btnLoading, setBtnLoading] = useState(false);
 
   const onRefreshCryptoGiftDetail = useDebounceCallback(
@@ -102,8 +105,12 @@ const CryptoGift: React.FC = () => {
 
         if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
 
-        result?.remainingWaitingSeconds && setClaimAgainCountdownSecond(result?.remainingWaitingSeconds);
-        result?.remainingExpirationSeconds && setExpiredTime(result.remainingExpirationSeconds);
+        if (result?.remainingWaitingSeconds || result?.remainingExpirationSeconds)
+          rootTime.current = {
+            claimAgainCountdownSecond: result?.remainingWaitingSeconds,
+            expiredTime: result?.remainingExpirationSeconds,
+          };
+
         setCryptoGiftDetail(result);
       } catch (error) {
         console.log('error', error);
@@ -120,24 +127,24 @@ const CryptoGift: React.FC = () => {
     googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift');
   });
 
-  useEffect(() => {
-    if (!cryptoDetail?.sender.nickname) return;
-    if (!cryptoDetail?.remainingWaitingSeconds && !cryptoDetail?.remainingExpirationSeconds) return;
+  // useEffect(() => {
+  //   if (!cryptoDetail?.sender.nickname) return;
+  //   if (!cryptoDetail?.remainingWaitingSeconds && !cryptoDetail?.remainingExpirationSeconds) return;
 
-    timerRef.current = setInterval(() => {
-      if (cryptoDetail?.remainingWaitingSeconds) setClaimAgainCountdownSecond((pre) => (pre - 1 > 0 ? pre - 1 : 0));
-      if (cryptoDetail?.remainingExpirationSeconds) setExpiredTime((pre) => (pre - 1 > 0 ? pre - 1 : 0));
-    }, 1000);
+  //   timerRef.current = setInterval(() => {
+  //     if (cryptoDetail?.remainingWaitingSeconds) setClaimAgainCountdownSecond((pre) => (pre - 1 > 0 ? pre - 1 : 0));
+  //     if (cryptoDetail?.remainingExpirationSeconds) setExpiredTime((pre) => (pre - 1 > 0 ? pre - 1 : 0));
+  //   }, 1000);
 
-    return () => {
-      timerRef.current && clearInterval(timerRef.current);
-    };
-  }, [
-    cryptoDetail,
-    cryptoDetail?.remainingExpirationSeconds,
-    cryptoDetail?.remainingWaitingSeconds,
-    cryptoDetail?.sender.nickname,
-  ]);
+  //   return () => {
+  //     timerRef.current && clearInterval(timerRef.current);
+  //   };
+  // }, [
+  //   cryptoDetail,
+  //   cryptoDetail?.remainingExpirationSeconds,
+  //   cryptoDetail?.remainingWaitingSeconds,
+  //   cryptoDetail?.sender.nickname,
+  // ]);
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -166,8 +173,9 @@ const CryptoGift: React.FC = () => {
 
   useLayoutEffect(() => {
     if (!initializing) return;
+    fetchAndStoreCaHolderInfo();
     latestOnRefreshCryptoGiftDetail.current(true);
-  }, [initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
+  }, [fetchAndStoreCaHolderInfo, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
@@ -524,7 +532,11 @@ const CryptoGift: React.FC = () => {
           <BaseImage src={cryptoSuccess} alt="cryptoSuccess" priority width={20} height={20} />
           <BreakWord
             className={styles['amount-symbol']}
-            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${cryptoDetail?.symbol || ''}`}
+            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${
+              cryptoDetail.assetType === AssetsType.ft
+                ? cryptoDetail?.label || cryptoDetail.symbol
+                : cryptoDetail.nftAlias
+            }`}
           />
           <BreakWord className={styles.toAddress} text={`has sent to your address`} />
         </div>
@@ -540,8 +552,11 @@ const CryptoGift: React.FC = () => {
     );
   }, [
     cryptoDetail?.amount,
+    cryptoDetail?.assetType,
     cryptoDetail?.cryptoGiftPhase,
     cryptoDetail?.decimals,
+    cryptoDetail?.label,
+    cryptoDetail?.nftAlias,
     cryptoDetail?.symbol,
     onCopyClick,
     onJumpToStore,
