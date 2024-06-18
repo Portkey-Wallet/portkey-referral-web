@@ -13,7 +13,21 @@
   align-items: center;
   gap: 8px;
   display: inline-flex;
-
+  position: relative;
+  .leftBg {
+    width: 165px;
+    height: 106px;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .rightBg {
+    width: 165px;
+    height: 106px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+  }
   .header_bg {
     width: 145px;
     height: 28px;

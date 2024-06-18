@@ -12,22 +12,23 @@ interface RankItemProps {
   count: number;
 }
 
-const RankImages = [invitationRankFirst, invitationRankSecond, invitationRankThird];
+export const showRankImage = (rank: number) => {
+  return rank === 1 || rank === 2 || rank === 3;
+};
+export const RankImages = [invitationRankFirst, invitationRankSecond, invitationRankThird];
 
 const RankItem: React.FC<RankItemProps> = ({ rank, avatar, caAddress, count }) => {
-  const showRankImage = useMemo(() => {
-    return rank === 1 || rank === 2 || rank === 3;
-  }, [rank]);
+  
   const rankImage = useMemo(() => {
-    if (showRankImage) {
+    if (showRankImage(rank)) {
       return RankImages[rank - 1];
     }
     return invitationRankFirst;
-  }, [rank, showRankImage]);
+  }, [rank]);
   return (
     <div className={styles.container}>
       <div className={styles.item_left_wrap}>
-        {showRankImage ? (
+        {showRankImage(rank) ? (
           <BaseImage width={25} className={styles.item_left_image} src={rankImage} priority alt="invitation rank"/>
         ) : (
           <div className={styles.item_left_rank}>{rank}</div>

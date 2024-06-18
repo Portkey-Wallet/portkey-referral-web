@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { List } from 'antd';
 import styles from './styles.module.scss';
-import RankItem from '../RankItem';
+import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import { useModal } from '@ebay/nice-modal-react';
@@ -26,7 +26,7 @@ const TopRanks: React.FC = () => {
   const [data, setData] = useState<TopRanksResponse | null>(null);
   const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
   const leaderBoardModal = useModal(LeaderBoardModal);
-  const {isConnected, caHash} = useAccount();
+  const { isConnected, caHash } = useAccount();
 
   useEffect(() => {
     (async () => {
@@ -72,23 +72,37 @@ const TopRanks: React.FC = () => {
           className={styles.list}
           dataSource={data?.referralRecordsRank}
           header={
-            myRank?.caAddress && <div className={styles.list_header_wrap}>
-              <div className={styles.list_item_left}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
-              <div className={styles.list_item_middle}>
-                <Image
-                  className={styles.list_item_image}
-                  width={20}
-                  height={20}
-                  src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                  alt="avatar"
-                />
-                <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
-                <div className={styles.me_wrap}>
-                  <div className={styles.me_text}>Me</div>
+            myRank?.caAddress && (
+              <div className={styles.list_header_wrap}>
+                <div className={styles.list_item_left}>
+                  {showRankImage(myRank?.rank) ? (
+                    <Image
+                      width={25}
+                      className={styles.rank_image}
+                      src={RankImages[myRank?.rank - 1]}
+                      priority
+                      alt="invitation rank"
+                    />
+                  ) : (
+                    <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
+                  )}
                 </div>
+                <div className={styles.list_item_middle}>
+                  <Image
+                    className={styles.list_item_image}
+                    width={20}
+                    height={20}
+                    src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+                    alt="avatar"
+                  />
+                  <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+                  <div className={styles.me_wrap}>
+                    <div className={styles.me_text}>Me</div>
+                  </div>
+                </div>
+                <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
               </div>
-              <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
-            </div>
+            )
           }
           renderItem={(item, index) => (
             <RankItem

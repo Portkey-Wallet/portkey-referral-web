@@ -15,6 +15,8 @@ import invitationRankFirst from './referral/invitationRankFirst.png'
 import invitationRankSecond from './referral/invitationRankSecond.png'
 import invitationRankThird from './referral/invitationRankThird.png'
 import userProfile from './referral/userProfile.png'
+import myInvitationLeftBg from'./referral/myInvitationLeftBg.png';
+import myInvitationRightBg from'./referral/myInvitationRightBg.png';
 
 import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
@@ -56,6 +58,8 @@ export {
   invitationRankSecond,
   invitationRankThird,
   userProfile,
+  myInvitationLeftBg,
+  myInvitationRightBg,
   QRCodeLogo,
   appStoreDownload,
   googleGetIt,

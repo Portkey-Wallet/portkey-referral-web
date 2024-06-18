@@ -67,12 +67,18 @@
     }
     .list_item_left {
       width: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       text-align: center;
       color: #979aa1;
       font-size: 12px;
       font-weight: 400;
       line-height: 16px;
-      word-wrap: break-word;
+      .rank_image {
+        width: 25px;
+        height: 16px;
+      }
     }
     .list_item_middle {
       display: flex;

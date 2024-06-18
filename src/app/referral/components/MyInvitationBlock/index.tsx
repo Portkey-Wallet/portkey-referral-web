@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';
-import { myInvitationHeaderBg, directionRight } from '@/assets/images';
+import { myInvitationHeaderBg, directionRight, myInvitationLeftBg, myInvitationRightBg } from '@/assets/images';
 import Image from 'next/image';
 import { useModal } from '@ebay/nice-modal-react';
 import MyInvitationModal from '../MyInvitationModal';
@@ -18,6 +18,8 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
 
   return (
     <div className={styles.container}>
+      <Image className={styles.leftBg} src={myInvitationLeftBg} alt="" />
+      <Image className={styles.rightBg} src={myInvitationRightBg} alt="" />
       <BaseImage className={styles.header_bg} src={myInvitationHeaderBg} priority alt="my invitation" />
       <div className={styles.invitation_amount}>{invitationAmount ?? 0}</div>
       <div className={styles.view_all_wrap} onClick={onClickViewAll}>
