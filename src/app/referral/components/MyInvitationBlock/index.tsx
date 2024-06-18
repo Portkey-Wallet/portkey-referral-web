@@ -19,7 +19,7 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
   return (
     <div className={styles.container}>
       <BaseImage className={styles.header_bg} src={myInvitationHeaderBg} priority alt="my invitation" />
-      <div className={styles.invitation_amount}>{invitationAmount}</div>
+      <div className={styles.invitation_amount}>{invitationAmount ?? 0}</div>
       <div className={styles.view_all_wrap} onClick={onClickViewAll}>
         <div className={styles.view_all_text}>View All</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />

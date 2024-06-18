@@ -11,24 +11,28 @@ import QRCode from '@/components/QRCode';
 import MyInvitationBlock from './components/MyInvitationBlock';
 import QrcodeModal from './components/QrcodeModal';
 import TopRank from './components/TopRank';
+import { Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 import {
   referralWaterMark,
   referralColorBox,
   referralBgLines,
   referralDiscover,
   sloganReference,
+  userProfile,
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
 import referralApi from '@/utils/axios/referral';
 import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
+import Image from 'next/image';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
-  const { isConnected, login } = useAccount();
+  const { isConnected, login, walletInfo, logout } = useAccount();
   const { isLG } = useResponsive();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,11 +40,21 @@ const Referral: React.FC = () => {
     fetchTotalCount();
   });
 
+  const onLogout = useCallback(async () => {
+    await logout();
+    singleMessage.info('Logout successfully');
+  }, [logout]);
+
+  useEffect(() => {
+    console.log('walletInfo : ', walletInfo);
+  }, [walletInfo]);
+
   const fetchTotalCount = useCallback(async () => {
     try {
       const totalCount = await referralApi.referralTotalCount({
         caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
       });
+      console.log('totalCount : ', totalCount);
       setMyInvitedCount(totalCount);
     } catch (error) {
       console.error('referralTotalCount error : ', error);
@@ -102,6 +116,17 @@ const Referral: React.FC = () => {
     );
   }, [login]);
 
+  const items: MenuProps['items'] = [
+    {
+      key: '1',
+      label: (
+        <a target="_blank" rel="noopener noreferrer" onClick={onLogout}>
+          Log out
+        </a>
+      ),
+    },
+  ];
+
   return (
     <NiceModal.Provider>
       <div className={styles.referralPage}>
@@ -109,6 +134,16 @@ const Referral: React.FC = () => {
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+              {isConnected && <Dropdown menu={{ items }} placement="bottomRight">
+                <div className={styles.profileButton}>
+                  <Image
+                    className={styles.profileImage}
+                    width={24}
+                    src={userProfile}
+                    alt="avatar"
+                  />
+                </div>
+              </Dropdown>}
             </div>
           </header>
           <div className={styles.referralMainContainer}>
@@ -126,7 +161,7 @@ const Referral: React.FC = () => {
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
-          {true ? (
+          {isConnected ? (
             <>
               <MyInvitationBlock invitationAmount={myInvitedCount} />
               {shortLink && isLG ? inviteButton : qrcodeDom}

@@ -14,6 +14,7 @@ import myInvitationHeaderBg from './referral/myInvitationHeaderBg.svg';
 import invitationRankFirst from './referral/invitationRankFirst.png'
 import invitationRankSecond from './referral/invitationRankSecond.png'
 import invitationRankThird from './referral/invitationRankThird.png'
+import userProfile from './referral/userProfile.png'
 
 import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
@@ -52,6 +53,7 @@ export {
   invitationRankFirst,
   invitationRankSecond,
   invitationRankThird,
+  userProfile,
   QRCodeLogo,
   appStoreDownload,
   googleGetIt,
