@@ -25,7 +25,7 @@ const QrcodeModal: React.FC<QrcodeModalProps> = ({ shortLink, handleCancel }) =>
   }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
 
   const onShare = useCallback(async () => {
-    detectProviderInstance.share({ url: shortLink, title: shortLink });
+    detectProviderInstance.share({ title: shortLink, message: shortLink });
   }, [shortLink]);
 
   const headerDom = useMemo(() => {

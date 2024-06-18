@@ -16,14 +16,15 @@ class DetectProvider {
       providerName: 'Portkey',
     });
   }
-  async share(config: {url: string, title: string}) {
-    const {url, title} = config;
+  async share(config: {url?: string, title?: string, message?: string}) {
+    const {url, title, message} = config;
     if(!this.initialized){
       console.warn('provider is not initialized, Please try again later!');
     }
     const result = await this.provider?.request({ method: 'Share', payload: {
       url,
       title,
+      message,
     } });
     return result;
   }
