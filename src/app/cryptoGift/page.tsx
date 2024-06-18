@@ -71,7 +71,6 @@ ConfigProvider.setGlobalConfig({
 });
 
 const CryptoGift: React.FC = () => {
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
   const { isPortkeyApp, isWeChat, isMobile } = useEnvironment();
   const { onJumpToPortkeyWeb, onJumpToStore } = useDownload();
@@ -101,7 +100,7 @@ const CryptoGift: React.FC = () => {
 
         const params: { id: string; caHash?: string } = { id: cryptoGiftId };
         if (caHolderInfo?.caHash) params.caHash = caHolderInfo?.caHash;
-        if (caHash) params.caHash = caHolderInfo?.caHash;
+        if (caHash) params.caHash = caHash;
         const result: TCryptoDetail = await portkeyGet(path, params);
 
         if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
@@ -259,10 +258,11 @@ const CryptoGift: React.FC = () => {
       setLoading(true);
       const originChainId = getItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID);
       await did.logout({ chainId: originChainId });
-      removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
-      removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
-      removeItem(CRYPTO_GIFT_CA_ADDRESS);
       setCaHolderInfo(undefined);
+
+      removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
+      removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
+      removeItem(CRYPTO_GIFT_CA_ADDRESS);
       setIsSignUp(false);
 
       await latestOnRefreshCryptoGiftDetail.current();
