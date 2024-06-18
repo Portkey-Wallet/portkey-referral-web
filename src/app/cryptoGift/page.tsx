@@ -87,8 +87,6 @@ const CryptoGift: React.FC = () => {
   const cryptoGiftId = searchParams.get('id') || '';
   const [cryptoDetail, setCryptoGiftDetail] = useState<TCryptoDetail>();
   const { claimAgainCountdownSecond, expiredTime, rootTime } = useCryptoDetailTimer();
-  // const [claimAgainCountdownSecond, setClaimAgainCountdownSecond] = useState(0);
-  // const [expiredTime, setExpiredTime] = useState(0);
 
   const [btnLoading, setBtnLoading] = useState(false);
 
@@ -126,25 +124,6 @@ const CryptoGift: React.FC = () => {
   useEffectOnce(() => {
     googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift');
   });
-
-  // useEffect(() => {
-  //   if (!cryptoDetail?.sender.nickname) return;
-  //   if (!cryptoDetail?.remainingWaitingSeconds && !cryptoDetail?.remainingExpirationSeconds) return;
-
-  //   timerRef.current = setInterval(() => {
-  //     if (cryptoDetail?.remainingWaitingSeconds) setClaimAgainCountdownSecond((pre) => (pre - 1 > 0 ? pre - 1 : 0));
-  //     if (cryptoDetail?.remainingExpirationSeconds) setExpiredTime((pre) => (pre - 1 > 0 ? pre - 1 : 0));
-  //   }, 1000);
-
-  //   return () => {
-  //     timerRef.current && clearInterval(timerRef.current);
-  //   };
-  // }, [
-  //   cryptoDetail,
-  //   cryptoDetail?.remainingExpirationSeconds,
-  //   cryptoDetail?.remainingWaitingSeconds,
-  //   cryptoDetail?.sender.nickname,
-  // ]);
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -213,11 +192,11 @@ const CryptoGift: React.FC = () => {
       setIsSignUp(true);
       setSuccessClaimCurrentPage(true);
       latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash);
-
+      setCaHolderInfo({ caHash: didWallet.caInfo.caHash, avatar: '', nickName: '' });
       await sleep(1000);
       fetchAndStoreCaHolderInfo();
     },
-    [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail],
+    [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail, setCaHolderInfo],
   );
 
   const onClaim = useCallback(async () => {
@@ -589,7 +568,7 @@ const CryptoGift: React.FC = () => {
               onClick={onJumpToPortkeyWeb}
             />
 
-            {caHolderInfo?.caHash && (
+            {caHolderInfo?.nickName && (
               <Dropdown overlayClassName="logout-drop-down" trigger={['click']} menu={{ items: dropDownItems }}>
                 <Avatar alt="avatar" className={styles.userLogo} src={caHolderInfo?.avatar || ''}>
                   {caHolderInfo?.nickName?.[0] || ''}
