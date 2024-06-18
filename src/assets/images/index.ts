@@ -23,6 +23,7 @@ import directionRight from './common/directionRight.svg';
 import directionDown from './common/directionDown.svg';
 import close from './common/close.svg';
 import interactiveCopy from './common/interactiveCopy.svg';
+import interactiveCopyWhite from './common/interactiveCopyWhite.svg';
 
 import bgPortkeyLogo from './cryptoGift/bgPortkeyLogo.svg';
 import bgLine1 from './cryptoGift/bgLine1.svg';
@@ -62,6 +63,7 @@ export {
   directionDown,
   close,
   interactiveCopy,
+  interactiveCopyWhite,
   sloganReference,
   bgPortkeyLogo,
   bgLine1,

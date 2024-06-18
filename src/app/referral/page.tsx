@@ -17,9 +17,9 @@ import {
   referralWaterMark,
   referralColorBox,
   referralBgLines,
-  referralDiscover,
   sloganReference,
   userProfile,
+  interactiveCopyWhite,
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
@@ -85,14 +85,16 @@ const Referral: React.FC = () => {
           <div className={styles.QRcodeTitle}>Referral Link</div>
           <div className={styles.QRcodeUrlWrapper}>
             <div className={styles.QRcodeUrl}>{shortLink}</div>
-            <BaseImage
-              src={referralDiscover}
-              className={styles.QRcodeCopy}
-              alt="QRcodeCopy"
-              priority
-              width={20}
-              onClick={onCopyClick}
-            />
+            <div className={styles.QRcodeCopyWrap}>
+              <BaseImage
+                src={interactiveCopyWhite}
+                className={styles.QRcodeCopy}
+                alt="QRcodeCopy"
+                priority
+                width={16}
+                onClick={onCopyClick}
+              />
+            </div>
           </div>
         </div>
       </div>

@@ -172,31 +172,38 @@
         .QRcodeUrlWrapper {
           display: flex;
           align-items: center;
+          justify-content: flex-start;
+          width: 100%;
           margin-top: 8px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
 
           .QRcodeUrl {
             word-wrap: 100%;
-            width: 100%;
-            flex: auto;
+            flex: 1;
             overflow: hidden;
-            color: $font-white;
             text-overflow: ellipsis;
             white-space: nowrap;
+            color: $font-white;
             font-size: 18px;
             font-style: normal;
             font-weight: 400;
             line-height: 22px;
           }
 
-          .QRcodeCopy {
-            flex: none;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
+          .QRcodeCopyWrap {
+            background-color: aliceblue;
+            width: 32px;
+            height: 32px;
             margin-left: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+
+            .QRcodeCopy {
+              width: 16px;
+              height: 16px;
+            }
           }
         }
       }
