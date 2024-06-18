@@ -1,12 +1,12 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 import { getConnectToken } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
 import { ConnectHost } from '@/constants/network';
 const AElf = require('aelf-sdk');
 export default function useAccount() {
-  const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
+  const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking, getSignature } = useConnectWallet();
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   console.log('1111wallet is:', walletInfo);
   console.log('1111walletType is:', walletType);
@@ -29,6 +29,7 @@ export default function useAccount() {
     // const signInfo = Buffer.from(`${walletInfo?.address}-${timestamp}`).toString('hex');
 
       const signInfo =  AElf.utils.sha256(`${walletInfo?.address}-${timestamp}`)
+      console.log('signInfo origin===', `${walletInfo?.address}-${timestamp}`, 'signInfo', signInfo);
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
       const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo);
       console.log("caHash===", caHash);
@@ -51,6 +52,12 @@ export default function useAccount() {
   const logout = useCallback(async () => {
       await disConnectWallet();
   }, [disConnectWallet]);
-
+  useEffect(() => {
+    (async () => {
+      if (!isConnected) return;
+      const caHash = await sync();
+      console.log('useEffect sync success!', caHash);
+    })();
+  }, [isConnected, sync]);
   return { login, sync, logout, isConnected, isLocking };
 }

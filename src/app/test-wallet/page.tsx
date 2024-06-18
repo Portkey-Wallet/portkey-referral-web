@@ -6,7 +6,7 @@ import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { did } from '@portkey/did-ui-react';
 import {Button} from 'antd'
 import { log } from 'console';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 const AElf = require('aelf-sdk');
 
 export default function Referral() {
@@ -28,7 +28,6 @@ export default function Referral() {
     disConnectWallet()
 }
 const signInfo = AElf.utils.sha256(`${walletInfo?.address}-${timestamp}`);
-
 const [walletInfo2, setwalletInfo] = useState();
 const { getSignatureAndPublicKey } = useDiscoverProvider();
   return <div>
@@ -45,9 +44,12 @@ const { getSignatureAndPublicKey } = useDiscoverProvider();
      <Button onClick={onDisConnectBtnClickHandler}>DisConnect</Button>
      <Button onClick={async () => {
       const status = await login();
-      const caHash = await sync();
-      console.log('login success! caHash', caHash);
-     }}>Login And Sync</Button>
+      console.log('login success', status);
+      // setTimeout(async ()=>{
+      //   const caHash = await sync();
+      //   console.log('login success! caHash', caHash);
+      // }, 5000);
+     }}>Login</Button>
       <Button onClick={async () => {
       const caHash = await sync();
       console.log('sync success!', caHash);

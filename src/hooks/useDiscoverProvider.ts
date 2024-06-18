@@ -23,7 +23,7 @@ export default function useDiscoverProvider() {
     if (!provider || !provider?.request) throw new Error('Discover not connected');
     const signature = await provider.request({
       method: MethodsWallet.GET_WALLET_SIGNATURE,
-      payload: { data },
+      payload: { data, autoSha256: true },
     });
     if (!signature || signature.recoveryParam == null) return {};
     const signatureStr = [
