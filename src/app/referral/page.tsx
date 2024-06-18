@@ -9,6 +9,7 @@ import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import styles from './page.module.scss';
 import QRCode from '@/components/QRCode';
 import MyInvitationBlock from './components/MyInvitationBlock';
+import QrcodeModal from './components/QrcodeModal';
 import TopRank from './components/TopRank';
 import {
   referralWaterMark,
@@ -19,31 +20,19 @@ import {
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
-import referralApi, { ActivityCycleEnums, ActivityEnums } from '@/utils/axios/referral';
+import referralApi from '@/utils/axios/referral';
 import { useResponsive } from '@/hooks/useResponsive';
+import useAccount from '@/hooks/useAccount';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
+  const { isConnected, login } = useAccount();
   const { isLG } = useResponsive();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   useEffect(() => {
-    (async () => {
-      const res = await referralApi.referralRecordList({
-        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
-        skip: 0,
-        limit: 10,
-      });
-      // const res = await referralApi.referralTotalCount({ caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57' });
-      console.log('referralRecordList : ', res);
-
-      const referralRecordRank = await referralApi.referralRecordRank({
-        activityEnums: ActivityEnums.Invition,
-        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
-      });
-      console.log('referralRecordRank : ', referralRecordRank);
-    })();
     fetchTotalCount();
   });
 
@@ -71,27 +60,6 @@ const Referral: React.FC = () => {
     );
   }, []);
 
-  const topRankData = {
-    items: [
-      { rank: 1, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 2, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 3, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 4, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 5, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 6, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 7, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 8, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 9, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-      { rank: 10, avatar: '', caAddress: 'ELF_wwww....wwww_AELF', count: 1000 },
-    ],
-    myRank: {
-      rank: 3,
-      avatar: '',
-      caAddress: 'ELF_wwww....wwww_AELF',
-      count: 1000,
-    },
-  };
-
   const qrcodeDom = useMemo(() => {
     return (
       <div className={styles.QRcodeWrapper}>
@@ -116,11 +84,23 @@ const Referral: React.FC = () => {
 
   const inviteButton = useMemo(() => {
     return (
-      <div className={styles.inviteButton}>
+      <div
+        className={styles.inviteButton}
+        onClick={() => {
+          setIsModalOpen(true);
+        }}>
         <div className={styles.inviteText}>Invite Friends</div>
       </div>
     );
   }, []);
+
+  const loginButton = useMemo(() => {
+    return (
+      <div className={styles.loginButton} onClick={login}>
+        <div className={styles.loginText}>Login</div>
+      </div>
+    );
+  }, [login]);
 
   return (
     <NiceModal.Provider>
@@ -146,10 +126,24 @@ const Referral: React.FC = () => {
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
-          <MyInvitationBlock invitationAmount={myInvitedCount} />
-          {shortLink && isLG ? inviteButton : qrcodeDom}
-          <TopRank data={topRankData} />
+          {true ? (
+            <>
+              <MyInvitationBlock invitationAmount={myInvitedCount} />
+              {shortLink && isLG ? inviteButton : qrcodeDom}
+            </>
+          ) : (
+            loginButton
+          )}
+          <TopRank />
         </div>
+        {isModalOpen && (
+          <QrcodeModal
+            shortLink={shortLink}
+            handleCancel={() => {
+              setIsModalOpen(false);
+            }}
+          />
+        )}
       </div>
     </NiceModal.Provider>
   );

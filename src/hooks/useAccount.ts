@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 
 export default function useAccount() {
-  const { connectWallet, disConnectWallet, walletInfo, walletType } = useConnectWallet();
+  const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected } = useConnectWallet();
   const login = useCallback(async () => {
     try {
       const rs = await connectWallet();
@@ -18,5 +18,5 @@ export default function useAccount() {
       await disConnectWallet();
   }, [disConnectWallet]);
 
-  return { login, logout };
+  return { login, logout, isConnected, walletInfo };
 }

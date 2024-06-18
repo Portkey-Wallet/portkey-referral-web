@@ -205,6 +205,27 @@
       }
     }
 
+    .loginButton {
+      max-width: 600px;
+      margin: 16px auto 48px;
+      width: 100%;
+      height: 48px;
+      padding: 8px;
+      background: #5b5cff;
+      border-radius: 8px;
+      border-bottom: 3px #3334ba solid;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      display: inline-flex;
+      .loginText {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 22px;
+      }
+    }
+
     .referralBtn {
       width: 328px;
       height: 48px;
