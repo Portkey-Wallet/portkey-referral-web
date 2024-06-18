@@ -214,7 +214,7 @@ const CryptoGift: React.FC = () => {
       setSuccessClaimCurrentPage(true);
       latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash);
 
-      await sleep(300);
+      await sleep(1000);
       fetchAndStoreCaHolderInfo();
     },
     [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail],
