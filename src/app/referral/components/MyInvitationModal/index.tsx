@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import NiceModal, { useModal } from '@ebay/nice-modal-react';
@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { List } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
-import { useEffectOnce } from '@/hooks/commonHooks';
+import useAccount from '@/hooks/useAccount';
 
 const ContainerHeight = 434;
 
@@ -33,18 +33,19 @@ interface MyInvitationList {
 const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
   const modal = useModal();
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
+  const { caHash, isConnected } = useAccount();
   const currentList = useRef<MyInvitationList>({
     skip: 0,
     hasNextPage: true,
   });
 
-  const fetchInvitationList = useCallback(async () => {
+  const fetchInvitationList = useCallback(async (caHash: string) => {
     if (!currentList.current.hasNextPage) {
       return;
     }
     try {
       const res = await referralApi.referralRecordList({
-        caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167',
+        caHash,
         skip: currentList.current.skip,
         limit: 10,
       });
@@ -74,9 +75,11 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
     }
   }, [sections]);
 
-  useEffectOnce(() => {
-    fetchInvitationList();
-  });
+  useEffect(() => {
+    if (isConnected && caHash) {
+      fetchInvitationList(caHash);
+    }
+  }, [caHash, fetchInvitationList, isConnected]);
 
   const showInvitation = useMemo(() => {
     return invitationAmount > 0 && sections.length > 0;

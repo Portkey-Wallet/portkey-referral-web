@@ -8,7 +8,7 @@ import { useModal } from '@ebay/nice-modal-react';
 import LeaderBoardModal from '../LeaderBoardModal';
 import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
-import { useEffectOnce } from '@/hooks/commonHooks';
+import useAccount from '@/hooks/useAccount';
 
 interface Item {
   rank: number;
@@ -26,19 +26,30 @@ const TopRanks: React.FC = () => {
   const [data, setData] = useState<TopRanksResponse | null>(null);
   const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
   const leaderBoardModal = useModal(LeaderBoardModal);
+  const {isConnected, caHash} = useAccount();
 
-  useEffectOnce(() => {
+  useEffect(() => {
     (async () => {
-      const res = await referralApi.referralRecordRank({
-        activityEnums: 1,
-        caHash: '2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167',
-      });
-      setData(res);
+      if (isConnected) {
+        // connected: fetch data by caHash
+        if (caHash) {
+          const res = await referralApi.referralRecordRank({
+            caHash,
+            activityEnums: 1,
+          });
+          setData(res);
+        }
+      } else {
+        // not connected: fetch default rank data
+        const res = await referralApi.referralRecordRank({
+          activityEnums: 1,
+        });
+        setData(res);
+      }
     })();
-  });
+  }, [isConnected, caHash]);
 
   const onViewAll = useCallback(() => {
-    console.log('View All Clicked');
     leaderBoardModal.show();
   }, [leaderBoardModal]);
 
@@ -62,7 +73,7 @@ const TopRanks: React.FC = () => {
           dataSource={data?.referralRecordsRank}
           header={
             myRank  && <div className={styles.list_header_wrap}>
-              <div className={styles.list_item_left}>{myRank?.rank ?? '--'}</div>
+              <div className={styles.list_item_left}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
               <div className={styles.list_item_middle}>
                 <Image
                   className={styles.list_item_image}

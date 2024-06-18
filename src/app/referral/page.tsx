@@ -32,13 +32,26 @@ const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
-  const { isConnected, login, walletInfo, logout } = useAccount();
+  const { isConnected, login, walletInfo, logout, caHash } = useAccount();
   const { isLG } = useResponsive();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const fetchTotalCount = useCallback(async (caHash: string) => {
+    try {
+      const totalCount = await referralApi.referralTotalCount({ caHash });
+      console.log('totalCount : ', totalCount);
+      setMyInvitedCount(totalCount ?? 0);
+    } catch (error) {
+      console.error('referralTotalCount error : ', error);
+    }
+  }, []);
+
   useEffect(() => {
-    fetchTotalCount();
-  });
+    if (isConnected && caHash) {
+      fetchTotalCount(caHash);
+    }
+  }, [isConnected, caHash, fetchTotalCount]);
 
   const onLogout = useCallback(async () => {
     await logout();
@@ -48,18 +61,6 @@ const Referral: React.FC = () => {
   useEffect(() => {
     console.log('walletInfo : ', walletInfo);
   }, [walletInfo]);
-
-  const fetchTotalCount = useCallback(async () => {
-    try {
-      const totalCount = await referralApi.referralTotalCount({
-        caHash: 'e47131fc105c8fe0ab230946559f98030cf52c9363f576f639b20ab2b2902f57',
-      });
-      console.log('totalCount : ', totalCount);
-      setMyInvitedCount(totalCount);
-    } catch (error) {
-      console.error('referralTotalCount error : ', error);
-    }
-  }, []);
 
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
@@ -134,16 +135,13 @@ const Referral: React.FC = () => {
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
-              {isConnected && <Dropdown menu={{ items }} placement="bottomRight">
-                <div className={styles.profileButton}>
-                  <Image
-                    className={styles.profileImage}
-                    width={24}
-                    src={userProfile}
-                    alt="avatar"
-                  />
-                </div>
-              </Dropdown>}
+              {isConnected && (
+                <Dropdown menu={{ items }} placement="bottomRight">
+                  <div className={styles.profileButton}>
+                    <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
+                  </div>
+                </Dropdown>
+              )}
             </div>
           </header>
           <div className={styles.referralMainContainer}>

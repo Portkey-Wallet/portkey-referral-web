@@ -26,7 +26,7 @@ export const useReferralHome = (caHash: string) => {
   return { referralRecords, viewTotal, init, next };
 };
 
-export const useReferralRank = (caHash: string) => {
+export const useReferralRank = (caHash?: string) => {
   const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>();
   const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

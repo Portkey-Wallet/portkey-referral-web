@@ -33,7 +33,7 @@ export enum ActivityEnums
 interface IReferralRecordRankParams {
   activityCycleEnums?: ActivityCycleEnums;
   activityEnums?: ActivityEnums;
-  caHash: string;
+  caHash?: string;
 }
 class ReferralApi {
   private referralRecordListConfig: IApiConfig;

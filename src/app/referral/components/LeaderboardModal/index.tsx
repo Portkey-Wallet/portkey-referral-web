@@ -9,15 +9,17 @@ import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
 import { useReferralRank } from '../../hook';
 import { formatStr2EllipsisStr } from '@/utils';
+import useAccount from '@/hooks/useAccount';
 
 const LeaderBoardModal: React.FC = () => {
   const modal = useModal();
+  const { caHash } = useAccount();
   const {
     referralRankList: list,
     myRank,
     loading,
     error,
-  } = useReferralRank('2eb1f55de480b8cd5ec2960eebdc2eb8b12376afc7ee040b5a12ce2196776167');
+  } = useReferralRank(caHash ?? undefined);
 
   const onCancel = useCallback(() => {
     modal.hide();
@@ -66,7 +68,7 @@ const LeaderBoardModal: React.FC = () => {
     return (
       myRank && <div className={styles.myRankWrap}>
         <div className={styles.myRankTextWrap}>
-          <div className={styles.myRankText}>18</div>
+          <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
         </div>
         <div className={styles.myRankMiddleWrap}>
           <Image
@@ -82,7 +84,7 @@ const LeaderBoardModal: React.FC = () => {
           </div>
         </div>
         <div className={styles.myInvitationWrap}>
-          <div className={styles.myInvitationText}>12</div>
+          <div className={styles.myInvitationText}>{myRank.referralTotalCount}</div>
         </div>
       </div>
     );
