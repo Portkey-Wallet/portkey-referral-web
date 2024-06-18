@@ -240,7 +240,6 @@ const CryptoGift: React.FC = () => {
       }
     } catch (error: any) {
       console.log('ERROR', error);
-      singleMessage.error(error?.message || 'Claim failed');
     } finally {
       await sleep(500);
       await latestOnRefreshCryptoGiftDetail.current();
