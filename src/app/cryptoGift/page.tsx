@@ -375,6 +375,10 @@ const CryptoGift: React.FC = () => {
       onAction = onSignUp;
     }
 
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased) {
+      text = `Claim Again`;
+    }
+
     if (claimAgainCountdownSecond || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota) {
       disabled = !!claimAgainCountdownSecond;
       text = !!claimAgainCountdownSecond
