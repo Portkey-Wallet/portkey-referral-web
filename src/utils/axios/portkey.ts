@@ -30,7 +30,6 @@ const api = create({
 
 const portkeyGet = async (url: string, params?: any, config?: any) => {
   const res = await api.get(url, params, config);
-  console.log('portkeyGet!!', res);
   if (res.ok) {
     return res.data as any;
   }

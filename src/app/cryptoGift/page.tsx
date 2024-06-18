@@ -94,13 +94,14 @@ const CryptoGift: React.FC = () => {
   const [btnLoading, setBtnLoading] = useState(false);
 
   const onRefreshCryptoGiftDetail = useDebounceCallback(
-    async (init?: boolean) => {
+    async (init?: boolean, caHash?: string) => {
       try {
         init && setInitializing(true);
         const path = isSignUp ? PORTKEY_API.GET.LOGIN_CRYPTO_GIFT_DETAIL : PORTKEY_API.GET.CRYPTO_GIFT_DETAIL;
 
         const params: { id: string; caHash?: string } = { id: cryptoGiftId };
         if (caHolderInfo?.caHash) params.caHash = caHolderInfo?.caHash;
+        if (caHash) params.caHash = caHolderInfo?.caHash;
         const result: TCryptoDetail = await portkeyGet(path, params);
 
         if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
@@ -212,10 +213,8 @@ const CryptoGift: React.FC = () => {
 
       setIsSignUp(true);
       setSuccessClaimCurrentPage(true);
-
-      await fetchAndStoreCaHolderInfo();
-      await sleep(300);
-      latestOnRefreshCryptoGiftDetail.current();
+      latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash);
+      fetchAndStoreCaHolderInfo();
     },
     [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail],
   );
