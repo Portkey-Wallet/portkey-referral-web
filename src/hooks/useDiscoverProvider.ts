@@ -4,6 +4,7 @@ import elliptic from 'elliptic';
 import { zeroFill } from '@/utils/calculate';
 
 const ec = new elliptic.ec('secp256k1');
+const AElf = require('aelf-sdk');
 
 export default function useDiscoverProvider() {
   const discoverProvider = async () => {
@@ -17,13 +18,22 @@ export default function useDiscoverProvider() {
       return null;
     }
   };
-
-  const getSignatureAndPublicKey = async (data: string) => {
+  const  getSignInfo = async () => {
+    const timestamp = Date.now();
+    const provider = await discoverProvider();
+    const fromManagerAddress = await provider?.request({
+      method: MethodsWallet.GET_WALLET_CURRENT_MANAGER_ADDRESS,
+    });
+    const signInfo =  AElf.utils.sha256(`${fromManagerAddress}-${timestamp}`)
+    return {signInfo, timestamp};
+  };
+  const getSignatureAndPublicKey = async () => {
     const provider = await discoverProvider();
     if (!provider || !provider?.request) throw new Error('Discover not connected');
+    const { signInfo: data, timestamp }= await getSignInfo();
     const signature = await provider.request({
       method: MethodsWallet.GET_WALLET_SIGNATURE,
-      payload: { data, autoSha256: true },
+      payload: { data },
     });
     if (!signature || signature.recoveryParam == null) return {};
     const signatureStr = [
@@ -40,7 +50,7 @@ export default function useDiscoverProvider() {
     );
     const pubKey = ec.keyFromPublic(publicKey).getPublic('hex');
 
-    return { pubKey, signatureStr };
+    return { pubKey, signatureStr, timestamp };
   };
 
   return { discoverProvider, getSignatureAndPublicKey };

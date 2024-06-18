@@ -3,13 +3,9 @@ import { useCallback, useEffect } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 import { getConnectToken } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
-import { ConnectHost } from '@/constants/network';
-const AElf = require('aelf-sdk');
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking, getSignature } = useConnectWallet();
   const { getSignatureAndPublicKey } = useDiscoverProvider();
-  console.log('1111wallet is:', walletInfo);
-  console.log('1111walletType is:', walletType);
   const login = useCallback(async () => {
     try {
       const rs = await connectWallet();
@@ -25,22 +21,15 @@ export default function useAccount() {
         console.error('please connect wallet first!');
         return;
       }
-    const timestamp = Date.now();
-    // const signInfo = Buffer.from(`${walletInfo?.address}-${timestamp}`).toString('hex');
-
-      const signInfo =  AElf.utils.sha256(`${walletInfo?.address}-${timestamp}`)
-      console.log('signInfo origin===', `${walletInfo?.address}-${timestamp}`, 'signInfo', signInfo);
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
-      const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo);
-      console.log("caHash===", caHash);
-      console.log("originChainId===", originChainId);
+      const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
       getConnectToken({
         grant_type: 'signature',
         client_id: 'CAServer_App',
         scope: 'CAServer',
         signature: signatureStr || '',
         pubkey: pubKey|| '',
-        timestamp,
+        timestamp: timestamp || 0,
         ca_hash: caHash,
         chainId: originChainId,
       })
