@@ -66,7 +66,7 @@ const LeaderBoardModal: React.FC = () => {
 
   const myRankDom = useMemo(() => {
     return (
-      myRank && <div className={styles.myRankWrap}>
+      myRank?.caAddress && <div className={styles.myRankWrap}>
         <div className={styles.myRankTextWrap}>
           <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
         </div>

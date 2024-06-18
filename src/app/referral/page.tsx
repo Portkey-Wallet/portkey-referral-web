@@ -28,12 +28,13 @@ import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
+import { sleep } from '@/utils';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
-  const { isConnected, login, walletInfo, logout, caHash } = useAccount();
+  const { isConnected, login, sync, logout, caHash } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
@@ -59,10 +60,6 @@ const Referral: React.FC = () => {
     await logout();
     singleMessage.info('Logout successfully');
   }, [logout]);
-
-  useEffect(() => {
-    console.log('walletInfo : ', walletInfo);
-  }, [walletInfo]);
 
   const onCopyClick = useCallback(() => {
     copyToClipboard(shortLink);
@@ -113,13 +110,21 @@ const Referral: React.FC = () => {
     );
   }, []);
 
+  const onLogin = useCallback(async() => {
+    try {
+      await login();
+    } catch (e: any) {
+      console.error('aaaa connect failed', e.message);
+    }
+  }, [login]);
+
   const loginButton = useMemo(() => {
     return (
-      <div className={styles.loginButton} onClick={login}>
+      <div className={styles.loginButton} onClick={onLogin}>
         <div className={styles.loginText}>Login</div>
       </div>
     );
-  }, [login]);
+  }, [onLogin]);
 
   const items: MenuProps['items'] = [
     {

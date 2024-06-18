@@ -1,5 +1,5 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 import { PORTKEY_REFERRAL_CA_HASH } from '@/constants/storage';
@@ -22,8 +22,6 @@ export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
   const [caHash, setCaHash] = useState<string | null>(isConnected ? getCaHash() : null);
   const { getSignatureAndPublicKey } = useDiscoverProvider();
-  console.log('1111wallet is:', walletInfo);
-  console.log('1111walletType is:', walletType);
   const login = useCallback(async () => {
     try {
       const rs = await connectWallet();
@@ -46,6 +44,7 @@ export default function useAccount() {
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
       setCaHash(caHash);
       saveCaHash(caHash);
+      /*
       const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo);
       console.log("caHash===", caHash);
       console.log("originChainId===", originChainId);
@@ -58,17 +57,22 @@ export default function useAccount() {
         timestamp,
         ca_hash: caHash,
         chainId: originChainId,
-      })
+      })*/
       return caHash;
     } catch (e: any) {
       console.log('connect failed', e.message)
     }
-  }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
+  }, [isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
       await disConnectWallet();
       setCaHash(null);
       removeCaHash();
   }, [disConnectWallet]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    sync();
+  }, [isConnected, sync]);
 
   return { login, sync, logout, isConnected, isLocking, caHash };
 }

@@ -5,7 +5,7 @@ import RankItem from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import { useModal } from '@ebay/nice-modal-react';
-import LeaderBoardModal from '../LeaderBoardModal';
+import LeaderBoardModal from '../LeaderboardModal';
 import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
 import useAccount from '@/hooks/useAccount';
@@ -72,7 +72,7 @@ const TopRanks: React.FC = () => {
           className={styles.list}
           dataSource={data?.referralRecordsRank}
           header={
-            myRank  && <div className={styles.list_header_wrap}>
+            myRank?.caAddress && <div className={styles.list_header_wrap}>
               <div className={styles.list_item_left}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
               <div className={styles.list_item_middle}>
                 <Image
