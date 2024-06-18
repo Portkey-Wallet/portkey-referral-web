@@ -10,6 +10,7 @@ import Axios from 'axios';
 import { BASE_PORTKEY_URL, PORTKEY_API } from './api';
 import { interceptorsBind } from './utils';
 import { create } from 'apisauce';
+import { RefreshTokenConfig, isValidRefreshTokenConfig, queryAuthorization } from './connect';
 
 // Please invoke axiosInit before any usages of the useAxios hook
 export default function initAxios() {
@@ -45,5 +46,17 @@ const portkeyPost = async (url: string, params?: any, config?: any) => {
     return res.data as any;
   }
 };
+const getConnectToken = async (refreshTokenConfig?: RefreshTokenConfig) => {
+  try {
+    if (!refreshTokenConfig || !isValidRefreshTokenConfig(refreshTokenConfig)) return;
+    const authorization = await queryAuthorization(refreshTokenConfig);
+    api.setHeader('Authorization', authorization);
+    // this.emitConnectTokenChange(authorization);
 
-export { PORTKEY_API, portkeyGet, portkeyPost };
+    return authorization;
+  } catch (error) {
+    console.log(error, '====error-getConnectToken');
+    return;
+  }
+};
+export { PORTKEY_API, portkeyGet, portkeyPost, getConnectToken };
