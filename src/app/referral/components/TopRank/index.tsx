@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { List } from 'antd';
+import { List, Avatar } from 'antd';
 import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
@@ -14,6 +14,7 @@ interface Item {
   avatar: string;
   caAddress: string;
   referralTotalCount: number;
+  walletName: string;
 }
 
 interface TopRanksResponse {
@@ -87,7 +88,13 @@ const TopRanks: React.FC = () => {
                   )}
                 </div>
                 <div className={styles.list_item_middle}>
-                  <Image className={styles.list_item_image} width={20} height={20} src={myRank?.avatar ?? ''} alt="" />
+                  <Avatar
+                    className={styles.list_item_image}
+                    style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
+                    size={20}
+                    src={myRank?.avatar}>
+                    {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
+                  </Avatar>
                   <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
                   <div className={styles.me_wrap}>
                     <div className={styles.me_text}>Me</div>
@@ -103,6 +110,7 @@ const TopRanks: React.FC = () => {
               avatar={item.avatar}
               caAddress={item.caAddress}
               count={item.referralTotalCount}
+              walletName={item?.walletName?.length > 0 ? item.walletName[0].toUpperCase() : ''}
             />
           )}
         />
@@ -111,12 +119,14 @@ const TopRanks: React.FC = () => {
         <div className={styles.view_all_text}>View More</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </div>
-      {showLeaderBoardModal && <LeaderBoardModal
-        open={showLeaderBoardModal}
-        onClose={() => {
-          setShowLeaderBoardModal(false);
-        }}
-      />}
+      {showLeaderBoardModal && (
+        <LeaderBoardModal
+          open={showLeaderBoardModal}
+          onClose={() => {
+            setShowLeaderBoardModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };

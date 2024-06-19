@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import Image from 'next/image';
 import RankItem from '../LeaderBoardRankItem';
-import { List, Dropdown } from 'antd';
+import { List, Dropdown, Avatar } from 'antd';
 import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
 import { useReferralRank } from '../../hook';
@@ -68,7 +68,13 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
             <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
           </div>
           <div className={styles.myRankMiddleWrap}>
-            <Image className={styles.list_item_image} width={20} height={20} src={myRank?.avatar ?? ''} alt="" />
+            <Avatar
+              className={styles.list_item_image}
+              style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
+              size={20}
+              src={myRank?.avatar}>
+              {myRank.walletName ? myRank.walletName[0].toUpperCase() : ''}
+            </Avatar>
             <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
             <div className={styles.me_wrap}>
               <div className={styles.me_text}>Me</div>
@@ -92,6 +98,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
               avatar={item.avatar}
               caAddress={item.caAddress}
               count={item.referralTotalCount}
+              walletName={item?.walletName ? item.walletName[0].toUpperCase() : ''}
             />
           )}
         </VirtualList>
