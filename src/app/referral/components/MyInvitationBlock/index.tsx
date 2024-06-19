@@ -1,3 +1,4 @@
+'use client';
 import React, { useCallback } from 'react';
 import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';

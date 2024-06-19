@@ -1,3 +1,4 @@
+'use client';
 import React, { useCallback, useMemo } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';

@@ -4,7 +4,9 @@ import './globals.scss';
 import '../styles/common.scss';
 import '../styles/constants.scss';
 import '../styles/font.scss';
-import Provider from '@/provider';
+// import Provider from '@/provider';
+import { useMemo } from 'react';
+import dynamic from 'next/dynamic';
 
 export const metadata: Metadata = {
   title: 'Portkey Referral Program',
@@ -21,6 +23,9 @@ export const viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const Provider = useMemo(() => {
+    return dynamic(() =>  import('../provider'),{ ssr: false })
+  },[])
   return (
     <html lang="en">
       {/* Global site tag (gtag.js) - Google Analytics  */}

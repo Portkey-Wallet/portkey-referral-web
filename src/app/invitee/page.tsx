@@ -40,6 +40,8 @@ import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
 import { StaticImageData } from 'next/image';
+import React, { Suspense } from 'react';
+
 
 const AElf = require('aelf-sdk');
 ConfigProvider.setGlobalConfig({
@@ -212,7 +214,8 @@ const Referral: React.FC = () => {
   }, [isNewAccount, isSignUp]);
 
   return (
-    <div className={styles.referralPage}>
+   <Suspense fallback={<div>Loading...</div>}>
+     <div className={styles.referralPage}>
       <div className={styles.referralBlueContainer}>
         <header className="row-center">
           <div className={clsx(['flex-row-center', styles.referralHeader])}>
@@ -286,6 +289,7 @@ const Referral: React.FC = () => {
       {/* mask */}
       {isShowMask && <OpenInBrowser />}
     </div>
+   </Suspense>
   );
 };
 

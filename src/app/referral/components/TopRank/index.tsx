@@ -1,3 +1,4 @@
+'use client';
 import React, { useCallback, useEffect, useState } from 'react';
 import { List } from 'antd';
 import styles from './styles.module.scss';

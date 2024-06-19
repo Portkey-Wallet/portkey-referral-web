@@ -1,3 +1,4 @@
+'use client';
 import React, { useMemo } from 'react';
 import styles from './styles.module.scss';
 import { Image } from 'antd';
