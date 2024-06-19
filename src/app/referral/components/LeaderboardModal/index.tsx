@@ -10,16 +10,14 @@ import { directionDown } from '@/assets/images';
 import { useReferralRank } from '../../hook';
 import { formatStr2EllipsisStr } from '@/utils';
 import useAccount from '@/hooks/useAccount';
+import VirtualList from 'rc-virtual-list';
+
+const ContainerHeight = 434;
 
 const LeaderBoardModal: React.FC = () => {
   const modal = useModal();
   const { caHash } = useAccount();
-  const {
-    referralRankList: list,
-    myRank,
-    loading,
-    error,
-  } = useReferralRank(caHash ?? undefined);
+  const { referralRankList: list, myRank, loading, error } = useReferralRank(caHash ?? undefined);
 
   const onCancel = useCallback(() => {
     modal.hide();
@@ -66,50 +64,49 @@ const LeaderBoardModal: React.FC = () => {
 
   const myRankDom = useMemo(() => {
     return (
-      myRank?.caAddress && <div className={styles.myRankWrap}>
-        <div className={styles.myRankTextWrap}>
-          <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
-        </div>
-        <div className={styles.myRankMiddleWrap}>
-          <Image
-            className={styles.list_item_image}
-            width={20}
-            height={20}
-            src={myRank?.avatar ?? ''}
-            alt=""
-          />
-          <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
-          <div className={styles.me_wrap}>
-            <div className={styles.me_text}>Me</div>
+      myRank?.caAddress && (
+        <div className={styles.myRankWrap}>
+          <div className={styles.myRankTextWrap}>
+            <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
+          </div>
+          <div className={styles.myRankMiddleWrap}>
+            <Image className={styles.list_item_image} width={20} height={20} src={myRank?.avatar ?? ''} alt="" />
+            <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+            <div className={styles.me_wrap}>
+              <div className={styles.me_text}>Me</div>
+            </div>
+          </div>
+          <div className={styles.myInvitationWrap}>
+            <div className={styles.myInvitationText}>{myRank.referralTotalCount}</div>
           </div>
         </div>
-        <div className={styles.myInvitationWrap}>
-          <div className={styles.myInvitationText}>{myRank.referralTotalCount}</div>
-        </div>
-      </div>
+      )
     );
   }, [myRank]);
+
+  const listDom = useMemo(() => {
+    return (
+      <List className={styles.list} dataSource={list} header={myRankDom}>
+        <VirtualList data={list ?? []} height={ContainerHeight} itemHeight={47} itemKey="email">
+          {(item, index) => (
+            <RankItem
+              rank={item.rank ?? index + 1}
+              avatar={item.avatar}
+              caAddress={item.caAddress}
+              count={item.referralTotalCount}
+            />
+          )}
+        </VirtualList>
+      </List>
+    );
+  }, [list, myRankDom]);
 
   return (
     <CommonModal title={'LeaderBoard'} open={modal.visible} onCancel={onCancel} afterClose={modal.remove}>
       <div className={styles.container}>
         {selectorDom}
         {headerDom}
-        {list && (
-          <List
-            className={styles.list}
-            dataSource={list}
-            header={myRankDom}
-            renderItem={(item, index) => (
-              <RankItem
-                rank={item.rank ?? index + 1}
-                avatar={item.avatar}
-                caAddress={item.caAddress}
-                count={item.referralTotalCount}
-              />
-            )}
-          />
-        )}
+        {list && listDom}
       </div>
     </CommonModal>
   );
