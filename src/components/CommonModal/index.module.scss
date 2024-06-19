@@ -1,0 +1,30 @@
+@import 'src/styles/common.scss';
+.modal-wrap {
+  // @apply flex justify-center items-center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .modal {
+    max-width: 600px;
+    overflow: hidden;
+  }
+  .titleWrap {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .titleText {
+      color: white;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 26px;
+    }
+  }
+  .modal-mobile {
+    background-color: #161630;
+  }
+  .modal-full-screen {
+    background-color: #161630;
+  }
+}

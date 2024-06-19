@@ -33,7 +33,7 @@ const { getSignatureAndPublicKey } = useDiscoverProvider();
   return <div>
     <Button onClick={async ()=>{
       try {
-     const result = await getSignatureAndPublicKey(signInfo);
+    //  const result = await getSignatureAndPublicKey(signInfo);
      const rst2 = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
       console.log('wfs=== result', result, 'rst2===', rst2);
       }catch (e){

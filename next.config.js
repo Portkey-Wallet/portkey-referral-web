@@ -9,7 +9,7 @@ const rewrites = require('./rewrites/index');
 // }
 
 module.exports = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   async rewrites() {
     return rewrites;
   },
@@ -27,4 +27,15 @@ module.exports = {
   //   },
   // },
   productionBrowserSourceMaps: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'portkey-did.s3.ap-northeast-1.amazonaws.com',
+        port: '',
+        // pathname: '/rmsportal/**',
+        pathname: '/**',
+      },
+    ],
+  },
 };

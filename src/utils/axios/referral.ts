@@ -19,21 +19,21 @@ interface IApiConfig{
   params?: {}, 
   config?: AxiosRequestConfig;
 }
-enum ActivityCycleEnums
+export enum ActivityCycleEnums
 {
     Day = 1,
     Week = 2,
     Month = 3,
     Year = 4
 }
-enum ActivityEnums
+export enum ActivityEnums
 {
     Invition = 1
 }
 interface IReferralRecordRankParams {
   activityCycleEnums?: ActivityCycleEnums;
   activityEnums?: ActivityEnums;
-  caHash: string;
+  caHash?: string;
 }
 class ReferralApi {
   private referralRecordListConfig: IApiConfig;

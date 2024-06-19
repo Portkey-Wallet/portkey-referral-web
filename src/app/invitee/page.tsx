@@ -33,15 +33,15 @@ import AndroidDownloadBtn from '@/components/DownloadButtons/AndroidDownloadBtn'
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
-import { CMS_API, cmsGet } from '@/utils/axios';
+import { CMS_API, cmsGet, getConnectToken } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
-import { devices } from '@portkey/utils';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
 import { StaticImageData } from 'next/image';
 
+const AElf = require('aelf-sdk');
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
   serviceUrl: ApiHost,
@@ -118,13 +118,27 @@ const Referral: React.FC = () => {
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
   const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
-    // console.log('didWallet', didWallet);
-    // setIsSignUp(true);
-    // setIsNewAccount(didWallet.createType === 'register');
+    setIsSignUp(true);
+    setIsNewAccount(didWallet.createType === 'register');
 
     const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
     setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
     setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
+
+    const timestamp = Date.now();
+    const message = Buffer.from(`${didWallet.walletInfo.address}-${timestamp}`).toString('hex');
+    const signature = AElf.wallet.sign(message, didWallet.walletInfo.keyPair).toString('hex');
+    const pubKey = (didWallet.walletInfo.keyPair as any).getPublic('hex');
+    getConnectToken({
+      grant_type: 'signature',
+      client_id: 'CAServer_App',
+      scope: 'CAServer',
+      signature: signature || '',
+      pubkey: pubKey|| '',
+      timestamp: timestamp || 0,
+      ca_hash: didWallet.caInfo.caHash,
+      chainId: didWallet.chainId,
+    })
   }, []);
 
   const onDownload = useCallback(() => {

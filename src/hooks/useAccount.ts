@@ -1,10 +1,27 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
+import { getItem, removeItem, setItem } from '@/utils/storage';
+import { PORTKEY_REFERRAL_CA_HASH } from '@/constants/storage';
 import { getConnectToken } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
+import { ConnectHost } from '@/constants/network';
+const AElf = require('aelf-sdk');
+
+export const saveCaHash = (caHash: string) => {
+  setItem(PORTKEY_REFERRAL_CA_HASH, caHash);
+};
+export const getCaHash = () => {
+  return getItem(PORTKEY_REFERRAL_CA_HASH);
+};
+export const removeCaHash = () => {
+  removeItem(PORTKEY_REFERRAL_CA_HASH);
+};
+
 export default function useAccount() {
-  const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking, getSignature } = useConnectWallet();
+  const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
+  const [caHash, setCaHash] = useState<string | null>(isConnected ? getCaHash() : null);
+  const [synced, setSynced] = useState<boolean>(false);
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
     try {
@@ -40,13 +57,19 @@ export default function useAccount() {
   }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
       await disConnectWallet();
+      setCaHash(null);
+      removeCaHash();
   }, [disConnectWallet]);
   useEffect(() => {
     (async () => {
       if (!isConnected) return;
       const caHash = await sync();
-      console.log('useEffect sync success!', caHash);
+      if(caHash) {
+        setCaHash(caHash);
+        saveCaHash(caHash);
+      }
+      setSynced(true);
     })();
   }, [isConnected, sync]);
-  return { login, sync, logout, isConnected, isLocking };
+  return { login, sync, logout, isConnected, isLocking, caHash, synced };
 }

@@ -20,6 +20,7 @@
       width: 100%;
       height: 80px;
       max-width: $content-width-large-desktop;
+      max-width: $content-width-large-desktop;
       padding: $padding-24;
       display: flex;
       flex-direction: row;
@@ -28,12 +29,15 @@
 
       .portkeyLogo {
         cursor: pointer;
+        width: 142px;
+        height: 32px;
       }
 
       .userLogo {
-        width: 24px;
-        height: 24px;
-        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        border-radius: 24px;
         overflow: hidden;
         cursor: pointer;
       }
@@ -59,7 +63,7 @@
         .bgPortkeyLogo {
           position: absolute;
           left: 0;
-          top: -20px;
+          top: -100px;
           width: 269px;
           height: 278px;
         }
@@ -75,25 +79,27 @@
           position: absolute;
           top: 350px;
           left: -50px;
-          width: 104px;
-          height: 250px;
+          width: 363px;
+          height: 104px;
         }
         .bgLine3 {
           position: absolute;
-          top: 550px;
-          right: 30px;
-          width: 104;
-          height: 72px;
+          bottom: 10px;
+          right: -25px;
+          width: 72px;
+          height: 104px;
           z-index: 0;
+          overflow: hidden;
         }
       }
 
       .cryptoGiftSenderImg {
         display: block;
         margin: 0 auto;
-        width: 36px;
-        height: 36px;
-        border-radius: 18px;
+        width: 48px;
+        height: 48px;
+        line-height: 48px;
+        border-radius: 24px;
         overflow: hidden;
       }
 
@@ -114,6 +120,7 @@
       }
 
       .cryptoGiftImg {
+        overflow: hidden;
         margin-top: 12px;
         width: 343px;
         height: 240px;
@@ -123,15 +130,21 @@
         margin-top: 12px;
         line-height: 26px;
         font-size: 18px;
-        color: #101114;
         font-weight: 500;
         text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        .symbol {
+          color: $primary-color;
+        }
       }
 
       .giftDetailWrap {
         background-color: #ffffff;
         border-radius: 12px;
         padding: 24px 12px;
+        margin-top: 12px;
 
         .willGet {
           font-size: 14px;
@@ -172,25 +185,34 @@
           align-items: center;
 
           .nftItem {
-            border-radius: 6px;
+            border-radius: 8px;
+            overflow: hidden;
           }
 
           .nftName {
+            max-width: 80px;
             position: absolute;
             left: 8px;
             bottom: 22px;
             font-size: 14px;
             line-height: 20px;
             color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
 
           .nftId {
+            max-width: 80px;
             position: absolute;
             left: 8px;
             bottom: 6px;
             font-size: 12px;
             line-height: 16px;
             color: #ffffff;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
 
@@ -211,6 +233,7 @@
           margin: 32px auto 0;
           color: $font-color-yellow;
           .alarmText {
+            margin-top: 2px;
             margin-left: 8px;
             font-size: 14px;
             line-height: 20px;
@@ -230,16 +253,20 @@
         border-radius: 6px;
       }
 
-      .claimBtn {
+      .actionBtn {
         width: 343px;
         height: 48px;
         background-color: $bg-btn;
-        margin-bottom: 16px;
+        margin: 40px 0 16px;
         border-radius: 8px;
         color: #fff;
         cursor: pointer;
         font-size: 16px;
         border: 0;
+      }
+      .disabledBtn {
+        background-color: $bg-disabled-btn-color;
+        cursor: not-allowed;
       }
 
       .btnTips {
@@ -251,6 +278,7 @@
 
       .successSectionWrap {
         max-width: 343px;
+        overflow: hidden;
 
         .successWrap {
           display: flex;
@@ -355,9 +383,9 @@
   }
 
   .downloadWrap {
-    position: relative;
-    bottom: 0;
-    left: -4px;
+    position: absolute;
+    bottom: 8px;
+    left: 12px;
     z-index: 100;
     margin: 0 auto;
     width: 351px;
@@ -369,6 +397,7 @@
     border-radius: 6px;
     border: 1px solid #d7d6ff;
     z-index: 100;
+    cursor: pointer;
 
     .portkeyLogo {
       width: 40px;
@@ -425,6 +454,23 @@
   @media screen and (max-width: $divide-510) {
     .referralBlueContainer {
       padding: 0;
+
+      .referralHeader {
+        .portkeyLogo {
+          cursor: pointer;
+          width: 106.5 px;
+          height: 24px;
+        }
+
+        .userLogo {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
     }
   }
 
