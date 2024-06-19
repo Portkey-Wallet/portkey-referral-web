@@ -1,8 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
-import Image from 'next/image';
-import { List } from 'antd';
+import { List, Avatar } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
 import useAccount from '@/hooks/useAccount';
@@ -105,19 +104,28 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
   const invitationItemDom = useCallback((item: MyInvitationItem) => {
     return (
       <div className={styles.listItemWrap}>
-        <Image className={styles.list_item_image} width={20} height={20} src={item.avatar} alt="" />
+        <Avatar
+          className={styles.list_item_image}
+          style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
+          size={20}
+          src={item.avatar}>
+          {item?.walletName ? item.walletName[0].toUpperCase() : ''}
+        </Avatar>
         <div className={styles.inviteMethod}>{item.isDirectlyInvite ? 'Invite' : 'Indirectly invite'}</div>
         <div className={styles.walletName}>{item.walletName}</div>
       </div>
     );
   }, []);
 
-  const onScroll = useCallback((e: React.UIEvent<HTMLElement, UIEvent>) => {
-    // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
-    if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-      caHash && fetchInvitationList(caHash);
-    }
-  }, [caHash, fetchInvitationList]);
+  const onScroll = useCallback(
+    (e: React.UIEvent<HTMLElement, UIEvent>) => {
+      // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+        caHash && fetchInvitationList(caHash);
+      }
+    },
+    [caHash, fetchInvitationList],
+  );
 
   const invitationListDom = useMemo(() => {
     return (

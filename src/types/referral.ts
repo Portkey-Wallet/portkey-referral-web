@@ -20,6 +20,7 @@ interface IReferralRecordsRankDetail {
   referralTotalCount: number;
   avatar: string;
   rank: number;
+  walletName: string;
 }
 
 
