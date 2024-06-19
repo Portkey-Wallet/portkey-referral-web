@@ -21,6 +21,7 @@ export const removeCaHash = () => {
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
   const [caHash, setCaHash] = useState<string | null>(isConnected ? getCaHash() : null);
+  const [synced, setSynced] = useState<boolean>(false);
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
     try {
@@ -37,42 +38,38 @@ export default function useAccount() {
         console.error('please connect wallet first!');
         return;
       }
-    const timestamp = Date.now();
-    // const signInfo = Buffer.from(`${walletInfo?.address}-${timestamp}`).toString('hex');
-
-      const signInfo =  AElf.utils.sha256(`${walletInfo?.address}-${timestamp}`)
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
-      setCaHash(caHash);
-      saveCaHash(caHash);
-      /*
-      const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo);
-      console.log("caHash===", caHash);
-      console.log("originChainId===", originChainId);
-      getConnectToken({
-        grant_type: 'signature',
-        client_id: 'CAServer_App',
-        scope: 'CAServer',
-        signature: signatureStr || '',
-        pubkey: pubKey|| '',
-        timestamp,
-        ca_hash: caHash,
-        chainId: originChainId,
-      })*/
+      // const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
+      // getConnectToken({
+      //   grant_type: 'signature',
+      //   client_id: 'CAServer_App',
+      //   scope: 'CAServer',
+      //   signature: signatureStr || '',
+      //   pubkey: pubKey|| '',
+      //   timestamp: timestamp || 0,
+      //   ca_hash: caHash,
+      //   chainId: originChainId,
+      // })
       return caHash;
     } catch (e: any) {
       console.log('connect failed', e.message)
     }
-  }, [isConnected, walletInfo, walletType]);
+  }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
       await disConnectWallet();
       setCaHash(null);
       removeCaHash();
   }, [disConnectWallet]);
-
   useEffect(() => {
-    if (!isConnected) return;
-    sync();
+    (async () => {
+      if (!isConnected) return;
+      const caHash = await sync();
+      if(caHash) {
+        setCaHash(caHash);
+        saveCaHash(caHash);
+      }
+      setSynced(true);
+    })();
   }, [isConnected, sync]);
-
-  return { login, sync, logout, isConnected, isLocking, caHash };
+  return { login, sync, logout, isConnected, isLocking, caHash, synced };
 }

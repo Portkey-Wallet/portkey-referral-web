@@ -40,41 +40,44 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
     hasNextPage: true,
   });
 
-  const fetchInvitationList = useCallback(async (caHash: string) => {
-    if (!currentList.current.hasNextPage) {
-      return;
-    }
-    try {
-      const res = await referralApi.referralRecordList({
-        caHash,
-        skip: currentList.current.skip,
-        limit: 10,
-      });
-      const { hasNextPage = true, referralRecords = [] } = res;
-      currentList.current.skip += referralRecords.length;
-      currentList.current.hasNextPage = hasNextPage;
-
-      if (!referralRecords.length) {
+  const fetchInvitationList = useCallback(
+    async (caHash: string) => {
+      if (!currentList.current.hasNextPage) {
         return;
       }
-      referralRecords.forEach((record: MyInvitationItem) => {
-        const date = record.referralDate;
-        const sectionIndex = sections.findIndex((section) => section.date === date);
-        if (sectionIndex === -1) {
-          sections.push({
-            date,
-            items: [record],
-          });
-        } else {
-          sections[sectionIndex].items.push(record);
+      try {
+        const res = await referralApi.referralRecordList({
+          caHash,
+          skip: currentList.current.skip,
+          limit: 10,
+        });
+        const { hasNextPage = true, referralRecords = [] } = res;
+        currentList.current.skip += referralRecords.length;
+        currentList.current.hasNextPage = hasNextPage;
+
+        if (!referralRecords.length) {
+          return;
         }
-      });
-      setSections([...sections]);
-      console.log('sections : ', sections);
-    } catch (error) {
-      console.error('referralRecordList error : ', error);
-    }
-  }, [sections]);
+        referralRecords.forEach((record: MyInvitationItem) => {
+          const date = record.referralDate;
+          const sectionIndex = sections.findIndex((section) => section.date === date);
+          if (sectionIndex === -1) {
+            sections.push({
+              date,
+              items: [record],
+            });
+          } else {
+            sections[sectionIndex].items.push(record);
+          }
+        });
+        setSections([...sections]);
+        console.log('sections : ', sections);
+      } catch (error) {
+        console.error('referralRecordList error : ', error);
+      }
+    },
+    [sections],
+  );
 
   useEffect(() => {
     if (isConnected && caHash) {
@@ -107,25 +110,19 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
   const invitationItemDom = useCallback((item: MyInvitationItem) => {
     return (
       <div className={styles.listItemWrap}>
-        <Image
-          className={styles.list_item_image}
-          width={20}
-          height={20}
-          src={item.avatar}
-          alt=""
-        />
+        <Image className={styles.list_item_image} width={20} height={20} src={item.avatar} alt="" />
         <div className={styles.inviteMethod}>{item.isDirectlyInvite ? 'Invite' : 'Indirectly invite'}</div>
         <div className={styles.walletName}>{item.walletName}</div>
       </div>
     );
   }, []);
 
-  const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
+  const onScroll = useCallback((e: React.UIEvent<HTMLElement, UIEvent>) => {
     // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
     if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-      // fetchInvitationList();
+      caHash && fetchInvitationList(caHash);
     }
-  };
+  }, [caHash, fetchInvitationList]);
 
   const invitationListDom = useMemo(() => {
     return (
@@ -143,7 +140,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
         </VirtualList>
       </List>
     );
-  }, [invitationItemDom, invitationSectionHeaderDom, sections]);
+  }, [invitationItemDom, invitationSectionHeaderDom, onScroll, sections]);
 
   return (
     <CommonModal title={'My Invitation'} open={modal.visible} onCancel={onCancel} afterClose={modal.remove}>

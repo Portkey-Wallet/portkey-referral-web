@@ -73,7 +73,7 @@ const TopRanks: React.FC = () => {
           dataSource={data?.referralRecordsRank}
           header={
             myRank?.caAddress && (
-              <div className={styles.list_header_wrap}>
+              <div className={styles.my_rank_wrap}>
                 <div className={styles.list_item_left}>
                   {showRankImage(myRank?.rank) ? (
                     <Image
