@@ -4,7 +4,6 @@ import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
-import { useModal } from '@ebay/nice-modal-react';
 import LeaderBoardModal from '../LeaderboardModal';
 import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
@@ -25,8 +24,8 @@ interface TopRanksResponse {
 const TopRanks: React.FC = () => {
   const [data, setData] = useState<TopRanksResponse | null>(null);
   const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
-  const leaderBoardModal = useModal(LeaderBoardModal);
   const { isConnected, caHash } = useAccount();
+  const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -50,8 +49,8 @@ const TopRanks: React.FC = () => {
   }, [isConnected, caHash]);
 
   const onViewAll = useCallback(() => {
-    leaderBoardModal.show();
-  }, [leaderBoardModal]);
+    setShowLeaderBoardModal(true);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -88,13 +87,7 @@ const TopRanks: React.FC = () => {
                   )}
                 </div>
                 <div className={styles.list_item_middle}>
-                  <Image
-                    className={styles.list_item_image}
-                    width={20}
-                    height={20}
-                    src={myRank?.avatar ?? ''}
-                    alt=""
-                  />
+                  <Image className={styles.list_item_image} width={20} height={20} src={myRank?.avatar ?? ''} alt="" />
                   <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
                   <div className={styles.me_wrap}>
                     <div className={styles.me_text}>Me</div>
@@ -118,6 +111,12 @@ const TopRanks: React.FC = () => {
         <div className={styles.view_all_text}>View More</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </div>
+      {showLeaderBoardModal && <LeaderBoardModal
+        open={showLeaderBoardModal}
+        onClose={() => {
+          setShowLeaderBoardModal(false);
+        }}
+      />}
     </div>
   );
 };

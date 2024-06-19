@@ -1,57 +1,86 @@
-import React from 'react';
-import { ConfigProvider, Modal as AntdModal, ModalProps as AntdModalProps } from 'antd';
+import React, { useMemo } from 'react';
+import { ConfigProvider, Modal as AntdModal } from 'antd';
 import styles from './index.module.scss';
 import { close } from '@/assets/images';
 import Image from 'next/image';
 import useResponsive from '@/hooks/useResponsive';
-export interface ModalProps extends AntdModalProps {
-  subTitle?: string;
-  width?: number;
-  disableMobileLayout?: boolean;
+import { Popup } from 'antd-mobile';
+
+export interface ModalProps {
+  title: string;
+  open: boolean;
+  onCancel: () => void;
+  children: React.ReactNode;
 }
 function CommonModal(props: ModalProps) {
-  const { children, className, title, subTitle, wrapClassName, width = 440, disableMobileLayout = false } = props;
+  const { children, title, open: isOpen, onCancel } = props;
 
   const { isLG } = useResponsive();
 
-  const modalStyles = {
-    header: {
-      backgroundColor: '#161630',
-    },
-    content: {
-      backgroundColor: '#161630',
-      paddingLeft: 0,
-      paddingRight: 0,
-      paddingBottom: 0,
-    },
-  };
-  return (
-    <ConfigProvider
-      modal={{
-        styles: modalStyles,
-      }}>
-      <AntdModal
-        keyboard={false}
-        maskClosable={false}
-        destroyOnClose={true}
-        closeIcon={<Image src={close} width={20} height={20} alt="close" />}
-        width={width}
-        footer={null}
-        centered
-        {...props}
-        className={`${styles.modal} ${isLG && styles['modal-mobile']} ${
-          isLG && !disableMobileLayout && styles['modal-full-screen']
-        } ${className || ''}`}
-        wrapClassName={`${styles['modal-wrap']} ${wrapClassName}`}
-        title={
+  const webDom = useMemo(() => {
+    const modalStyles = {
+      header: {
+        backgroundColor: '#161630',
+      },
+      content: {
+        backgroundColor: '#161630',
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+      },
+    };
+    return (
+      <ConfigProvider
+        modal={{
+          styles: modalStyles,
+        }}>
+        <AntdModal
+          keyboard={false}
+          maskClosable={false}
+          destroyOnClose={true}
+          closeIcon={<Image src={close} width={20} height={20} alt="close" />}
+          width={440}
+          footer={null}
+          centered
+          {...props}
+          className={styles.modal_web}
+          wrapClassName={`${styles['modal-wrap']}`}
+          title={
+            <div className={styles.titleWrap}>
+              <div className={styles.titleText}>{title}</div>
+            </div>
+          }>
+          {children}
+        </AntdModal>
+      </ConfigProvider>
+    );
+  }, [children, props, title]);
+
+  const mobileDom = useMemo(() => {
+    return (
+      <Popup
+        visible={isOpen}
+        onMaskClick={onCancel}
+        onClose={onCancel}
+        bodyStyle={{
+          height: '80vh',
+          backgroundColor: '#161630',
+          borderTopLeftRadius: '8px',
+          borderTopRightRadius: '8px',
+          overflow: 'hidden',
+        }}>
+        <div className={styles.headerWrap} onClick={onCancel}>
           <div className={styles.titleWrap}>
             <div className={styles.titleText}>{title}</div>
           </div>
-        }>
+          <Image className={styles.closeImage} src={close} width={20} height={20} alt="close" />
+        </div>
         {children}
-      </AntdModal>
-    </ConfigProvider>
-  );
+      </Popup>
+    );
+  }, [children, isOpen, onCancel, title]);
+
+  return isLG ? mobileDom : webDom;
 }
 
 export default React.memo(CommonModal);

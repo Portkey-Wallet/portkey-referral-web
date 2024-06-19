@@ -1,9 +1,8 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';
 import { myInvitationHeaderBg, directionRight, myInvitationLeftBg, myInvitationRightBg } from '@/assets/images';
 import Image from 'next/image';
-import { useModal } from '@ebay/nice-modal-react';
 import MyInvitationModal from '../MyInvitationModal';
 
 interface MyInvitationBlockProps {
@@ -11,10 +10,13 @@ interface MyInvitationBlockProps {
 }
 
 const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount }) => {
-  const myInvitationModal = useModal(MyInvitationModal);
+  const [isMyInvitationModalVisible, setMyInvitationModalVisible] = useState(false);
   const onClickViewAll = useCallback(() => {
-    myInvitationModal.show({ invitationAmount });
-  }, [invitationAmount, myInvitationModal]);
+    setMyInvitationModalVisible(true);
+  }, []);
+  const onClose = useCallback(() => {
+    setMyInvitationModalVisible(false);
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -26,6 +28,7 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
         <div className={styles.view_all_text}>View All</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </div>
+      {isMyInvitationModalVisible && <MyInvitationModal invitationAmount={invitationAmount} open={isMyInvitationModalVisible} onClose={onClose}/>}
     </div>
   );
 };

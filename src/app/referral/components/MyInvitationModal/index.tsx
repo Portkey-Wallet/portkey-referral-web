@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
 import { List } from 'antd';
 import VirtualList from 'rc-virtual-list';
@@ -24,6 +23,8 @@ interface MyInvitationSection {
 
 interface MyInvitationProps {
   invitationAmount: number;
+  open: boolean;
+  onClose: () => void;
 }
 
 interface MyInvitationList {
@@ -31,8 +32,7 @@ interface MyInvitationList {
   hasNextPage: boolean;
 }
 
-const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) => {
-  const modal = useModal();
+const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open, onClose }) => {
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
   const { caHash, isConnected } = useAccount();
   const currentList = useRef<MyInvitationList>({
@@ -89,11 +89,6 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
     return invitationAmount > 0 && sections.length > 0;
   }, [invitationAmount, sections.length]);
 
-  const onCancel = useCallback(() => {
-    console.log('onCancel');
-    modal.hide();
-  }, [modal]);
-
   const headerDom = useMemo(() => {
     return (
       <div className={styles.headerWrap}>
@@ -143,7 +138,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
   }, [invitationItemDom, invitationSectionHeaderDom, onScroll, sections]);
 
   return (
-    <CommonModal title={'My Invitation'} open={modal.visible} onCancel={onCancel} afterClose={modal.remove}>
+    <CommonModal title={'My Invitation'} open={open} onCancel={onClose}>
       <div className={styles.container}>
         {showInvitation ? (
           <div className={styles.contentWrap}>
@@ -160,4 +155,4 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
   );
 };
 
-export default NiceModal.create(MyInvitationModal);
+export default MyInvitationModal;
