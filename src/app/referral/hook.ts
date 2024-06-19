@@ -41,7 +41,7 @@ export const useReferralRank = (caHash?: string) => {
       try {
         setLoading(true);
         const result = await init();
-      } catch (e) {
+      } catch (e: any) {
         setError(e?.message);
       } finally {
         setLoading(false);

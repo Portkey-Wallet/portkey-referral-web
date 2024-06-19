@@ -63,12 +63,15 @@ export default function useAccount() {
   useEffect(() => {
     (async () => {
       if (!isConnected) return;
-      const caHash = await sync();
-      if(caHash) {
-        setCaHash(caHash);
-        saveCaHash(caHash);
+      try{
+        const caHash = await sync();
+        if(caHash) {
+          setCaHash(caHash);
+          saveCaHash(caHash);
+        }
+      }finally{
+        setSynced(true);
       }
-      setSynced(true);
     })();
   }, [isConnected, sync]);
   return { login, sync, logout, isConnected, isLocking, caHash, synced };
