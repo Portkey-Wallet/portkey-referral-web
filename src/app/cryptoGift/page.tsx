@@ -151,8 +151,7 @@ const CryptoGift: React.FC = () => {
   }, [isPortkeyApp, isWeChat]);
 
   const init = useCallback(async () => {
-    await fetchAndStoreCaHolderInfo();
-    await sleep(300);
+     await fetchAndStoreCaHolderInfo();
     latestOnRefreshCryptoGiftDetail.current(true);
   }, [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail]);
 
