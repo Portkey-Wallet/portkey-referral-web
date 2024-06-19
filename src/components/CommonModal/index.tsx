@@ -39,9 +39,7 @@ function CommonModal(props: ModalProps) {
         footer={null}
         centered
         {...props}
-        className={`${styles.modal} ${isLG && styles['modal-mobile']} ${
-          isLG && !disableMobileLayout && styles['modal-full-screen']
-        } ${className || ''}`}
+        className={styles.modal_web}
         wrapClassName={`${styles['modal-wrap']} ${wrapClassName}`}
         title={
           <div className={styles.titleWrap}>
