@@ -71,6 +71,8 @@ ConfigProvider.setGlobalConfig({
 });
 
 const CryptoGift: React.FC = () => {
+  const isFirstRender = useRef(true);
+
   const { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
   const { isPortkeyApp, isWeChat, isMobile } = useEnvironment();
   const { onJumpToPortkeyWeb, onJumpToStore } = useDownload();
@@ -92,6 +94,7 @@ const CryptoGift: React.FC = () => {
 
   const onRefreshCryptoGiftDetail = useDebounceCallback(
     async (init?: boolean, caHash?: string) => {
+      console.log('init', init);
       try {
         init && setInitializing(true);
         const path = isSignUp ? PORTKEY_API.GET.LOGIN_CRYPTO_GIFT_DETAIL : PORTKEY_API.GET.CRYPTO_GIFT_DETAIL;
@@ -151,13 +154,16 @@ const CryptoGift: React.FC = () => {
   }, [isPortkeyApp, isWeChat]);
 
   const init = useCallback(async () => {
-     await fetchAndStoreCaHolderInfo();
+    await fetchAndStoreCaHolderInfo();
     latestOnRefreshCryptoGiftDetail.current(true);
   }, [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     if (!initializing) return;
+    if (!isFirstRender.current) return;
+
     init();
+    isFirstRender.current = false;
   }, [fetchAndStoreCaHolderInfo, init, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
