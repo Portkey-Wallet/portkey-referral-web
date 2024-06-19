@@ -19,6 +19,7 @@
     "@portkey/did-ui-react": "2.0.0-alpha.24",
     "aelf-sdk": "^3.4.2-alpha",
     "antd": "^5.13.0",
+    "antd-mobile": "^5.36.1",
     "apisauce": "^2.1.6",
     "axios-hooks": "^3.1.5",
     "bignumber.js": "^9.1.2",
@@ -34,6 +35,7 @@
     "ua-parser-js": "^1.0.37"
   },
   "devDependencies": {
+    "@types/bn.js": "^5.1.5",
     "@types/elliptic": "^6.4.18",
     "@types/node": "^20",
     "@types/react": "^18",
@@ -45,8 +47,7 @@
     "stylelint": "^16.1.0",
     "stylelint-config-prettier": "^9.0.5",
     "stylelint-config-standard": "^36.0.0",
-    "typescript": "^5",
-    "@types/bn.js": "^5.1.5"
+    "typescript": "^5"
   },
   "engines": {
     "node": ">=18.0.0"
