@@ -1,6 +1,16 @@
 /* stylelint-disable selector-class-pattern */
 @import 'src/styles/variable.scss';
-
+.claimBtn {
+  width: 343px;
+  height: 48px;
+  background-color: $bg-btn;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 16px;
+  border: 0;
+}
 .referralPage {
   width: 100%;
   min-height: 100vh;
@@ -20,29 +30,11 @@
       height: 80px;
       max-width: $content-width-large-desktop;
       padding: $padding-24;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
 
       .portkeyLogo {
         width: 142px;
         height: 32px;
         cursor: pointer;
-      }
-      .profileButton {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 20px;
-        overflow: hidden;
-        .profileImage {
-          width: 24px;
-          height: 24px;
-        }
       }
     }
 
@@ -142,7 +134,7 @@
     margin-top: 96px;
 
     .QRcodeWrapper {
-      margin: 16px auto 48px;
+      margin: -43px auto 80px;
       display: flex;
       align-items: center;
       max-width: 600px;
@@ -172,82 +164,33 @@
         .QRcodeUrlWrapper {
           display: flex;
           align-items: center;
-          justify-content: flex-start;
-          width: 100%;
           margin-top: 8px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
 
           .QRcodeUrl {
             word-wrap: 100%;
-            flex: 1;
+            width: 100%;
+            flex: auto;
             overflow: hidden;
+            color: $font-white;
             text-overflow: ellipsis;
             white-space: nowrap;
-            color: $font-white;
             font-size: 18px;
             font-style: normal;
             font-weight: 400;
             line-height: 22px;
           }
 
-          .QRcodeCopyWrap {
-            background-color: aliceblue;
-            width: 32px;
-            height: 32px;
+          .QRcodeCopy {
+            flex: none;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
             margin-left: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-
-            .QRcodeCopy {
-              width: 16px;
-              height: 16px;
-            }
           }
         }
-      }
-    }
-
-    .inviteButton {
-      max-width: 600px;
-      margin: 16px auto 48px;
-      width: 100%;
-      height: 48px;
-      padding: 8px;
-      background: #5b5cff;
-      border-radius: 8px;
-      border-bottom: 3px #3334ba solid;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      display: inline-flex;
-      .inviteText {
-        color: white;
-        font-size: 18px;
-        font-weight: 500;
-        line-height: 22px;
-      }
-    }
-
-    .loginButton {
-      max-width: 600px;
-      margin: 16px auto 48px;
-      width: 100%;
-      height: 48px;
-      padding: 8px;
-      background: #5b5cff;
-      border-radius: 8px;
-      border-bottom: 3px #3334ba solid;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      display: inline-flex;
-      .loginText {
-        color: white;
-        font-size: 18px;
-        font-weight: 500;
-        line-height: 22px;
       }
     }
 

@@ -4,6 +4,7 @@ import './globals.scss';
 import '../styles/common.scss';
 import '../styles/constants.scss';
 import '../styles/font.scss';
+import Provider from '@/provider';
 
 export const metadata: Metadata = {
   title: 'Portkey Referral Program',
@@ -34,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
       </Script>
 
-      <body>{children}</body>
+      <body><Provider>{children}</Provider></body>
     </html>
   );
 }

@@ -27,4 +27,15 @@ module.exports = {
   //   },
   // },
   productionBrowserSourceMaps: true,
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'portkey-did.s3.ap-northeast-1.amazonaws.com',
+        port: '',
+        // pathname: '/rmsportal/**',
+        pathname: '/**',
+      },
+    ],
+  },
 };
