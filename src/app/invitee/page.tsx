@@ -40,6 +40,7 @@ import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
 import { StaticImageData } from 'next/image';
+import { useEnvironment } from '@/hooks/environment';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -49,11 +50,10 @@ ConfigProvider.setGlobalConfig({
   },
 });
 
-const Referral: React.FC = () => {
+const Invitee: React.FC = () => {
+  const { isMobile, isAndroid, isIOS } = useEnvironment();
   const [isShowMask, setIsShowMask] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
-  const [isAndroid, setIsAndroid] = useState(false);
+
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
@@ -67,7 +67,6 @@ const Referral: React.FC = () => {
   const projectCode = searchParams.get('project_code');
   const shortLink = searchParams.get('shortLink') || '';
   const networkType = searchParams.get('networkType') || '';
-  const [walletInfo, setWalletInfo] = useState();
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -86,7 +85,6 @@ const Referral: React.FC = () => {
       setIsShowMask(true);
       return;
     }
-
 
     // portkey app
     const isPortkeyApp = isPortkey();
@@ -117,6 +115,7 @@ const Referral: React.FC = () => {
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
   const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
+    console.log('didWallet', didWallet);
     setIsSignUp(true);
     setIsNewAccount(didWallet.createType === 'register');
 
@@ -247,7 +246,6 @@ const Referral: React.FC = () => {
             </div>
           )}
         </>
-        )
       </div>
 
       {!isPortkeyApp && (
@@ -273,4 +271,4 @@ const Referral: React.FC = () => {
   );
 };
 
-export default Referral;
+export default Invitee;
