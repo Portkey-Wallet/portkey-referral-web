@@ -31,9 +31,10 @@ module.exports = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'zos.alipayobjects.com', // todo_wade: remove this hostname
+        hostname: 'portkey-did.s3.ap-northeast-1.amazonaws.com',
         port: '',
-        pathname: '/rmsportal/**',
+        // pathname: '/rmsportal/**',
+        pathname: '/**',
       },
     ],
   },

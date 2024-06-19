@@ -75,8 +75,8 @@ const LeaderBoardModal: React.FC = () => {
             className={styles.list_item_image}
             width={20}
             height={20}
-            src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-            alt="avatar"
+            src={myRank?.avatar ?? ''}
+            alt=""
           />
           <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
           <div className={styles.me_wrap}>

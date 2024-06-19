@@ -8,6 +8,7 @@ interface IReferralRecordDetailDto {
   caHash: string;
   walletName: string;
   isDirectlyInvite: boolean;
+  avatar: string;
 }
 
 interface IReferralRecordsRankResponseDto {

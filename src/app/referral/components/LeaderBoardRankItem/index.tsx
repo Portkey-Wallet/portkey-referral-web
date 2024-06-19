@@ -37,8 +37,8 @@ const RankItem: React.FC<RankItemProps> = ({ rank, avatar, caAddress, count }) =
         <Image
           className={styles.item_image}
           width={20}
-          src={'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png'}
-          alt="avatar"
+          src={avatar}
+          alt=""
         />
         <div className={styles.item_title}>{formatStr2EllipsisStr(caAddress, 8)}</div>
       </div>

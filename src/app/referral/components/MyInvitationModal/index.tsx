@@ -14,6 +14,7 @@ interface MyInvitationItem {
   isDirectlyInvite: boolean;
   walletName: string;
   referralDate: string;
+  avatar: string;
 }
 
 interface MyInvitationSection {
@@ -110,8 +111,8 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount }) =>
           className={styles.list_item_image}
           width={20}
           height={20}
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          alt="avatar"
+          src={item.avatar}
+          alt=""
         />
         <div className={styles.inviteMethod}>{item.isDirectlyInvite ? 'Invite' : 'Indirectly invite'}</div>
         <div className={styles.walletName}>{item.walletName}</div>
