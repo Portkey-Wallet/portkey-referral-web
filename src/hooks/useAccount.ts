@@ -39,17 +39,17 @@ export default function useAccount() {
         return;
       }
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
-      const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
-      getConnectToken({
-        grant_type: 'signature',
-        client_id: 'CAServer_App',
-        scope: 'CAServer',
-        signature: signatureStr || '',
-        pubkey: pubKey|| '',
-        timestamp: timestamp || 0,
-        ca_hash: caHash,
-        chainId: originChainId,
-      })
+      // const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
+      // getConnectToken({
+      //   grant_type: 'signature',
+      //   client_id: 'CAServer_App',
+      //   scope: 'CAServer',
+      //   signature: signatureStr || '',
+      //   pubkey: pubKey|| '',
+      //   timestamp: timestamp || 0,
+      //   ca_hash: caHash,
+      //   chainId: originChainId,
+      // })
       return caHash;
     } catch (e: any) {
       console.log('connect failed', e.message)

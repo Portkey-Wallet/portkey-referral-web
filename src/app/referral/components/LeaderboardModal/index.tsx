@@ -12,7 +12,7 @@ import { formatStr2EllipsisStr } from '@/utils';
 import useAccount from '@/hooks/useAccount';
 import VirtualList from 'rc-virtual-list';
 
-const ContainerHeight = 434;
+const ContainerHeight = 400;
 
 const LeaderBoardModal: React.FC = () => {
   const modal = useModal();
@@ -41,7 +41,6 @@ const LeaderBoardModal: React.FC = () => {
     });
     return (
       <Dropdown menu={{ items }} trigger={['click']}>
-        {/* <a onClick={(e) => e.preventDefault()}>Hover me</a> */}
         <div className={styles.dropdownWrap}>
           <div className={styles.dropdown}>
             <div className={styles.text}>All</div>
