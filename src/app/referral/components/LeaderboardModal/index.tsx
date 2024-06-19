@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
-import NiceModal, { useModal } from '@ebay/nice-modal-react';
 import Image from 'next/image';
 import RankItem from '../LeaderBoardRankItem';
 import { List, Dropdown } from 'antd';
@@ -14,14 +13,14 @@ import VirtualList from 'rc-virtual-list';
 
 const ContainerHeight = 400;
 
-const LeaderBoardModal: React.FC = () => {
-  const modal = useModal();
+interface LeaderBoardModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) => {
   const { caHash } = useAccount();
   const { referralRankList: list, myRank, loading, error } = useReferralRank(caHash ?? undefined);
-
-  const onCancel = useCallback(() => {
-    modal.hide();
-  }, [modal]);
 
   const selectorDom = useMemo(() => {
     const selectItems = ['All'];
@@ -101,7 +100,7 @@ const LeaderBoardModal: React.FC = () => {
   }, [list, myRankDom]);
 
   return (
-    <CommonModal title={'LeaderBoard'} open={modal.visible} onCancel={onCancel} afterClose={modal.remove}>
+    <CommonModal title={'LeaderBoard'} open={open} onCancel={onClose}>
       <div className={styles.container}>
         {selectorDom}
         {headerDom}
@@ -111,4 +110,4 @@ const LeaderBoardModal: React.FC = () => {
   );
 };
 
-export default NiceModal.create(LeaderBoardModal);
+export default LeaderBoardModal;
