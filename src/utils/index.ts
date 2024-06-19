@@ -23,6 +23,14 @@ export const formatStr2EllipsisStr = (address = '', digit = 8, type: 'middle' | 
 
   if (len < 2 * digit) return address;
   const pre = address.substring(0, digit);
-  const suffix = address.substring(len - digit - 1);
+  const suffix = address.substring(len - digit);
   return `${pre}...${suffix}`;
+};
+
+export const formatAelfAddress = (address = ''): string => {
+  if (!address) return '';
+
+  const pre = 'ELF_';
+  const suffix = '_AELF';
+  return `${pre}${address}${suffix}`;
 };

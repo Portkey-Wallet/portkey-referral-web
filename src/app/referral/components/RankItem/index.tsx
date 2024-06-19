@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { Image, Avatar } from 'antd';
 import BaseImage from '@/components/BaseImage';
 import { invitationRankFirst, invitationRankSecond, invitationRankThird } from '@/assets/images';
-import { formatStr2EllipsisStr } from '@/utils';
+import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 
 interface RankItemProps {
   rank: number;
@@ -42,7 +42,7 @@ const RankItem: React.FC<RankItemProps> = ({ rank, avatar, caAddress, count, wal
           src={avatar}>
           {walletName}
         </Avatar>
-        <div className={styles.item_title}>{formatStr2EllipsisStr(caAddress, 8)}</div>
+        <div className={styles.item_title}>{formatStr2EllipsisStr(formatAelfAddress(caAddress), 8)}</div>
       </div>
       <div className={styles.item_right}>{count}</div>
     </div>
