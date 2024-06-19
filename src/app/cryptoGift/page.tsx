@@ -150,11 +150,16 @@ const CryptoGift: React.FC = () => {
     }
   }, [isPortkeyApp, isWeChat]);
 
+  const init = useCallback(async () => {
+    await fetchAndStoreCaHolderInfo();
+    await sleep(300);
+    latestOnRefreshCryptoGiftDetail.current(true);
+  }, [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail]);
+
   useLayoutEffect(() => {
     if (!initializing) return;
-    fetchAndStoreCaHolderInfo();
-    latestOnRefreshCryptoGiftDetail.current(true);
-  }, [fetchAndStoreCaHolderInfo, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
+    init();
+  }, [fetchAndStoreCaHolderInfo, init, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
