@@ -10,8 +10,9 @@ import { useReferralRank } from '../../hook';
 import { formatStr2EllipsisStr } from '@/utils';
 import useAccount from '@/hooks/useAccount';
 import VirtualList from 'rc-virtual-list';
+import { useEffectOnce } from '@/hooks/commonHooks';
 
-const ContainerHeight = 400;
+const ContainerHeight = 350;
 
 interface LeaderBoardModalProps {
   open: boolean;
@@ -20,7 +21,20 @@ interface LeaderBoardModalProps {
 
 const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) => {
   const { caHash } = useAccount();
-  const { referralRankList: list, myRank, loading, error } = useReferralRank(caHash ?? undefined);
+  const { referralRankList: list, myRank, next, init } = useReferralRank(caHash ?? undefined);
+  useEffectOnce(() => {
+    init();
+  });
+
+  const onScroll = useCallback(
+    (e: React.UIEvent<HTMLElement, UIEvent>) => {
+      // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+        caHash && next();
+      }
+    },
+    [caHash, next],
+  );
 
   const selectorDom = useMemo(() => {
     const selectItems = ['All'];
@@ -91,20 +105,20 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
   const listDom = useMemo(() => {
     return (
       <List className={styles.list} dataSource={list} header={myRankDom}>
-        <VirtualList data={list ?? []} height={ContainerHeight} itemHeight={47} itemKey="email">
+        <VirtualList data={list ?? []} height={ContainerHeight} itemHeight={47} itemKey="email" onScroll={onScroll}>
           {(item, index) => (
             <RankItem
               rank={item.rank ?? index + 1}
               avatar={item.avatar}
               caAddress={item.caAddress}
-              count={item.referralTotalCount}
+              referralTotalCount={item.referralTotalCount}
               walletName={item?.walletName ? item.walletName[0].toUpperCase() : ''}
             />
           )}
         </VirtualList>
       </List>
     );
-  }, [list, myRankDom]);
+  }, [list, myRankDom, onScroll]);
 
   return (
     <CommonModal title={'LeaderBoard'} open={open} onCancel={onClose}>

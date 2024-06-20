@@ -1,57 +1,71 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { List, Avatar } from 'antd';
 import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import LeaderBoardModal from '../LeaderboardModal';
-import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
-import useAccount from '@/hooks/useAccount';
+import { useReferralRank } from '../../hook';
 
-interface Item {
-  rank: number;
-  avatar: string;
-  caAddress: string;
-  referralTotalCount: number;
-  walletName: string;
-}
+const TopRanks: React.FC<{ isLogin: boolean; caHash?: string }> = ({ isLogin, caHash }) => {
 
-interface TopRanksResponse {
-  referralRecordsRank: Item[];
-  currentUserReferralRecordsRankDetail: Item;
-}
-
-const TopRanks: React.FC = () => {
-  const [data, setData] = useState<TopRanksResponse | null>(null);
-  const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
-  const { isConnected, caHash } = useAccount();
+  const { referralRankList, init, next, myRank } = useReferralRank(caHash ?? undefined);
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      if (isConnected) {
-        // connected: fetch data by caHash
-        if (caHash) {
-          const res = await referralApi.referralRecordRank({
-            caHash,
-            activityEnums: 1,
-          });
-          setData(res);
-        }
-      } else {
-        // not connected: fetch default rank data
-        const res = await referralApi.referralRecordRank({
-          activityEnums: 1,
-        });
-        setData(res);
-      }
-    })();
-  }, [isConnected, caHash]);
+    init();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLogin]);
+
+  useEffect(() => {
+    if (referralRankList.length < 0) return;
+    const lastItem = referralRankList[referralRankList.length - 1];
+    if (lastItem && lastItem.rank <= 10) {
+      next();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referralRankList]);
 
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
   }, []);
+
+  const myRankDom = useMemo(() => {
+    return (
+      myRank?.caAddress && (
+        <div className={styles.my_rank_wrap}>
+          <div className={styles.list_item_left}>
+            {showRankImage(myRank?.rank) ? (
+              <Image
+                width={25}
+                className={styles.rank_image}
+                src={RankImages[myRank?.rank - 1]}
+                priority
+                alt="invitation rank"
+              />
+            ) : (
+              <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
+            )}
+          </div>
+          <div className={styles.list_item_middle}>
+            <Avatar
+              className={styles.list_item_image}
+              style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
+              size={20}
+              src={myRank?.avatar}>
+              {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
+            </Avatar>
+            <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+            <div className={styles.me_wrap}>
+              <div className={styles.me_text}>Me</div>
+            </div>
+          </div>
+          <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
+        </div>
+      )
+    );
+  }, [myRank]);
 
   return (
     <div className={styles.container}>
@@ -70,46 +84,14 @@ const TopRanks: React.FC = () => {
         </div>
         <List
           className={styles.list}
-          dataSource={data?.referralRecordsRank}
-          header={
-            myRank?.caAddress && (
-              <div className={styles.my_rank_wrap}>
-                <div className={styles.list_item_left}>
-                  {showRankImage(myRank?.rank) ? (
-                    <Image
-                      width={25}
-                      className={styles.rank_image}
-                      src={RankImages[myRank?.rank - 1]}
-                      priority
-                      alt="invitation rank"
-                    />
-                  ) : (
-                    <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
-                  )}
-                </div>
-                <div className={styles.list_item_middle}>
-                  <Avatar
-                    className={styles.list_item_image}
-                    style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
-                    size={20}
-                    src={myRank?.avatar}>
-                    {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
-                  </Avatar>
-                  <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
-                  <div className={styles.me_wrap}>
-                    <div className={styles.me_text}>Me</div>
-                  </div>
-                </div>
-                <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
-              </div>
-            )
-          }
+          dataSource={referralRankList}
+          header={myRankDom}
           renderItem={(item, index) => (
             <RankItem
               rank={item.rank ?? index + 1}
               avatar={item.avatar}
               caAddress={item.caAddress}
-              count={item.referralTotalCount}
+              referralTotalCount={item.referralTotalCount}
               walletName={item?.walletName?.length > 0 ? item.walletName[0].toUpperCase() : ''}
             />
           )}
