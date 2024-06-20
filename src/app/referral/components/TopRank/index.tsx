@@ -5,41 +5,27 @@ import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import LeaderBoardModal from '../LeaderboardModal';
-import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
-import useAccount from '@/hooks/useAccount';
-import { IReferralRecordsRankResponseDto } from '@/types/referral';
+import { useReferralRank } from '../../hook';
 
-const TopRanks: React.FC = () => {
-  const [data, setData] = useState<IReferralRecordsRankResponseDto | null>(null);
-  const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
-  const { isConnected, caHash } = useAccount();
+const TopRanks: React.FC<{ isLogin: boolean; caHash?: string }> = ({ isLogin, caHash }) => {
+
+  const { referralRankList, init, next, myRank } = useReferralRank(caHash ?? undefined);
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      if (isConnected) {
-        // connected: fetch data by caHash
-        if (caHash) {
-          const res = await referralApi.referralRecordRank({
-            caHash,
-            activityEnums: 1,
-            skip: 0,
-            limit: 10,
-          });
-          setData(res);
-        }
-      } else {
-        // not connected: fetch default rank data
-        const res = await referralApi.referralRecordRank({
-          activityEnums: 1,
-          skip: 0,
-          limit: 10,
-        });
-        setData(res);
-      }
-    })();
-  }, [isConnected, caHash]);
+    init();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLogin]);
+
+  useEffect(() => {
+    if (referralRankList.length < 0) return;
+    const lastItem = referralRankList[referralRankList.length - 1];
+    if (lastItem && lastItem.rank <= 10) {
+      next();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [referralRankList]);
 
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
@@ -98,7 +84,7 @@ const TopRanks: React.FC = () => {
         </div>
         <List
           className={styles.list}
-          dataSource={data?.referralRecordsRank}
+          dataSource={referralRankList}
           header={myRankDom}
           renderItem={(item, index) => (
             <RankItem

@@ -28,7 +28,6 @@ import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
-import { sleep } from '@/utils';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -176,7 +175,7 @@ const Referral: React.FC = () => {
           ) : (
             loginButton
           )}
-          <TopRank />
+          <TopRank isLogin={isConnected && Boolean(caHash)} caHash={caHash ?? undefined}/>
         </div>
         {isModalOpen && (
           <QrcodeModal

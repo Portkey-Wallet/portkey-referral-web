@@ -32,13 +32,14 @@ export const useReferralHome = (caHash: string) => {
 export const useReferralRank = (caHash?: string) => {
   const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>([]);
   const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>('');
   const pageRef = useRef<{ hasNext: boolean; skip: number; limit: number }>(INIT_PAGE);
   const next = useCallback(
     async (init?: boolean) => {
-      if (!caHash) return;
       if (!pageRef.current?.hasNext) return;
+      if (init) {
+        setReferralRankList([]);
+        setMyRank(null);
+      }
       const result = await referralApi.referralRecordRank({
         caHash,
         activityEnums: ActivityEnums.Invitation,
@@ -60,18 +61,5 @@ export const useReferralRank = (caHash?: string) => {
     pageRef.current = INIT_PAGE;
     return next(true);
   }, [next]);
-  // useEffect(() => {
-  //   (async () => {
-  //     try {
-  //       console.log('aaa useReferralRank caHash : ', caHash);
-  //       setLoading(true);
-  //       await init();
-  //     } catch (e: any) {
-  //       setError(e?.message);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   })();
-  // }, [caHash, init]);
-  return { referralRankList, myRank, loading, error, init, next };
+  return { referralRankList, myRank, init, next };
 };
