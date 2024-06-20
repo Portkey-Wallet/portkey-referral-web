@@ -23,8 +23,8 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const Provider = useMemo(() => {
-    return dynamic(() =>  import('../provider'),{ ssr: false })
-  },[])
+    return dynamic(() => import('../provider'), { ssr: false });
+  }, []);
   return (
     <html lang="en">
       {/* Global site tag (gtag.js) - Google Analytics  */}
@@ -39,7 +39,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         `}
       </Script>
 
-      <body><Provider>{children}</Provider></body>
+      <body>
+        <Provider>{children}</Provider>
+      </body>
     </html>
   );
 }
