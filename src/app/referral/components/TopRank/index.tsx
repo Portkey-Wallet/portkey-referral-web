@@ -5,7 +5,7 @@ import RankItem, { showRankImage, RankImages } from '../RankItem';
 import { directionRight } from '@/assets/images';
 import Image from 'next/image';
 import LeaderBoardModal from '../LeaderboardModal';
-import { formatStr2EllipsisStr } from '@/utils';
+import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { useReferralRank } from '../../hook';
 
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
@@ -56,7 +56,7 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
               src={myRank?.avatar}>
               {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
             </Avatar>
-            <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+            <div className={styles.list_item_title}>{formatStr2EllipsisStr(formatAelfAddress(myRank?.caAddress), 8)}</div>
             <div className={styles.me_wrap}>
               <div className={styles.me_text}>Me</div>
             </div>
