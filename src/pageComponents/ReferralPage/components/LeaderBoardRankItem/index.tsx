@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import { Avatar } from 'antd';
 import BaseImage from '@/components/BaseImage';
 import { invitationRankFirst, invitationRankSecond, invitationRankThird } from '@/assets/images';
-import { formatStr2EllipsisStr } from '@/utils';
+import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { IReferralRecordsRankDetail } from '@/types/referral';
 
 const RankImages = [invitationRankFirst, invitationRankSecond, invitationRankThird];
@@ -35,7 +35,7 @@ const RankItem: React.FC<IReferralRecordsRankDetail> = ({ rank, avatar, caAddres
           src={avatar}>
           {walletName}
         </Avatar>
-        <div className={styles.item_title}>{formatStr2EllipsisStr(caAddress, 8)}</div>
+        <div className={styles.item_title}>{formatStr2EllipsisStr(formatAelfAddress(caAddress), 8)}</div>
       </div>
       <div className={styles.item_right}>{count}</div>
     </div>
