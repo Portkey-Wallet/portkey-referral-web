@@ -12,6 +12,7 @@ export default function useAccount() {
   const login = useCallback(async () => {
     try {
       const walletInfo = await connectWallet();
+      console.log('wfs=== walletInfo', walletInfo);
       return true;
     } catch (e: any) {
       console.log('connect failed', e.message)

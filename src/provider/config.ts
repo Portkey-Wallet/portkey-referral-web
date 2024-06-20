@@ -47,6 +47,7 @@ const wallets = [
     appName: APP_NAME,
     chainId: CHAIN_ID,
     autoShowUnlock: true,
+    noNeedForConfirm: true,
   }),
   new PortkeyDiscoverWallet({
     networkType: NETWORK_TYPE,
