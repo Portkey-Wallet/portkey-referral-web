@@ -8,7 +8,6 @@ import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
 import { useReferralRank } from '../../hook';
 import { formatStr2EllipsisStr } from '@/utils';
-import useAccount from '@/hooks/useAccount';
 import VirtualList from 'rc-virtual-list';
 import { useEffectOnce } from '@/hooks/commonHooks';
 
@@ -20,8 +19,7 @@ interface LeaderBoardModalProps {
 }
 
 const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) => {
-  const { caHash } = useAccount();
-  const { referralRankList: list, myRank, next, init } = useReferralRank(caHash ?? undefined);
+  const { referralRankList: list, myRank, next, init } = useReferralRank();
   useEffectOnce(() => {
     init();
   });
@@ -30,10 +28,10 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
     (e: React.UIEvent<HTMLElement, UIEvent>) => {
       // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
       if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-        caHash && next();
+        next();
       }
     },
-    [caHash, next],
+    [next],
   );
 
   const selectorDom = useMemo(() => {

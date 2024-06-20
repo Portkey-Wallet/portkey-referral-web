@@ -1,26 +1,11 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
-import { getItem, removeItem, setItem } from '@/utils/storage';
-import { PORTKEY_REFERRAL_CA_HASH } from '@/constants/storage';
 import { getConnectToken } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
-import { ConnectHost } from '@/constants/network';
-const AElf = require('aelf-sdk');
-
-export const saveCaHash = (caHash: string) => {
-  setItem(PORTKEY_REFERRAL_CA_HASH, caHash);
-};
-export const getCaHash = () => {
-  return getItem(PORTKEY_REFERRAL_CA_HASH);
-};
-export const removeCaHash = () => {
-  removeItem(PORTKEY_REFERRAL_CA_HASH);
-};
 
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
-  const [caHash, setCaHash] = useState<string | null>(isConnected ? getCaHash() : null);
   const [synced, setSynced] = useState<boolean>(false);
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
@@ -39,40 +24,38 @@ export default function useAccount() {
         return;
       }
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
-      // const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
-      // getConnectToken({
-      //   grant_type: 'signature',
-      //   client_id: 'CAServer_App',
-      //   scope: 'CAServer',
-      //   signature: signatureStr || '',
-      //   pubkey: pubKey|| '',
-      //   timestamp: timestamp || 0,
-      //   ca_hash: caHash,
-      //   chainId: originChainId,
-      // })
-      return caHash;
+      const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
+      const token  = await getConnectToken({
+        grant_type: 'signature',
+        client_id: 'CAServer_App',
+        scope: 'CAServer',
+        signature: signatureStr || '',
+        pubkey: pubKey|| '',
+        timestamp: timestamp || 0,
+        ca_hash: caHash,
+        chainId: originChainId,
+      })
+      return token;
     } catch (e: any) {
       console.log('connect failed', e.message)
     }
   }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
-      setCaHash(null);
-      removeCaHash();
       await disConnectWallet();
   }, [disConnectWallet]);
   useEffect(() => {
     (async () => {
       if (!isConnected) return;
       try{
-        const caHash = await sync();
-        if(caHash) {
-          setCaHash(caHash);
-          saveCaHash(caHash);
-        }
-      }finally{
+        setSynced(false);
+        const token = await sync();
+        console.log('jwt token:', token);
+      } finally {
         setSynced(true);
       }
     })();
-  }, [isConnected, sync]);
-  return { login, sync, logout, isConnected, isLocking, caHash, synced };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected]);
+  const isLogin = useMemo(() => isConnected && synced, [isConnected, synced]);
+  return { login, sync, logout, isLogin, isLocking, isConnected };
 }

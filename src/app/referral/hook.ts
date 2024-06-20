@@ -22,14 +22,14 @@ export const useReferralHome = (caHash: string) => {
   }, [next]);
   useEffect(() => {
     (async () => {
-      const result = await referralApi.referralTotalCount({ caHash });
+      const result = await referralApi.referralTotalCount();
       setViewTotal(result + '');
     })();
   }, [caHash]);
   return { referralRecords, viewTotal, init, next };
 };
 
-export const useReferralRank = (caHash?: string) => {
+export const useReferralRank = () => {
   const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>([]);
   const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
   const pageRef = useRef<{ hasNext: boolean; skip: number; limit: number }>(INIT_PAGE);
@@ -41,7 +41,6 @@ export const useReferralRank = (caHash?: string) => {
         setMyRank(null);
       }
       const result = await referralApi.referralRecordRank({
-        caHash,
         activityEnums: ActivityEnums.Invitation,
         skip: pageRef.current?.skip,
         limit: pageRef.current?.limit,
@@ -55,7 +54,7 @@ export const useReferralRank = (caHash?: string) => {
       const newRankList = init ? result.referralRecordsRank : referralRankList.concat(result.referralRecordsRank);
       setReferralRankList([...newRankList]);
     },
-    [caHash, referralRankList],
+    [referralRankList],
   );
   const init = useCallback(() => {
     pageRef.current = INIT_PAGE;

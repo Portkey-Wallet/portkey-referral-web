@@ -8,9 +8,9 @@ import LeaderBoardModal from '../LeaderboardModal';
 import { formatStr2EllipsisStr } from '@/utils';
 import { useReferralRank } from '../../hook';
 
-const TopRanks: React.FC<{ isLogin: boolean; caHash?: string }> = ({ isLogin, caHash }) => {
+const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
 
-  const { referralRankList, init, next, myRank } = useReferralRank(caHash ?? undefined);
+  const { referralRankList, init, next, myRank } = useReferralRank();
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
 
   useEffect(() => {
