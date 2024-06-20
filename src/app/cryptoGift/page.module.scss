@@ -34,10 +34,10 @@
       }
 
       .userLogo {
-        width: 48px;
-        height: 48px;
-        line-height: 48px;
-        border-radius: 24px;
+        width: 40x;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 20px;
         overflow: hidden;
         cursor: pointer;
       }
@@ -46,10 +46,9 @@
     .referralMainContainer {
       position: relative;
       z-index: 100;
-      max-width: 375px;
       padding: 0 16px;
-      width: 100%;
-      height: calc(100vh - 80px);
+      width: 375px;
+      height: calc(100% - 80px);
       margin: auto;
 
       .bgWrap {
@@ -98,6 +97,7 @@
         margin: 0 auto;
         width: 48px;
         height: 48px;
+        font-size: 20px;
         line-height: 48px;
         border-radius: 24px;
         overflow: hidden;
@@ -119,9 +119,12 @@
         color: #979aa1;
       }
 
+      .cryptoGiftTopDom {
+        height: 10px;
+      }
+
       .cryptoGiftImg {
         overflow: hidden;
-        margin-top: 12px;
         width: 343px;
         height: 240px;
       }
@@ -130,7 +133,7 @@
         margin-top: 12px;
         line-height: 26px;
         font-size: 18px;
-        font-weight: 500;
+        font-weight: $font-wight-bold;
         text-align: center;
         display: flex;
         flex-wrap: wrap;
@@ -156,7 +159,7 @@
         .symbol {
           margin-top: 12px;
           font-size: 30px;
-          font-weight: 500;
+          font-weight: $font-wight-bold;
           line-height: 38px;
           color: $font-color-primary;
           text-align: center;
@@ -183,43 +186,47 @@
           display: flex;
           justify-content: center;
           align-items: center;
+          overflow: hidden;
 
           .nftItem {
             border-radius: 8px;
             overflow: hidden;
           }
 
-          .nftName {
-            max-width: 80px;
+          .nftInfoWrap {
             position: absolute;
-            left: 8px;
-            bottom: 22px;
-            font-size: 14px;
-            line-height: 20px;
-            color: #ffffff;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-          }
+            left: 0px;
+            bottom: 0px;
+            right: 0;
+            height: 48px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 0 0 8px 8px;
+            padding: 6px 8px;
 
-          .nftId {
-            max-width: 80px;
-            position: absolute;
-            left: 8px;
-            bottom: 6px;
-            font-size: 12px;
-            line-height: 16px;
-            color: #ffffff;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            .nftName {
+              font-size: 14px;
+              line-height: 20px;
+              color: #ffffff;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .nftId {
+              font-size: 12px;
+              line-height: 16px;
+              color: #ffffff;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
           }
         }
 
         .nftCount {
           font-size: 30px;
           margin-top: 4px;
-          font-weight: 500;
+          font-weight: $font-wight-bold;
           line-height: 38px;
           color: $font-color-primary;
           text-align: center;
@@ -289,13 +296,13 @@
           .amount-symbol {
             color: $primary-color;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: $font-wight-bold;
             line-height: 24px;
           }
           .toAddress {
             color: $font-color-primary;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: $font-wight-bold;
             line-height: 24px;
           }
         }
@@ -308,6 +315,7 @@
           line-height: 22px;
           color: $primary-color;
           margin-top: 8px;
+          font-weight: $font-wight-bold;
         }
 
         .shareBtnWrap {
@@ -326,7 +334,7 @@
             margin-left: 8px;
             font-size: 16px;
             line-height: 24px;
-            font-weight: 500;
+            font-weight: $font-wight-bold;
           }
         }
       }
@@ -360,7 +368,7 @@
         color: #fff;
         text-align: center;
         font-size: 16px;
-        font-weight: 400;
+        font-weight: $font-wight-bold;
         line-height: 22px;
         position: relative;
         z-index: 1;
@@ -406,7 +414,7 @@
     .downloadTips {
       font-size: 14px;
       line-height: 20px;
-      font-weight: 500;
+      font-weight: $font-wight-bold;
       margin: 0 8px;
     }
     .downloadBtn {
@@ -414,7 +422,7 @@
       line-height: 24px;
       padding: 0 12px;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: $font-wight-bold;
       color: #ffffff;
       text-align: center;
       border-radius: 4px;
@@ -456,9 +464,11 @@
       padding: 0;
 
       .referralHeader {
+        height: 60px;
+        margin-bottom: 12px;
         .portkeyLogo {
           cursor: pointer;
-          width: 106.5 px;
+          width: 106px;
           height: 24px;
         }
 
