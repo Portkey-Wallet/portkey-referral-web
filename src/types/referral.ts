@@ -1,9 +1,10 @@
-interface IReferralRecordResponseDto {
+export interface IReferralRecordResponseDto {
   hasNextPage: boolean;
   lastDayReferralTotalCount: number;
   referralRecords: IReferralRecordDetailDto[];
 }
-interface IReferralRecordDetailDto {
+
+export interface IReferralRecordDetailDto {
   referralDate: string;
   caHash: string;
   walletName: string;
@@ -11,11 +12,13 @@ interface IReferralRecordDetailDto {
   avatar: string;
 }
 
-interface IReferralRecordsRankResponseDto {
+export interface IReferralRecordsRankResponseDto {
+  hasNext: boolean;
   referralRecordsRank: IReferralRecordsRankDetail[];
   currentUserReferralRecordsRankDetail: IReferralRecordsRankDetail;
 }
-interface IReferralRecordsRankDetail {
+
+export interface IReferralRecordsRankDetail {
   caAddress: string;
   referralTotalCount: number;
   avatar: string;
@@ -23,8 +26,7 @@ interface IReferralRecordsRankDetail {
   walletName: string;
 }
 
-
-interface IActivityDateRange {
+export interface IActivityDateRange {
   startDate: string;
   endDate: string;
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { List, Avatar } from 'antd';
 import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
@@ -36,6 +36,8 @@ const TopRanks: React.FC = () => {
           const res = await referralApi.referralRecordRank({
             caHash,
             activityEnums: 1,
+            skip: 0,
+            limit: 10,
           });
           setData(res);
         }
@@ -43,6 +45,8 @@ const TopRanks: React.FC = () => {
         // not connected: fetch default rank data
         const res = await referralApi.referralRecordRank({
           activityEnums: 1,
+          skip: 0,
+          limit: 10,
         });
         setData(res);
       }
@@ -52,6 +56,42 @@ const TopRanks: React.FC = () => {
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
   }, []);
+
+  const myRankDom = useMemo(() => {
+    return (
+      myRank?.caAddress && (
+        <div className={styles.my_rank_wrap}>
+          <div className={styles.list_item_left}>
+            {showRankImage(myRank?.rank) ? (
+              <Image
+                width={25}
+                className={styles.rank_image}
+                src={RankImages[myRank?.rank - 1]}
+                priority
+                alt="invitation rank"
+              />
+            ) : (
+              <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
+            )}
+          </div>
+          <div className={styles.list_item_middle}>
+            <Avatar
+              className={styles.list_item_image}
+              style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
+              size={20}
+              src={myRank?.avatar}>
+              {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
+            </Avatar>
+            <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
+            <div className={styles.me_wrap}>
+              <div className={styles.me_text}>Me</div>
+            </div>
+          </div>
+          <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
+        </div>
+      )
+    );
+  }, [myRank]);
 
   return (
     <div className={styles.container}>
@@ -71,39 +111,7 @@ const TopRanks: React.FC = () => {
         <List
           className={styles.list}
           dataSource={data?.referralRecordsRank}
-          header={
-            myRank?.caAddress && (
-              <div className={styles.my_rank_wrap}>
-                <div className={styles.list_item_left}>
-                  {showRankImage(myRank?.rank) ? (
-                    <Image
-                      width={25}
-                      className={styles.rank_image}
-                      src={RankImages[myRank?.rank - 1]}
-                      priority
-                      alt="invitation rank"
-                    />
-                  ) : (
-                    <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
-                  )}
-                </div>
-                <div className={styles.list_item_middle}>
-                  <Avatar
-                    className={styles.list_item_image}
-                    style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
-                    size={20}
-                    src={myRank?.avatar}>
-                    {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
-                  </Avatar>
-                  <div className={styles.list_item_title}>{formatStr2EllipsisStr(myRank?.caAddress, 8)}</div>
-                  <div className={styles.me_wrap}>
-                    <div className={styles.me_text}>Me</div>
-                  </div>
-                </div>
-                <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
-              </div>
-            )
-          }
+          header={myRankDom}
           renderItem={(item, index) => (
             <RankItem
               rank={item.rank ?? index + 1}
