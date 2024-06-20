@@ -1,7 +1,7 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
-import { getAAConnectToken, getConnectToken } from '@/utils/axios';
+import { getAAConnectToken, getConnectToken, logoutPortkeyApi } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
 
@@ -47,6 +47,7 @@ export default function useAccount() {
   }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
       await disConnectWallet();
+      logoutPortkeyApi();
   }, [disConnectWallet]);
   useEffect(() => {
     (async () => {

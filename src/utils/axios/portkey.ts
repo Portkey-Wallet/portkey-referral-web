@@ -76,4 +76,7 @@ const getAAConnectToken = async (didWallet: DIDWalletInfo) => {
       chainId: didWallet.chainId,
     });
 }
-export { PORTKEY_API, portkeyGet, portkeyPost, getConnectToken, getAAConnectToken };
+const logoutPortkeyApi = () =>{
+  api.deleteHeader('Authorization');
+}
+export { PORTKEY_API, portkeyGet, portkeyPost, getConnectToken, getAAConnectToken, logoutPortkeyApi };
