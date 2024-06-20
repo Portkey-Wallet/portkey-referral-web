@@ -80,7 +80,7 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
           <div className={styles.list_item_middle}>
             <div className={styles.list_item_title}>Wallet Address</div>
           </div>
-          <div className={styles.list_item_right}>Invite Amount</div>
+          <div className={styles.list_item_right}>Invited</div>
         </div>
         <List
           className={styles.list}
