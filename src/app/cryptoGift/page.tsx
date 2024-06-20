@@ -82,7 +82,7 @@ const CryptoGift: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [successClaimCurrentPage, setSuccessClaimCurrentPage] = useState(true);
 
-  const [copyState, copyToClipboard] = useCopyToClipboard();
+  const [, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
   const networkType = searchParams.get('networkType') || '';
@@ -268,10 +268,13 @@ const CryptoGift: React.FC = () => {
 
   const onCopyClick = useCallback(() => {
     const fullUrl = window?.location?.href;
-    copyToClipboard(fullUrl);
-
-    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  }, [copyState.error, copyState.value, copyToClipboard]);
+    try {
+      copyToClipboard(fullUrl);
+      singleMessage.success('Copied');
+    } catch (error) {
+      singleMessage.error('Failed');
+    }
+  }, [copyToClipboard]);
 
   const dropDownItems: MenuProps['items'] = useMemo(
     () => [
@@ -545,9 +548,9 @@ const CryptoGift: React.FC = () => {
           <BreakWord
             className={styles['amount-symbol']}
             text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${
-              cryptoDetail.assetType === AssetsType.ft
+              cryptoDetail?.assetType === AssetsType.ft
                 ? cryptoDetail?.label || cryptoDetail.symbol
-                : cryptoDetail.nftAlias
+                : cryptoDetail?.nftAlias
             }`}
           />
           <BreakWord className={styles.toAddress} text={`has sent to your address`} />

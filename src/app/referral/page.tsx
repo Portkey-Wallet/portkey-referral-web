@@ -32,7 +32,7 @@ import { useEnvironment } from '@/hooks/environment';
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
-  const [copyState, copyToClipboard] = useCopyToClipboard();
+  const [, copyToClipboard] = useCopyToClipboard();
   const { isLogin, isConnected, login, logout } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
@@ -61,9 +61,13 @@ const Referral: React.FC = () => {
   }, [logout]);
 
   const onCopyClick = useCallback(() => {
-    copyToClipboard(shortLink);
-    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
+    try {
+      copyToClipboard(shortLink);
+      singleMessage.success('Copied');
+    } catch (error) {
+      singleMessage.error('Failed');
+    }
+  }, [copyToClipboard, shortLink]);
 
   const SloganDOM = useMemo(() => {
     return (
@@ -109,7 +113,7 @@ const Referral: React.FC = () => {
     );
   }, []);
 
-  const onLogin = useCallback(async() => {
+  const onLogin = useCallback(async () => {
     try {
       await login();
     } catch (e: any) {
@@ -175,7 +179,7 @@ const Referral: React.FC = () => {
           ) : (
             loginButton
           )}
-          <TopRank isLogin={isLogin}/>
+          <TopRank isLogin={isLogin} />
         </div>
         {isModalOpen && (
           <QrcodeModal
