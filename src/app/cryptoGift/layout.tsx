@@ -6,6 +6,14 @@ export const metadata = {
   keywords: ['DID', 'social recovery', 'crypto wallet', 'AA wallet'],
 };
 
+export const viewport = {
+  viewportFit: 'cover',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: 'no',
+};
+
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
