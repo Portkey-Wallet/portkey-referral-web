@@ -10,7 +10,6 @@ import {
   did,
   ConfigProvider,
 } from '@portkey/did-ui-react';
-import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import logoWhite from '/public/logoWhite.svg';
@@ -60,7 +59,6 @@ const Invitee: React.FC = () => {
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
   const [iOSStoreUrl, setIOSStoreUrl] = useState('');
   const [isPortkeyApp, setIsPortkeyApp] = useState<boolean>(true);
-  const [copyState, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
   const [src, setSrc] = useState<StaticImageData>();
@@ -144,10 +142,6 @@ const Invitee: React.FC = () => {
     openWithBlank(portkeyDownloadPage);
   }, []);
 
-  const onCopyClick = useCallback(() => {
-    copyToClipboard(shortLink);
-    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
 
   useEffect(() => {
     const isInMobile = !isBrowser() || isMobile;

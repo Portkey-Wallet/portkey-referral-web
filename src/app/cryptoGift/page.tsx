@@ -82,7 +82,7 @@ const CryptoGift: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [successClaimCurrentPage, setSuccessClaimCurrentPage] = useState(true);
 
-  const [copyState, copyToClipboard] = useCopyToClipboard();
+  const [, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
   const networkType = searchParams.get('networkType') || '';
@@ -268,10 +268,13 @@ const CryptoGift: React.FC = () => {
 
   const onCopyClick = useCallback(() => {
     const fullUrl = window?.location?.href;
-    copyToClipboard(fullUrl);
-
-    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  }, [copyState.error, copyState.value, copyToClipboard]);
+    try {
+      copyToClipboard(fullUrl);
+      singleMessage.success('Copied');
+    } catch (error) {
+      singleMessage.error('Failed');
+    }
+  }, [copyToClipboard]);
 
   const dropDownItems: MenuProps['items'] = useMemo(
     () => [
@@ -319,10 +322,24 @@ const CryptoGift: React.FC = () => {
     let src = boxClosed;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) src = boxEmpty;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) src = boxOpened;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) src = boxCannotClaimed;
+    if (
+      cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired ||
+      cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers
+    )
+      src = boxCannotClaimed;
 
     return (
-      <BaseImage src={src} className={styles.cryptoGiftImg} alt="boxCannotClaimed" priority width={343} height={240} />
+      <>
+        <div className={styles.cryptoGiftTopDom} />
+        <BaseImage
+          src={src}
+          className={styles.cryptoGiftImg}
+          alt="boxCannotClaimed"
+          priority
+          width={343}
+          height={240}
+        />
+      </>
     );
   }, [cryptoDetail?.cryptoGiftPhase, successClaimCurrentPage]);
 
@@ -337,7 +354,7 @@ const CryptoGift: React.FC = () => {
     if (isSignUp && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
       text = `Oops, only newly registered Portkey users can claim this crypto gift.`;
 
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed)
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && !successClaimCurrentPage)
       return (
         <div className={styles.cryptoGiftTips}>
           <BreakWord text="You have already claimed " />
@@ -350,7 +367,14 @@ const CryptoGift: React.FC = () => {
       );
 
     return text ? <div className={styles.cryptoGiftTips}>{text}</div> : null;
-  }, [cryptoDetail?.amount, cryptoDetail?.cryptoGiftPhase, cryptoDetail?.decimals, cryptoDetail?.symbol, isSignUp]);
+  }, [
+    cryptoDetail?.amount,
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.decimals,
+    cryptoDetail?.symbol,
+    isSignUp,
+    successClaimCurrentPage,
+  ]);
 
   const renderActionButtonDom = useCallback(() => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
@@ -361,15 +385,14 @@ const CryptoGift: React.FC = () => {
     let onAction = onClaim;
 
     // sub title
-    if (cryptoDetail?.isNewUsersOnly) {
-      if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available)
-        subText = 'Create a new Portkey account to claim';
-      if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) subText = 'Claim to your Portkey address';
+    if (cryptoDetail?.isNewUsersOnly || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available) {
+      subText = 'Create a new Portkey account to claim';
     }
 
     // others
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
       text = `Signup to Claim`;
+      subText = 'Claim to your Portkey address';
       onAction = onSignUp;
     }
 
@@ -478,8 +501,10 @@ const CryptoGift: React.FC = () => {
                 height={98}
                 preview={false}
               />
-              <p className={styles.nftName}>{cryptoDetail?.nftAlias || ''}</p>
-              <p className={styles.nftId}>{`# ${cryptoDetail?.nftTokenId || ''}`}</p>
+              <div className={styles.nftInfoWrap}>
+                <p className={styles.nftName}>{cryptoDetail?.nftAlias || ''}</p>
+                <p className={styles.nftId}>{`# ${cryptoDetail?.nftTokenId || ''}`}</p>
+              </div>
             </div>
             <div className={styles.nftCount}>{divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)}</div>
           </>
@@ -523,9 +548,9 @@ const CryptoGift: React.FC = () => {
           <BreakWord
             className={styles['amount-symbol']}
             text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${
-              cryptoDetail.assetType === AssetsType.ft
+              cryptoDetail?.assetType === AssetsType.ft
                 ? cryptoDetail?.label || cryptoDetail.symbol
-                : cryptoDetail.nftAlias
+                : cryptoDetail?.nftAlias
             }`}
           />
           <BreakWord className={styles.toAddress} text={`has sent to your address`} />
