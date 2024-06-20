@@ -46,8 +46,8 @@ export default function useAccount() {
     }
   }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
-      await disConnectWallet();
       logoutPortkeyApi();
+      await disConnectWallet();
   }, [disConnectWallet]);
   useEffect(() => {
     (async () => {
