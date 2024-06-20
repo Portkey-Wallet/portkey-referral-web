@@ -6,6 +6,7 @@
 // export const BASE_CMS_URL = NEXT_PUBLIC_NETWORK_ENV ? BackEndNetWorkMap[NEXT_PUBLIC_NETWORK_ENV]?.cmsUrl : '';
 export const BASE_CMS_URL = '/cms';
 export const BASE_PORTKEY_URL = '/api/app';
+export const BASE_CONNECT_URL = '/connect';
 
 export const CMS_API = {
   GET: {
