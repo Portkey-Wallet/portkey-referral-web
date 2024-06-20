@@ -1,21 +1,14 @@
 import React, { useMemo } from 'react';
 import styles from './styles.module.scss';
-import { Image, Avatar } from 'antd';
+import { Avatar } from 'antd';
 import BaseImage from '@/components/BaseImage';
 import { invitationRankFirst, invitationRankSecond, invitationRankThird } from '@/assets/images';
 import { formatStr2EllipsisStr } from '@/utils';
-
-interface RankItemProps {
-  rank: number;
-  avatar: string;
-  caAddress: string;
-  count: number;
-  walletName: string;
-}
+import { IReferralRecordsRankDetail } from '@/types/referral';
 
 const RankImages = [invitationRankFirst, invitationRankSecond, invitationRankThird];
 
-const RankItem: React.FC<RankItemProps> = ({ rank, avatar, caAddress, count, walletName }) => {
+const RankItem: React.FC<IReferralRecordsRankDetail> = ({ rank, avatar, caAddress, referralTotalCount: count, walletName }) => {
   const showRankImage = useMemo(() => {
     return rank === 1 || rank === 2 || rank === 3;
   }, [rank]);

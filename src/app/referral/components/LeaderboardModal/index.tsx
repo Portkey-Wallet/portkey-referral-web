@@ -111,7 +111,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
               rank={item.rank ?? index + 1}
               avatar={item.avatar}
               caAddress={item.caAddress}
-              count={item.referralTotalCount}
+              referralTotalCount={item.referralTotalCount}
               walletName={item?.walletName ? item.walletName[0].toUpperCase() : ''}
             />
           )}

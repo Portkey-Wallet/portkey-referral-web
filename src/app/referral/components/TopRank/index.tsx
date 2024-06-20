@@ -8,22 +8,10 @@ import LeaderBoardModal from '../LeaderboardModal';
 import referralApi from '@/utils/axios/referral';
 import { formatStr2EllipsisStr } from '@/utils';
 import useAccount from '@/hooks/useAccount';
-
-interface Item {
-  rank: number;
-  avatar: string;
-  caAddress: string;
-  referralTotalCount: number;
-  walletName: string;
-}
-
-interface TopRanksResponse {
-  referralRecordsRank: Item[];
-  currentUserReferralRecordsRankDetail: Item;
-}
+import { IReferralRecordsRankResponseDto } from '@/types/referral';
 
 const TopRanks: React.FC = () => {
-  const [data, setData] = useState<TopRanksResponse | null>(null);
+  const [data, setData] = useState<IReferralRecordsRankResponseDto | null>(null);
   const { currentUserReferralRecordsRankDetail: myRank } = data ?? {};
   const { isConnected, caHash } = useAccount();
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
@@ -117,7 +105,7 @@ const TopRanks: React.FC = () => {
               rank={item.rank ?? index + 1}
               avatar={item.avatar}
               caAddress={item.caAddress}
-              count={item.referralTotalCount}
+              referralTotalCount={item.referralTotalCount}
               walletName={item?.walletName?.length > 0 ? item.walletName[0].toUpperCase() : ''}
             />
           )}
