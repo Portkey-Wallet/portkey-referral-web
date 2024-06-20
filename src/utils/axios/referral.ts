@@ -49,7 +49,7 @@ class ReferralApi {
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
   }
   async referralRecordList(params: {
-    caHash: string;
+    caHash?: string;
     skip: number;
     limit: number;
   }): Promise<IReferralRecordResponseDto> {
@@ -59,10 +59,10 @@ class ReferralApi {
       this.referralRecordListConfig.config,
     );
   }
-  async referralTotalCount(params: { caHash: string }): Promise<number> {
+  async referralTotalCount(): Promise<number> {
     return await portkeyGet(
       this.referralTotalCountConfig.path,
-      { ...this.referralTotalCountConfig.params, ...params },
+      { ...this.referralTotalCountConfig.params, },
       this.referralTotalCountConfig.config,
     );
   }

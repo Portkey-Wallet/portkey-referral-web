@@ -4,7 +4,7 @@ import CommonModal from '@/components/CommonModal';
 import { List, Avatar } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
-import useAccount from '@/hooks/useAccount';
+import { useEffectOnce } from '@/hooks/commonHooks';
 
 const ContainerHeight = 434;
 
@@ -33,20 +33,18 @@ interface MyInvitationList {
 
 const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open, onClose }) => {
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
-  const { caHash, isConnected } = useAccount();
   const currentList = useRef<MyInvitationList>({
     skip: 0,
     hasNextPage: true,
   });
 
   const fetchInvitationList = useCallback(
-    async (caHash: string) => {
+    async () => {
       if (!currentList.current.hasNextPage) {
         return;
       }
       try {
         const res = await referralApi.referralRecordList({
-          caHash,
           skip: currentList.current.skip,
           limit: 10,
         });
@@ -78,11 +76,9 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
     [sections],
   );
 
-  useEffect(() => {
-    if (isConnected && caHash) {
-      fetchInvitationList(caHash);
-    }
-  }, [caHash, fetchInvitationList, isConnected]);
+  useEffectOnce(() => {
+    fetchInvitationList();
+  });
 
   const showInvitation = useMemo(() => {
     return invitationAmount > 0 && sections.length > 0;
@@ -121,10 +117,10 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
     (e: React.UIEvent<HTMLElement, UIEvent>) => {
       // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
       if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-        caHash && fetchInvitationList(caHash);
+        fetchInvitationList();
       }
     },
-    [caHash, fetchInvitationList],
+    [fetchInvitationList],
   );
 
   const invitationListDom = useMemo(() => {

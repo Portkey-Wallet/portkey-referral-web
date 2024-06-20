@@ -33,16 +33,16 @@ const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [copyState, copyToClipboard] = useCopyToClipboard();
-  const { isConnected, login, sync, logout, caHash } = useAccount();
+  const { isLogin, isConnected, login, logout } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fetchTotalCount = useCallback(async (caHash: string) => {
+  const fetchTotalCount = useCallback(async () => {
     try {
-      const totalCount = await referralApi.referralTotalCount({ caHash });
-      console.log('totalCount : ', totalCount);
+      const totalCount = await referralApi.referralTotalCount();
+      console.log('referralTotalCount : ', totalCount);
       setMyInvitedCount(totalCount ?? 0);
     } catch (error) {
       console.error('referralTotalCount error : ', error);
@@ -50,10 +50,10 @@ const Referral: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isConnected && caHash) {
-      fetchTotalCount(caHash);
+    if (isLogin) {
+      fetchTotalCount();
     }
-  }, [isConnected, caHash, fetchTotalCount]);
+  }, [fetchTotalCount, isLogin]);
 
   const onLogout = useCallback(async () => {
     await logout();
@@ -167,7 +167,7 @@ const Referral: React.FC = () => {
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
-          {isConnected ? (
+          {isLogin ? (
             <>
               <MyInvitationBlock invitationAmount={myInvitedCount} />
               {shortLink && isLG ? inviteButton : qrcodeDom}
@@ -175,7 +175,7 @@ const Referral: React.FC = () => {
           ) : (
             loginButton
           )}
-          <TopRank isLogin={isConnected && Boolean(caHash)} caHash={caHash ?? undefined}/>
+          <TopRank isLogin={isLogin}/>
         </div>
         {isModalOpen && (
           <QrcodeModal
