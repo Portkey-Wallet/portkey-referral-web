@@ -35,7 +35,7 @@ const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
   const [, copyToClipboard] = useCopyToClipboard();
-  const { isLogin, isConnected, login, logout } = useAccount();
+  const { isLogin, login, logout } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
