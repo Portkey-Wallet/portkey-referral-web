@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import NiceModal, { show } from '@ebay/nice-modal-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { singleMessage } from '@portkey/did-ui-react';
+import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
@@ -28,8 +28,8 @@ import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
-import { useEffectOnce } from '@/hooks/commonHooks';
-import { error } from 'console';
+import { useLoading } from '@/hooks/global';
+import { CurrentNetWork } from '@/constants/network';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -40,6 +40,7 @@ const Referral: React.FC = () => {
   const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setLoading } = useLoading();
   const [referralLink, setReferralLink] = useState(shortLink);
   
   useEffect(() => {
@@ -58,7 +59,7 @@ const Referral: React.FC = () => {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]);
+  }, [isLogin, shortLink]); 
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -69,7 +70,16 @@ const Referral: React.FC = () => {
       console.error('referralTotalCount error : ', error);
     }
   }, []);
-
+  useEffect(() => {
+    if(isPortkeyApp) {
+      setLoading(true);
+    }
+    if(isLogin) {
+      if(isPortkeyApp) {
+        setLoading(false)
+      }
+    }
+  }, [isLogin, isPortkeyApp, setLoading]);
   useEffect(() => {
     if (isLogin) {
       fetchTotalCount();
@@ -162,13 +172,14 @@ const Referral: React.FC = () => {
   ];
 
   return (
+    <PortkeyProvider networkType={CurrentNetWork.networkType}>
     <NiceModal.Provider>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
-              {isConnected && !isPortkeyApp && (
+              {isLogin && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
                   <div className={styles.profileButton}>
                     <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
@@ -212,6 +223,7 @@ const Referral: React.FC = () => {
         )}
       </div>
     </NiceModal.Provider>
+    </PortkeyProvider>
   );
 };
 
