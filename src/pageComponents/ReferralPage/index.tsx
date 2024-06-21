@@ -2,7 +2,7 @@
 import clsx from 'clsx';
 import NiceModal from '@ebay/nice-modal-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { singleMessage } from '@portkey/did-ui-react';
+import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
@@ -28,6 +28,8 @@ import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
+import { useLoading } from '@/hooks/global';
+import { CurrentNetWork } from '@/constants/network';
 
 
 const Referral: React.FC = () => {
@@ -39,6 +41,7 @@ const Referral: React.FC = () => {
   const { isPortkeyApp } = useEnvironment();
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { setLoading } = useLoading();
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -49,7 +52,16 @@ const Referral: React.FC = () => {
       console.error('referralTotalCount error : ', error);
     }
   }, []);
-
+  useEffect(() => {
+    if(isPortkeyApp) {
+      setLoading(true);
+    }
+    if(isLogin) {
+      if(isPortkeyApp) {
+        setLoading(false)
+      }
+    }
+  }, [isLogin, isPortkeyApp, setLoading]);
   useEffect(() => {
     if (isLogin) {
       fetchTotalCount();
@@ -142,6 +154,7 @@ const Referral: React.FC = () => {
   ];
 
   return (
+    <PortkeyProvider networkType={CurrentNetWork.networkType}>
     <NiceModal.Provider>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
@@ -192,6 +205,7 @@ const Referral: React.FC = () => {
         )}
       </div>
     </NiceModal.Provider>
+    </PortkeyProvider>
   );
 };
 
