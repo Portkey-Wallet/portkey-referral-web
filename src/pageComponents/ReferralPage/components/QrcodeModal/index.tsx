@@ -17,12 +17,16 @@ interface QrcodeModalProps {
 
 const QrcodeModal: React.FC<QrcodeModalProps> = ({ shortLink, handleCancel }) => {
   const { isPortkeyApp } = useEnvironment();
-  const [copyState, copyToClipboard] = useCopyToClipboard();
+  const [, copyToClipboard] = useCopyToClipboard();
 
   const onCopyClick = useCallback(() => {
-    copyToClipboard(shortLink);
-    copyState.error ? singleMessage.error(copyState.error.message) : copyState.value && singleMessage.success('Copied');
-  }, [copyState.error, copyState.value, copyToClipboard, shortLink]);
+    try {
+      copyToClipboard(shortLink);
+      singleMessage.success('Copied');
+    } catch (error) {
+      singleMessage.error('Failed');
+    }
+  }, [copyToClipboard, shortLink]);
 
   const onShare = useCallback(async () => {
     detectProviderInstance.share({ title: shortLink, message: shortLink });
