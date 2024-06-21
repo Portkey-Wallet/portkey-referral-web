@@ -12,7 +12,7 @@
   .referralBlueContainer {
     width: 100%;
     height: 100%;
-    padding: $padding-24;
+    padding: $padding-16;
 
     .referralHeader {
       position: relative;
@@ -21,7 +21,7 @@
       height: 80px;
       max-width: $content-width-large-desktop;
       max-width: $content-width-large-desktop;
-      padding: $padding-24;
+      padding: $padding-16;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -421,9 +421,9 @@
     .downloadBtn {
       height: 24px;
       line-height: 24px;
-      padding: 0 12px;
+      padding: 0 8px;
       font-size: 12px;
-      font-weight: $font-wight-bold;
+      font-weight: 500;
       color: #ffffff;
       text-align: center;
       border-radius: 4px;
