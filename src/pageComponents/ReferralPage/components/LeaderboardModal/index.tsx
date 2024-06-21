@@ -11,8 +11,6 @@ import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import VirtualList from 'rc-virtual-list';
 import { useEffectOnce } from '@/hooks/commonHooks';
 
-const ContainerHeight = 350;
-
 interface LeaderBoardModalProps {
   open: boolean;
   onClose: () => void;
@@ -24,10 +22,20 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
     init();
   });
 
+  const containerHeight = useMemo(() => {
+    const listHeight = 392;
+    const myRankHeight = 56;
+    if (myRank?.caAddress) {
+      return listHeight;
+    } else {
+      return listHeight + myRankHeight;
+    }
+  }, [myRank?.caAddress]);
+
   const onScroll = useCallback(
     (e: React.UIEvent<HTMLElement, UIEvent>) => {
       // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
-      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - containerHeight) <= 1) {
         next();
       }
     },
@@ -104,8 +112,8 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
 
   const listDom = useMemo(() => {
     return (
-      <List className={styles.list} dataSource={list} header={myRankDom}>
-        <VirtualList data={list ?? []} height={ContainerHeight} itemHeight={47} itemKey="email" onScroll={onScroll}>
+      <List className={styles.list} dataSource={list}>
+        <VirtualList data={list ?? []} height={containerHeight} itemHeight={56} itemKey="email" onScroll={onScroll}>
           {(item, index) => (
             <RankItem
               rank={item.rank ?? index + 1}
@@ -118,13 +126,14 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
         </VirtualList>
       </List>
     );
-  }, [list, myRankDom, onScroll]);
+  }, [containerHeight, list, onScroll]);
 
   return (
     <CommonModal title={'LeaderBoard'} open={open} onCancel={onClose}>
       <div className={styles.container}>
         {selectorDom}
         {headerDom}
+        {myRankDom}
         {list && listDom}
       </div>
     </CommonModal>
