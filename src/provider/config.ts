@@ -30,6 +30,9 @@ const didConfig = {
       websiteIcon: WEBSITE_ICON,
     },
   },
+  loginConfig: {
+    loginMethodsOrder: ["Email", "Google", "Apple", "Scan"]
+  }
 };
 
 const baseConfig = {
