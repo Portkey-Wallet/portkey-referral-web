@@ -30,3 +30,7 @@ export interface IActivityDateRange {
   startDate: string;
   endDate: string;
 }
+
+export interface IReferralShortLink {
+  shortLink: string;
+}
