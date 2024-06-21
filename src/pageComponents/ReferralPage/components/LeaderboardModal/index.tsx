@@ -7,7 +7,7 @@ import { List, Dropdown, Avatar } from 'antd';
 import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
 import { useReferralRank } from '../../hook';
-import { formatStr2EllipsisStr,formatAelfAddress } from '@/utils';
+import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import VirtualList from 'rc-virtual-list';
 import { useEffectOnce } from '@/hooks/commonHooks';
 
@@ -87,7 +87,9 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
               src={myRank?.avatar}>
               {myRank.walletName ? myRank.walletName[0].toUpperCase() : ''}
             </Avatar>
-            <div className={styles.list_item_title}>{formatStr2EllipsisStr(formatAelfAddress(myRank?.caAddress), 8)}</div>
+            <div className={styles.list_item_title}>
+              {formatStr2EllipsisStr(formatAelfAddress(myRank?.caAddress), 8)}
+            </div>
             <div className={styles.me_wrap}>
               <div className={styles.me_text}>Me</div>
             </div>
