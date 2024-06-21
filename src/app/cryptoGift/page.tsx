@@ -251,6 +251,7 @@ const CryptoGift: React.FC = () => {
       }
     } catch (error: any) {
       console.log('ERROR', error);
+      latestOnRefreshCryptoGiftDetail.current();
     }
   }, [caHolderInfo?.caHash, cryptoGiftId, isSignUp, latestOnRefreshCryptoGiftDetail]);
 
