@@ -147,8 +147,8 @@
       align-items: center;
       max-width: 600px;
       padding: 16px 24px;
-      border: 2px solid #2f31a1;
-      box-shadow: 0 0 11px 0 rgba(91 92 255 / 50%);
+      border: 2px solid transparent;
+      border-image: linear-gradient(to right, #2f31a1 0%, #707eff 50%, #2f31a1 100%) 1;
 
       .QRcodeImg {
         margin-right: 24px;
