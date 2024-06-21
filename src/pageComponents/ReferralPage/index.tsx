@@ -71,14 +71,14 @@ const Referral: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    if(isPortkeyApp) {
-      setLoading(true);
-    }
-    if(isLogin) {
-      if(isPortkeyApp) {
-        setLoading(false)
-      }
-    }
+    // if(isPortkeyApp) {
+    //   setLoading(true);
+    // }
+    // if(isLogin) {
+    //   if(isPortkeyApp) {
+    //     setLoading(false)
+    //   }
+    // }
   }, [isLogin, isPortkeyApp, setLoading]);
   useEffect(() => {
     if (isLogin) {
@@ -171,7 +171,7 @@ const Referral: React.FC = () => {
   ];
 
   return (
-    <PortkeyProvider networkType={CurrentNetWork.networkType}>
+    // <PortkeyProvider networkType={CurrentNetWork.networkType}>
     <NiceModal.Provider>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
@@ -222,7 +222,7 @@ const Referral: React.FC = () => {
         )}
       </div>
     </NiceModal.Provider>
-    </PortkeyProvider>
+    // </PortkeyProvider>
   );
 };
 

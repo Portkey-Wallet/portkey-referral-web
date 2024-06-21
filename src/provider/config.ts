@@ -37,6 +37,7 @@ const didConfig: GlobalConfigProps = {
 };
 
 const baseConfig = {
+  showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: CHAIN_ID,
   keyboard: true,
