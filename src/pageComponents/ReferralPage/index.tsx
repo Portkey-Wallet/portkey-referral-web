@@ -71,14 +71,14 @@ const Referral: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    // if(isPortkeyApp) {
-    //   setLoading(true);
-    // }
-    // if(isLogin) {
-    //   if(isPortkeyApp) {
-    //     setLoading(false)
-    //   }
-    // }
+    if(isPortkeyApp) {
+      setLoading(true);
+    }
+    if(isLogin) {
+      if(isPortkeyApp) {
+        setLoading(false)
+      }
+    }
   }, [isLogin, isPortkeyApp, setLoading]);
   useEffect(() => {
     if (isLogin) {
