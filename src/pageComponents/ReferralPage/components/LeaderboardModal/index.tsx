@@ -39,7 +39,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
         next();
       }
     },
-    [next],
+    [containerHeight, next],
   );
 
   const selectorDom = useMemo(() => {

@@ -10,8 +10,13 @@ import { useReferralRank } from '../../hook';
 
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
 
-  const { referralRankList, init, next, myRank } = useReferralRank();
+  const { referralRankList: originalReferralRankList, init, next, myRank } = useReferralRank();
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
+
+  const referralRankList = useMemo(() => {
+    const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
+    return sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex);
+  }, [originalReferralRankList]);
 
   useEffect(() => {
     init();
