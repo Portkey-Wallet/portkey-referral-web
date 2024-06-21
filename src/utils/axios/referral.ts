@@ -1,6 +1,7 @@
 import { portkeyGet } from './portkey';
 import { AxiosRequestConfig } from 'axios';
-import { IReferralRecordResponseDto, IReferralRecordsRankResponseDto, IActivityDateRange } from '@/types/referral';
+import { IReferralRecordResponseDto, IReferralRecordsRankResponseDto, IActivityDateRange, IReferralShortLink } from '@/types/referral';
+import { REFERRAL_PROJECT_CODE } from '@/constants/project';
 
 const ReferralPath = {
   referralRecordList: {
@@ -14,6 +15,12 @@ const ReferralPath = {
   },
   activityDateRange: {
     path: '/growth/activityDateRange',
+  },
+  getReferralShortLink: {
+    path: '/growth/shortLink',
+    params: {
+      projectCode: REFERRAL_PROJECT_CODE,
+    }
   },
 };
 interface IApiConfig {
@@ -42,11 +49,13 @@ class ReferralApi {
   private referralTotalCountConfig: IApiConfig;
   private referralRecordRankConfig: IApiConfig;
   private activityDateRangeConfig: IApiConfig;
+  private getReferralShortLinkConfig: IApiConfig;
   constructor() {
     this.referralRecordListConfig = ReferralPath.referralRecordList;
     this.referralTotalCountConfig = ReferralPath.referralTotalCount;
     this.referralRecordRankConfig = ReferralPath.referralRecordRank;
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
+    this.getReferralShortLinkConfig = ReferralPath.getReferralShortLink;
   }
   async referralRecordList(params: {
     caHash?: string;
@@ -62,7 +71,7 @@ class ReferralApi {
   async referralTotalCount(): Promise<number> {
     return await portkeyGet(
       this.referralTotalCountConfig.path,
-      { ...this.referralTotalCountConfig.params, },
+      { ...this.referralTotalCountConfig.params },
       this.referralTotalCountConfig.config,
     );
   }
@@ -78,6 +87,13 @@ class ReferralApi {
       this.activityDateRangeConfig.path,
       { ...this.activityDateRangeConfig.params, ...params },
       this.activityDateRangeConfig.config,
+    );
+  }
+  async getReferralShortLink(): Promise<IReferralShortLink> {
+    return await portkeyGet(
+      this.getReferralShortLinkConfig.path,
+      { ...this.getReferralShortLinkConfig.params },
+      this.getReferralShortLinkConfig.config,
     );
   }
 }

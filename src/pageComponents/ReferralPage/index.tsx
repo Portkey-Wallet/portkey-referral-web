@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import NiceModal from '@ebay/nice-modal-react';
+import NiceModal, { show } from '@ebay/nice-modal-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
@@ -31,7 +31,6 @@ import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
 
-
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const shortLink = searchParams.get('shortLink') || '';
@@ -42,6 +41,25 @@ const Referral: React.FC = () => {
   const [myInvitedCount, setMyInvitedCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setLoading } = useLoading();
+  const [referralLink, setReferralLink] = useState(shortLink);
+  
+  useEffect(() => {
+    (async () => {
+      if (shortLink?.length > 0) {
+        return;
+      }
+      if (!isLogin) {
+        return;
+      }
+      try {
+        const res = await referralApi.getReferralShortLink();
+        setReferralLink(res?.shortLink);
+        console.log('aaa getReferralShortLink : ', res);
+      } catch (error: any) {
+        console.log('aaaa getReferralShortLink error: ', error.message);
+      }
+    })();
+  }, [isLogin, shortLink]); 
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -75,12 +93,12 @@ const Referral: React.FC = () => {
 
   const onCopyClick = useCallback(() => {
     try {
-      copyToClipboard(shortLink);
+      copyToClipboard(referralLink);
       singleMessage.success('Copied');
     } catch (error) {
       singleMessage.error('Failed');
     }
-  }, [copyToClipboard, shortLink]);
+  }, [copyToClipboard, referralLink]);
 
   const SloganDOM = useMemo(() => {
     return (
@@ -93,11 +111,11 @@ const Referral: React.FC = () => {
   const qrcodeDom = useMemo(() => {
     return (
       <div className={styles.QRcodeWrapper}>
-        <QRCode value={shortLink} size={132} quietZone={6} ecLevel="H" />
+        <QRCode value={referralLink} size={132} quietZone={6} ecLevel="H" />
         <div className={styles.QRcodeContent}>
           <div className={styles.QRcodeTitle}>Referral Link</div>
           <div className={styles.QRcodeUrlWrapper}>
-            <div className={styles.QRcodeUrl}>{shortLink}</div>
+            <div className={styles.QRcodeUrl}>{referralLink}</div>
             <div className={styles.QRcodeCopyWrap}>
               <BaseImage
                 src={interactiveCopyWhite}
@@ -112,7 +130,7 @@ const Referral: React.FC = () => {
         </div>
       </div>
     );
-  }, [onCopyClick, shortLink]);
+  }, [onCopyClick, referralLink]);
 
   const inviteButton = useMemo(() => {
     return (
@@ -161,7 +179,7 @@ const Referral: React.FC = () => {
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
-              {isConnected && !isPortkeyApp && (
+              {isLogin && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
                   <div className={styles.profileButton}>
                     <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
@@ -188,7 +206,7 @@ const Referral: React.FC = () => {
           {isLogin ? (
             <>
               <MyInvitationBlock invitationAmount={myInvitedCount} />
-              {shortLink && isLG ? inviteButton : qrcodeDom}
+              {referralLink?.length > 0 && (isLG ? inviteButton : qrcodeDom)}
             </>
           ) : (
             loginButton
@@ -197,7 +215,7 @@ const Referral: React.FC = () => {
         </div>
         {isModalOpen && (
           <QrcodeModal
-            shortLink={shortLink}
+            shortLink={referralLink}
             handleCancel={() => {
               setIsModalOpen(false);
             }}

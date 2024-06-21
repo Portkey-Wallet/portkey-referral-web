@@ -4,18 +4,17 @@ import { IReferralRecordDetailDto, IReferralRecordsRankDetail } from '@/types/re
 
 const INIT_PAGE = { hasNext: true, skip: 0, limit: 10 };
 
-export const useReferralHome = (caHash: string) => {
+export const useReferralHome = () => {
   const [viewTotal, setViewTotal] = useState<string>('--');
   const [referralRecords, setReferralRecords] = useState<IReferralRecordDetailDto[]>();
   const pageRef = useRef<{ skip: number; limit: number }>(INIT_PAGE);
   const next = useCallback(async () => {
     const result = await referralApi.referralRecordList({
-      caHash,
       skip: pageRef.current?.skip,
       limit: pageRef.current?.limit,
     });
     setReferralRecords(result.referralRecords);
-  }, [caHash]);
+  }, []);
   const init = useCallback(async () => {
     pageRef.current = INIT_PAGE;
     return await next();
@@ -25,7 +24,7 @@ export const useReferralHome = (caHash: string) => {
       const result = await referralApi.referralTotalCount();
       setViewTotal(result + '');
     })();
-  }, [caHash]);
+  }, []);
   return { referralRecords, viewTotal, init, next };
 };
 
