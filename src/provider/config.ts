@@ -5,6 +5,7 @@ import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
 import { TChainId, SignInDesignEnum, NetworkEnum } from '@aelf-web-login/wallet-adapter-base';
 import { ApiHost, ConnectHost, NetworkEnv } from '@/constants/network';
 import { ConfigProvider } from '@portkey/did-ui-react';
+import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
 
 const APP_NAME = 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
@@ -17,7 +18,7 @@ ConfigProvider.setGlobalConfig({
     baseURL: ApiHost,
   },
 });
-const didConfig = {
+const didConfig: GlobalConfigProps = {
   graphQLUrl: '/graphql',
   connectUrl: ConnectHost,
   requestDefaults: {
