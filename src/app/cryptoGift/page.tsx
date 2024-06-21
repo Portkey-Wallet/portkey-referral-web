@@ -385,7 +385,7 @@ const CryptoGift: React.FC = () => {
     let onAction = onClaim;
 
     // sub title
-    if (cryptoDetail?.isNewUsersOnly || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available) {
+    if (cryptoDetail?.isNewUsersOnly && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available) {
       subText = 'Create a new Portkey account to claim';
     }
 
