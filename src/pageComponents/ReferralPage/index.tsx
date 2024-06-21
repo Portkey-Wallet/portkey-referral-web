@@ -116,14 +116,13 @@ const Referral: React.FC = () => {
           <div className={styles.QRcodeTitle}>Referral Link</div>
           <div className={styles.QRcodeUrlWrapper}>
             <div className={styles.QRcodeUrl}>{referralLink}</div>
-            <div className={styles.QRcodeCopyWrap}>
+            <div className={styles.QRcodeCopyWrap} onClick={onCopyClick}>
               <BaseImage
                 src={interactiveCopyWhite}
                 className={styles.QRcodeCopy}
                 alt="QRcodeCopy"
                 priority
                 width={16}
-                onClick={onCopyClick}
               />
             </div>
           </div>
@@ -154,9 +153,9 @@ const Referral: React.FC = () => {
 
   const loginButton = useMemo(() => {
     return (
-      <div className={styles.loginButton} onClick={onLogin}>
+      <a className={styles.loginButton} onClick={onLogin}>
         <div className={styles.loginText}>Login</div>
-      </div>
+      </a>
     );
   }, [onLogin]);
 
@@ -181,9 +180,9 @@ const Referral: React.FC = () => {
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
               {isLogin && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
-                  <div className={styles.profileButton}>
+                  <a className={styles.profileButton}>
                     <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
-                  </div>
+                  </a>
                 </Dropdown>
               )}
             </div>

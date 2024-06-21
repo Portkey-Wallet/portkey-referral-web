@@ -102,10 +102,10 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
           )}
         />
       </div>
-      <div className={styles.view_all_wrap} onClick={onViewAll}>
+      <a className={styles.view_all_wrap} onClick={onViewAll}>
         <div className={styles.view_all_text}>View More</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
-      </div>
+      </a>
       {showLeaderBoardModal && (
         <LeaderBoardModal
           open={showLeaderBoardModal}
