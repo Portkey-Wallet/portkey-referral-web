@@ -1,6 +1,5 @@
 'use client';
 import clsx from 'clsx';
-import NiceModal, { show } from '@ebay/nice-modal-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
@@ -173,7 +172,7 @@ const Referral: React.FC = () => {
   ];
 
   return (
-    <NiceModal.Provider>
+    <PortkeyProvider networkType={CurrentNetWork.networkType}>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
           <header className="row-center">
@@ -227,7 +226,7 @@ const Referral: React.FC = () => {
           />
         )}
       </div>
-    </NiceModal.Provider>
+    </PortkeyProvider>
   );
 };
 
