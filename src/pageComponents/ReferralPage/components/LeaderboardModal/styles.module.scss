@@ -2,14 +2,20 @@
 
 .container {
   width: 100%;
-  height: 540px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
 
-  .headerWrap {
+  .margin_h5 {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+  .margin_pc {
     margin-left: 24px;
     margin-right: 24px;
+  }
+  .headerWrap {
     height: 40px;
     justify-content: flex-start;
     align-items: center;
@@ -42,8 +48,6 @@
     flex: 1;
   }
   .dropdownWrap {
-    margin-left: 24px;
-    margin-right: 24px;
     height: 48px;
     padding-top: 8px;
     padding-bottom: 8px;
