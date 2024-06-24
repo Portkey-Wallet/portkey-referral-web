@@ -7,15 +7,21 @@ import Image from 'next/image';
 import LeaderBoardModal from '../LeaderboardModal';
 import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { useReferralRank } from '../../hook';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
-
-  const { referralRankList, init, next, myRank } = useReferralRank();
+  const { referralRankList: originalReferralRankList, init, next, myRank } = useReferralRank();
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
+  const { isLG } = useResponsive();
+
+  const referralRankList = useMemo(() => {
+    const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
+    return sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex);
+  }, [originalReferralRankList]);
 
   useEffect(() => {
     init();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin]);
 
   useEffect(() => {
@@ -24,18 +30,26 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
     if (lastItem && lastItem.rank <= 10) {
       next();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [referralRankList]);
 
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
   }, []);
 
+  const listLeftItemWidth = useMemo(() => {
+    return isLG ? styles.list_item_left_width_h5 : styles.list_item_left_width_pc;
+  }, [isLG]);
+
+  const listRightItemWidth = useMemo(() => {
+    return isLG ? styles.list_item_right_width_h5 : styles.list_item_right_width_pc;
+  }, [isLG]);
+
   const myRankDom = useMemo(() => {
     return (
       myRank?.caAddress && (
         <div className={styles.my_rank_wrap}>
-          <div className={styles.list_item_left}>
+          <div className={`${styles.list_item_left} ${listLeftItemWidth}`}>
             {showRankImage(myRank?.rank) ? (
               <Image
                 width={25}
@@ -56,16 +70,18 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
               src={myRank?.avatar}>
               {myRank?.walletName ? myRank?.walletName[0].toUpperCase() : ''}
             </Avatar>
-            <div className={styles.list_item_title}>{formatStr2EllipsisStr(formatAelfAddress(myRank?.caAddress), 8)}</div>
+            <div className={styles.list_item_title}>
+              {formatStr2EllipsisStr(formatAelfAddress(myRank?.caAddress), 8)}
+            </div>
             <div className={styles.me_wrap}>
               <div className={styles.me_text}>Me</div>
             </div>
           </div>
-          <div className={styles.list_item_right}>{myRank?.referralTotalCount}</div>
+          <div className={`${styles.list_item_right} ${listRightItemWidth}`}>{myRank?.referralTotalCount}</div>
         </div>
       )
     );
-  }, [myRank]);
+  }, [myRank, listLeftItemWidth, listRightItemWidth]);
 
   return (
     <div className={styles.container}>
@@ -74,13 +90,13 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
         <div className={styles.header_title}>Leaderboard</div>
         <div className={styles.header_right}></div>
       </div>
-      <div className={styles.list_wrap}>
+      <div className={`${styles.list_wrap} ${isLG ? styles.list_wrap_margin_h5 : styles.list_wrap_margin_pc}`}>
         <div className={styles.list_header_wrap}>
-          <div className={styles.list_item_left}>Rank</div>
+          <div className={`${styles.list_item_left} ${listLeftItemWidth}`}>Rank</div>
           <div className={styles.list_item_middle}>
             <div className={styles.list_item_title}>Wallet Address</div>
           </div>
-          <div className={styles.list_item_right}>Invited</div>
+          <div className={`${styles.list_item_right} ${listRightItemWidth}`}>Invited</div>
         </div>
         <List
           className={styles.list}
@@ -97,10 +113,10 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
           )}
         />
       </div>
-      <div className={styles.view_all_wrap} onClick={onViewAll}>
+      <a className={styles.view_all_wrap} onClick={onViewAll}>
         <div className={styles.view_all_text}>View More</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
-      </div>
+      </a>
       {showLeaderBoardModal && (
         <LeaderBoardModal
           open={showLeaderBoardModal}

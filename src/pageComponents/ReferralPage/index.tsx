@@ -1,6 +1,5 @@
 'use client';
 import clsx from 'clsx';
-import NiceModal, { show } from '@ebay/nice-modal-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
@@ -30,6 +29,7 @@ import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
+import googleAnalytics from '@/utils/googleAnalytics';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -42,7 +42,7 @@ const Referral: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setLoading } = useLoading();
   const [referralLink, setReferralLink] = useState(shortLink);
-  
+
   useEffect(() => {
     (async () => {
       if (shortLink?.length > 0) {
@@ -59,7 +59,7 @@ const Referral: React.FC = () => {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]); 
+  }, [isLogin, shortLink]);
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -71,12 +71,12 @@ const Referral: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    if(isPortkeyApp) {
+    if (isPortkeyApp) {
       setLoading(true);
     }
-    if(isLogin) {
-      if(isPortkeyApp) {
-        setLoading(false)
+    if (isLogin) {
+      if (isPortkeyApp) {
+        setLoading(false);
       }
     }
   }, [isLogin, isPortkeyApp, setLoading]);
@@ -102,11 +102,11 @@ const Referral: React.FC = () => {
 
   const SloganDOM = useMemo(() => {
     return (
-      <div className={styles.sloganWrapper}>
-        <BaseImage src={sloganReference} alt={sloganReference.src} height={100} />
+      <div className={`${styles.sloganWrapper} ${isLG ? styles.sloganWrapperWidthH5 : styles.sloganWrapperWidthPC}`}>
+        <BaseImage src={sloganReference} alt={sloganReference.src} height={isLG ? 94 : 100} />
       </div>
     );
-  }, []);
+  }, [isLG]);
 
   const qrcodeDom = useMemo(() => {
     return (
@@ -116,14 +116,13 @@ const Referral: React.FC = () => {
           <div className={styles.QRcodeTitle}>Referral Link</div>
           <div className={styles.QRcodeUrlWrapper}>
             <div className={styles.QRcodeUrl}>{referralLink}</div>
-            <div className={styles.QRcodeCopyWrap}>
+            <div className={styles.QRcodeCopyWrap} onClick={onCopyClick}>
               <BaseImage
                 src={interactiveCopyWhite}
                 className={styles.QRcodeCopy}
                 alt="QRcodeCopy"
                 priority
                 width={16}
-                onClick={onCopyClick}
               />
             </div>
           </div>
@@ -137,6 +136,7 @@ const Referral: React.FC = () => {
       <div
         className={styles.inviteButton}
         onClick={() => {
+          googleAnalytics.referralInviteFriendsClickEvent();
           setIsModalOpen(true);
         }}>
         <div className={styles.inviteText}>Invite Friends</div>
@@ -154,9 +154,9 @@ const Referral: React.FC = () => {
 
   const loginButton = useMemo(() => {
     return (
-      <div className={styles.loginButton} onClick={onLogin}>
+      <a className={styles.loginButton} onClick={onLogin}>
         <div className={styles.loginText}>Login</div>
-      </div>
+      </a>
     );
   }, [onLogin]);
 
@@ -173,7 +173,6 @@ const Referral: React.FC = () => {
 
   return (
     <PortkeyProvider networkType={CurrentNetWork.networkType}>
-    <NiceModal.Provider>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
           <header className="row-center">
@@ -181,9 +180,9 @@ const Referral: React.FC = () => {
               <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
               {isLogin && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
-                  <div className={styles.profileButton}>
+                  <a className={styles.profileButton}>
                     <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
-                  </div>
+                  </a>
                 </Dropdown>
               )}
             </div>
@@ -199,7 +198,12 @@ const Referral: React.FC = () => {
             />
             <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
             {SloganDOM}
-            <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
+            <BaseImage
+              src={referralColorBox}
+              className={`${isLG ? styles.bgColorBoxH5 : styles.bgColorBoxPC}`}
+              alt="bgColorBox"
+              priority
+            />
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
@@ -222,7 +226,6 @@ const Referral: React.FC = () => {
           />
         )}
       </div>
-    </NiceModal.Provider>
     </PortkeyProvider>
   );
 };

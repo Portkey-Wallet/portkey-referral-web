@@ -23,28 +23,34 @@
     }
     .header_left {
       flex: 1 1 0;
-      height: 4px;
+      height: 2px;
       background-image: linear-gradient(to right, rgba(118, 132, 255, 0), rgba(118, 132, 255, 1));
       border-radius: 2px;
     }
     .header_right {
       flex: 1 1 0;
-      height: 4px;
+      height: 2px;
       background: #161630;
       background-image: linear-gradient(to right, rgba(118, 132, 255, 1), rgba(118, 132, 255, 0));
       border-radius: 2px;
     }
   }
 
-  .list_wrap {
+  .list_wrap_margin_pc {
     margin-top: 24px;
+  }
+  .list_wrap_margin_h5 {
+    margin-top: 16px;
+  }
+  .list_wrap {
     width: 100%;
     padding-top: 8px;
     padding-bottom: 8px;
     background: #161630;
+    border: 2px solid transparent;
+    border-image: linear-gradient(to right, #2f31a1 0%, #707eff 50%, #2f31a1 100%) 1;
     border-radius: 6px;
     overflow: hidden;
-    border: 2px #2f31a1 solid;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
@@ -65,22 +71,26 @@
     .my_rank_wrap {
       width: 100%;
       height: 56px;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding-left: 8px;
+      padding-right: 8px;
       padding-top: 8px;
       padding-bottom: 8px;
       background: #22235d;
       justify-content: flex-start;
       align-items: center;
+      gap: 12px;
       display: inline-flex;
-      border-radius: 6px;
-      overflow: hidden;
     }
     .list {
       width: 100%;
     }
-    .list_item_left {
+    .list_item_left_width_pc {
       width: 100px;
+    }
+    .list_item_left_width_h5 {
+      width: 48px;
+    }
+    .list_item_left {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -133,8 +143,13 @@
       line-height: 12px;
       word-wrap: break-word;
     }
-    .list_item_right {
+    .list_item_right_width_pc {
       width: 100px;
+    }
+    .list_item_right_width_h5 {
+      width: 56px;
+    }
+    .list_item_right {
       text-align: right;
       color: #979aa1;
       font-size: 12px;
@@ -156,6 +171,9 @@
       font-size: 12px;
       font-weight: 400;
       line-height: 16px;
+    }
+    .view_all_text:hover {
+      color: #fff;
     }
     .right_arrow {
       margin-left: 4px;

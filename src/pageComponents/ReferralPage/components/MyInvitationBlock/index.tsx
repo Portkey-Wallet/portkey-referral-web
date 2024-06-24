@@ -24,10 +24,10 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
       <Image className={styles.rightBg} src={myInvitationRightBg} alt="" />
       <BaseImage className={styles.header_bg} src={myInvitationHeaderBg} priority alt="my invitation" />
       <div className={styles.invitation_amount}>{invitationAmount ?? 0}</div>
-      <div className={styles.view_all_wrap} onClick={onClickViewAll}>
+      <a className={styles.view_all_wrap} onClick={onClickViewAll}>
         <div className={styles.view_all_text}>View All</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
-      </div>
+      </a>
       {isMyInvitationModalVisible && <MyInvitationModal invitationAmount={invitationAmount} open={isMyInvitationModalVisible} onClose={onClose}/>}
     </div>
   );
