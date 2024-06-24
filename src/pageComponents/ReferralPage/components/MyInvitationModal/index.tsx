@@ -5,6 +5,7 @@ import { List, Avatar } from 'antd';
 import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
 import { useEffectOnce } from '@/hooks/commonHooks';
+import { useResponsive } from '@/hooks/useResponsive';
 
 const ContainerHeight = 434;
 
@@ -33,48 +34,46 @@ interface MyInvitationList {
 
 const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open, onClose }) => {
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
+  const { isLG } = useResponsive();
   const currentList = useRef<MyInvitationList>({
     skip: 0,
     hasNextPage: true,
   });
 
-  const fetchInvitationList = useCallback(
-    async () => {
-      if (!currentList.current.hasNextPage) {
+  const fetchInvitationList = useCallback(async () => {
+    if (!currentList.current.hasNextPage) {
+      return;
+    }
+    try {
+      const res = await referralApi.referralRecordList({
+        skip: currentList.current.skip,
+        limit: 10,
+      });
+      const { hasNextPage = true, referralRecords = [] } = res;
+      currentList.current.skip += referralRecords.length;
+      currentList.current.hasNextPage = hasNextPage;
+
+      if (!referralRecords.length) {
         return;
       }
-      try {
-        const res = await referralApi.referralRecordList({
-          skip: currentList.current.skip,
-          limit: 10,
-        });
-        const { hasNextPage = true, referralRecords = [] } = res;
-        currentList.current.skip += referralRecords.length;
-        currentList.current.hasNextPage = hasNextPage;
-
-        if (!referralRecords.length) {
-          return;
+      referralRecords.forEach((record: MyInvitationItem) => {
+        const date = record.referralDate;
+        const sectionIndex = sections.findIndex((section) => section.date === date);
+        if (sectionIndex === -1) {
+          sections.push({
+            date,
+            items: [record],
+          });
+        } else {
+          sections[sectionIndex].items.push(record);
         }
-        referralRecords.forEach((record: MyInvitationItem) => {
-          const date = record.referralDate;
-          const sectionIndex = sections.findIndex((section) => section.date === date);
-          if (sectionIndex === -1) {
-            sections.push({
-              date,
-              items: [record],
-            });
-          } else {
-            sections[sectionIndex].items.push(record);
-          }
-        });
-        setSections([...sections]);
-        console.log('sections : ', sections);
-      } catch (error) {
-        console.error('referralRecordList error : ', error);
-      }
-    },
-    [sections],
-  );
+      });
+      setSections([...sections]);
+      console.log('sections : ', sections);
+    } catch (error) {
+      console.error('referralRecordList error : ', error);
+    }
+  }, [sections]);
 
   useEffectOnce(() => {
     fetchInvitationList();
@@ -143,7 +142,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
 
   return (
     <CommonModal title={'My Invitation'} open={open} onCancel={onClose}>
-      <div className={styles.container}>
+      <div className={`${styles.container} ${isLG ? styles.padding_h5 : styles.padding_pc}`}>
         {showInvitation ? (
           <div className={styles.contentWrap}>
             {headerDom}

@@ -10,6 +10,7 @@ import { useReferralRank } from '../../hook';
 import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import VirtualList from 'rc-virtual-list';
 import { useEffectOnce } from '@/hooks/commonHooks';
+import { useResponsive } from '@/hooks/useResponsive';
 
 interface LeaderBoardModalProps {
   open: boolean;
@@ -18,6 +19,8 @@ interface LeaderBoardModalProps {
 
 const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) => {
   const { referralRankList: list, myRank, next, init } = useReferralRank();
+  const { isLG } = useResponsive();
+
   useEffectOnce(() => {
     init();
   });
@@ -42,6 +45,10 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
     [containerHeight, next],
   );
 
+  const marginHorizontal = useMemo(() => {
+    return isLG ? styles.margin_h5 : styles.margin_pc;
+  }, [isLG]);
+
   const selectorDom = useMemo(() => {
     const selectItems = ['All'];
     const items: MenuProps['items'] = selectItems.map((item, index) => {
@@ -60,7 +67,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
     });
     return (
       <Dropdown menu={{ items }} trigger={['click']}>
-        <div className={styles.dropdownWrap}>
+        <div className={`${styles.dropdownWrap} ${marginHorizontal}`}>
           <div className={styles.dropdown}>
             <div className={styles.text}>All</div>
             <Image className={styles.down_arrow} src={directionDown} alt="rank" />
@@ -68,17 +75,17 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
         </div>
       </Dropdown>
     );
-  }, []);
+  }, [marginHorizontal]);
 
   const headerDom = useMemo(() => {
     return (
-      <div className={styles.headerWrap}>
+      <div className={`${styles.headerWrap} ${marginHorizontal}`}>
         <div className={styles.headerLeft}>Rank</div>
         <div className={styles.headerMiddle}>Wallet Address</div>
         <div className={styles.headerRight}>Invitations</div>
       </div>
     );
-  }, []);
+  }, [marginHorizontal]);
 
   const myRankDom = useMemo(() => {
     return (

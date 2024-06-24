@@ -7,7 +7,8 @@
   background: #23236b;
   border-radius: 6px;
   overflow: hidden;
-  border: 2px #2f31a1 solid;
+  border: 2px solid transparent;
+  border-image: linear-gradient(to right, #2f31a1 0%, #707eff 50%, #2f31a1 100%) 1;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
