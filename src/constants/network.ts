@@ -31,6 +31,7 @@ export const BackEndNetWorkMap: {
     connectUrl: 'https://auth-aa-portkey-test.portkey.finance',
     cmsUrl: 'https://cms-test-aa.portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://test.portkey.finance',
+    loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
   },
   mainnet: {
     name: 'aelf Mainnet',
@@ -40,6 +41,7 @@ export const BackEndNetWorkMap: {
     graphqlUrl: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
     cmsUrl: 'https://cms-aa-portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://portkey.finance',
+    loginType: ['Google', 'Email', 'Apple', 'Scan'],
   },
 };
 
@@ -47,7 +49,7 @@ export const NetworkEnv: BackEndNetworkType = process.env.NEXT_PUBLIC_NETWORK_EN
 export const CurrentNetWork = BackEndNetWorkMap[NetworkEnv] ?? {};
 export const ApiHost = CurrentNetWork.apiUrl;
 export const DomainHost = CurrentNetWork.domain || CurrentNetWork.apiUrl;
-
+export const LoginTypes = CurrentNetWork.loginType;
 export const ConnectHost = CurrentNetWork.connectUrl;
 export const GraphqlHost = CurrentNetWork.graphqlUrl;
 export const CmsHost = CurrentNetWork.cmsUrl;
