@@ -15,7 +15,7 @@ export const fetchCaHolderInfo = async () => {
 
   // adjust data create
   await walletInfo.getCAHolderInfo(originChainId || 'AELF');
-  await sleep(500);
+  await sleep(1000);
   const caHolderInfo = await walletInfo.getCAHolderInfo(originChainId || 'AELF');
   return caHolderInfo;
 };
