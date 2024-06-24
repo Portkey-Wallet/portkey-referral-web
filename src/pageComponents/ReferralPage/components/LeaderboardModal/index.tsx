@@ -26,14 +26,14 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
   });
 
   const containerHeight = useMemo(() => {
-    const listHeight = 392;
+    const listHeight = isLG ? 448 : 392;
     const myRankHeight = 56;
     if (myRank?.caAddress) {
       return listHeight;
     } else {
       return listHeight + myRankHeight;
     }
-  }, [myRank?.caAddress]);
+  }, [myRank?.caAddress, isLG]);
 
   const onScroll = useCallback(
     (e: React.UIEvent<HTMLElement, UIEvent>) => {

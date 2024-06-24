@@ -63,7 +63,7 @@ function CommonModal(props: ModalProps) {
         onMaskClick={onCancel}
         onClose={onCancel}
         bodyStyle={{
-          height: '80vh',
+          height: '650px',
           backgroundColor: '#161630',
           borderTopLeftRadius: '8px',
           borderTopRightRadius: '8px',
