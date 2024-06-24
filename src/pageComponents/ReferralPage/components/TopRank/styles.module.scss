@@ -36,8 +36,13 @@
     }
   }
 
-  .list_wrap {
+  .list_wrap_margin_pc {
     margin-top: 24px;
+  }
+  .list_wrap_margin_h5 {
+    margin-top: 16px;
+  }
+  .list_wrap {
     width: 100%;
     padding-top: 8px;
     padding-bottom: 8px;
@@ -66,20 +71,26 @@
     .my_rank_wrap {
       width: 100%;
       height: 56px;
-      padding-left: 12px;
-      padding-right: 12px;
+      padding-left: 8px;
+      padding-right: 8px;
       padding-top: 8px;
       padding-bottom: 8px;
       background: #22235d;
       justify-content: flex-start;
       align-items: center;
+      gap: 12px;
       display: inline-flex;
     }
     .list {
       width: 100%;
     }
-    .list_item_left {
+    .list_item_left_width_pc {
       width: 100px;
+    }
+    .list_item_left_width_h5 {
+      width: 48px;
+    }
+    .list_item_left {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -132,8 +143,13 @@
       line-height: 12px;
       word-wrap: break-word;
     }
-    .list_item_right {
+    .list_item_right_width_pc {
       width: 100px;
+    }
+    .list_item_right_width_h5 {
+      width: 56px;
+    }
+    .list_item_right {
       text-align: right;
       color: #979aa1;
       font-size: 12px;

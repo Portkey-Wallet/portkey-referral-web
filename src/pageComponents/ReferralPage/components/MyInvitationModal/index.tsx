@@ -103,7 +103,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
         <Avatar
           className={styles.list_item_image}
           style={{ backgroundColor: '#303055', verticalAlign: 'middle', fontSize: '12px', color: '#7F7FA7' }}
-          size={20}
+          size={24}
           src={item.avatar}>
           {item?.walletName ? item.walletName[0].toUpperCase() : ''}
         </Avatar>

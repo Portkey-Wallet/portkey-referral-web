@@ -11,8 +11,13 @@
   align-items: center;
   gap: 12px;
   display: inline-flex;
-  .item_left_wrap {
+  .item_left_width_pc {
     width: 100px;
+  }
+  .item_left_width_h5 {
+    width: 48px;
+  }
+  .item_left_wrap {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -47,8 +52,13 @@
     line-height: 16px;
     word-wrap: break-word;
   }
-  .item_right {
+  .item_right_width_pc {
     width: 100px;
+  }
+  .item_right_width_h5 {
+    width: 56px;
+  }
+  .item_right {
     text-align: right;
     color: #979aa1;
     font-size: 12px;

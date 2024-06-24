@@ -43,7 +43,7 @@ const Referral: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setLoading } = useLoading();
   const [referralLink, setReferralLink] = useState(shortLink);
-  
+
   useEffect(() => {
     (async () => {
       if (shortLink?.length > 0) {
@@ -60,7 +60,7 @@ const Referral: React.FC = () => {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]); 
+  }, [isLogin, shortLink]);
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -72,12 +72,12 @@ const Referral: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    if(isPortkeyApp) {
+    if (isPortkeyApp) {
       setLoading(true);
     }
-    if(isLogin) {
-      if(isPortkeyApp) {
-        setLoading(false)
+    if (isLogin) {
+      if (isPortkeyApp) {
+        setLoading(false);
       }
     }
   }, [isLogin, isPortkeyApp, setLoading]);
@@ -103,11 +103,11 @@ const Referral: React.FC = () => {
 
   const SloganDOM = useMemo(() => {
     return (
-      <div className={styles.sloganWrapper}>
-        <BaseImage src={sloganReference} alt={sloganReference.src} height={100} />
+      <div className={`${styles.sloganWrapper} ${isLG ? styles.sloganWrapperWidthH5 : styles.sloganWrapperWidthPC}`}>
+        <BaseImage src={sloganReference} alt={sloganReference.src} height={isLG ? 94 : 100} />
       </div>
     );
-  }, []);
+  }, [isLG]);
 
   const qrcodeDom = useMemo(() => {
     return (
@@ -173,7 +173,6 @@ const Referral: React.FC = () => {
   ];
 
   return (
-    // <PortkeyProvider networkType={CurrentNetWork.networkType}>
     <NiceModal.Provider>
       <div className={styles.referralPage}>
         <div className={styles.referralBlueContainer}>
@@ -200,7 +199,12 @@ const Referral: React.FC = () => {
             />
             <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
             {SloganDOM}
-            <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
+            <BaseImage
+              src={referralColorBox}
+              className={`${isLG ? styles.bgColorBoxH5 : styles.bgColorBoxPC}`}
+              alt="bgColorBox"
+              priority
+            />
           </div>
         </div>
         <div className={styles.referralBlackWrapper}>
@@ -224,7 +228,6 @@ const Referral: React.FC = () => {
         )}
       </div>
     </NiceModal.Provider>
-    // </PortkeyProvider>
   );
 };
 
