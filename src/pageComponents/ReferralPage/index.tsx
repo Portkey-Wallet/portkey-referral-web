@@ -42,7 +42,7 @@ const Referral: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { setLoading } = useLoading();
   const [referralLink, setReferralLink] = useState(shortLink);
-  
+
   useEffect(() => {
     (async () => {
       if (shortLink?.length > 0) {
@@ -59,7 +59,7 @@ const Referral: React.FC = () => {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]); 
+  }, [isLogin, shortLink]);
 
   const fetchTotalCount = useCallback(async () => {
     try {
@@ -71,12 +71,12 @@ const Referral: React.FC = () => {
     }
   }, []);
   useEffect(() => {
-    if(isPortkeyApp) {
+    if (isPortkeyApp) {
       setLoading(true);
     }
-    if(isLogin) {
-      if(isPortkeyApp) {
-        setLoading(false)
+    if (isLogin) {
+      if (isPortkeyApp) {
+        setLoading(false);
       }
     }
   }, [isLogin, isPortkeyApp, setLoading]);
@@ -172,56 +172,56 @@ const Referral: React.FC = () => {
 
   return (
     <PortkeyProvider networkType={CurrentNetWork.networkType}>
-    <NiceModal.Provider>
-      <div className={styles.referralPage}>
-        <div className={styles.referralBlueContainer}>
-          <header className="row-center">
-            <div className={clsx(['flex-row-center', styles.referralHeader])}>
-              <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
-              {isLogin && !isPortkeyApp && (
-                <Dropdown menu={{ items }} placement="bottomRight">
-                  <a className={styles.profileButton}>
-                    <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
-                  </a>
-                </Dropdown>
-              )}
+      <NiceModal.Provider>
+        <div className={styles.referralPage}>
+          <div className={styles.referralBlueContainer}>
+            <header className="row-center">
+              <div className={clsx(['flex-row-center', styles.referralHeader])}>
+                <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+                {isLogin && !isPortkeyApp && (
+                  <Dropdown menu={{ items }} placement="bottomRight">
+                    <a className={styles.profileButton}>
+                      <Image className={styles.profileImage} width={24} src={userProfile} alt="avatar" />
+                    </a>
+                  </Dropdown>
+                )}
+              </div>
+            </header>
+            <div className={styles.referralMainContainer}>
+              <BaseImage
+                src={referralWaterMark}
+                className={styles.bgWaterMark}
+                alt="waterMark"
+                priority
+                width={253}
+                height={378}
+              />
+              <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
+              {SloganDOM}
+              <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
             </div>
-          </header>
-          <div className={styles.referralMainContainer}>
-            <BaseImage
-              src={referralWaterMark}
-              className={styles.bgWaterMark}
-              alt="waterMark"
-              priority
-              width={253}
-              height={378}
-            />
-            <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
-            {SloganDOM}
-            <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
           </div>
-        </div>
-        <div className={styles.referralBlackWrapper}>
-          {isLogin ? (
-            <>
-              <MyInvitationBlock invitationAmount={myInvitedCount} />
-              {referralLink?.length > 0 && (isLG ? inviteButton : qrcodeDom)}
-            </>
-          ) : (
-            loginButton
+          <div className={styles.referralBlackWrapper}>
+            {isLogin ? (
+              <>
+                <MyInvitationBlock invitationAmount={myInvitedCount} />
+                {referralLink?.length > 0 && (isLG ? inviteButton : qrcodeDom)}
+              </>
+            ) : (
+              loginButton
+            )}
+            <TopRank isLogin={isLogin} />
+          </div>
+          {isModalOpen && (
+            <QrcodeModal
+              shortLink={referralLink}
+              handleCancel={() => {
+                setIsModalOpen(false);
+              }}
+            />
           )}
-          <TopRank isLogin={isLogin} />
         </div>
-        {isModalOpen && (
-          <QrcodeModal
-            shortLink={referralLink}
-            handleCancel={() => {
-              setIsModalOpen(false);
-            }}
-          />
-        )}
-      </div>
-    </NiceModal.Provider>
+      </NiceModal.Provider>
     </PortkeyProvider>
   );
 };
