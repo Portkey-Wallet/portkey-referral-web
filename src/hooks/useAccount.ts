@@ -11,6 +11,7 @@ export default function useAccount() {
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
     try {
+      console.log('wfs=== connectWallet start');
       const walletInfo = await connectWallet();
       console.log('wfs=== walletInfo', walletInfo);
       return true;

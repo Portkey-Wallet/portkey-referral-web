@@ -116,6 +116,18 @@ class Analytics {
       console.error('Google Analytics request failed with an exception', e);
     }
   }
+  async referralInviteFriendsClickEvent(additionalParams = {}) {
+    try {
+      const params = { timestamp: Date.now() };
+
+      return this.fireEvent('referral_invite_friends_click', {
+        ...params,
+        ...additionalParams,
+      });
+    } catch (e) {
+      console.error('Google Analytics request failed with an exception', e);
+    }
+  }
 }
 
 const googleAnalytics = new Analytics();

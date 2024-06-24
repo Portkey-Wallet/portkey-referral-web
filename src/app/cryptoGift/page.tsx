@@ -68,6 +68,9 @@ ConfigProvider.setGlobalConfig({
   requestDefaults: {
     baseURL: ApiHost,
   },
+  loginConfig: {
+    loginMethodsOrder: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
+  },
 });
 
 const CryptoGift: React.FC = () => {
@@ -92,10 +95,10 @@ const CryptoGift: React.FC = () => {
 
   const [btnLoading, setBtnLoading] = useState(false);
 
-  const onRefreshCryptoGiftDetail = useDebounceCallback(
-    async (init?: boolean, caHash?: string) => {
-      console.log('init', init);
+  const onRefreshCryptoGiftDetail: (init?: boolean, caHash?: string, circulate?: boolean) => void = useDebounceCallback(
+    async (init?: boolean, caHash?: string, circulate?: boolean) => {
       try {
+        if (circulate) setBtnLoading(true);
         init && setInitializing(true);
         const path = isSignUp ? PORTKEY_API.GET.LOGIN_CRYPTO_GIFT_DETAIL : PORTKEY_API.GET.CRYPTO_GIFT_DETAIL;
 
@@ -103,6 +106,13 @@ const CryptoGift: React.FC = () => {
         if (caHolderInfo?.caHash) params.caHash = caHolderInfo?.caHash;
         if (caHash) params.caHash = caHash;
         const result: TCryptoDetail = await portkeyGet(path, params);
+
+        // circulate fetch
+        if (circulate && result.cryptoGiftPhase === CryptoGiftPhase.Available) {
+          return onRefreshCryptoGiftDetail(false, caHash, true);
+        } else {
+          setBtnLoading(false);
+        }
 
         if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
 
@@ -203,7 +213,7 @@ const CryptoGift: React.FC = () => {
       setSuccessClaimCurrentPage(true);
       setCaHolderInfo({ caHash: didWallet.caInfo.caHash, avatar: '', nickName: '' });
       await sleep(1000);
-      latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash);
+      latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash, true);
       fetchAndStoreCaHolderInfo();
     },
     [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail, setCaHolderInfo],
@@ -219,9 +229,13 @@ const CryptoGift: React.FC = () => {
           userCaAddress: getItem(CRYPTO_GIFT_CA_ADDRESS) || '',
         });
 
-        if (result.result === RedPackageGrabStatus.Success) setSuccessClaimCurrentPage(true);
+        if (result.errorCode === '10001') return latestOnRefreshCryptoGiftDetail.current(false, undefined, true);
 
-        console.log('result', result);
+        if (result.result === RedPackageGrabStatus.Success) {
+          setSuccessClaimCurrentPage(true);
+          await latestOnRefreshCryptoGiftDetail.current();
+          setBtnLoading(false);
+        }
       } else {
         const { identityCode } = (await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId })) || {};
 
@@ -234,13 +248,13 @@ const CryptoGift: React.FC = () => {
           },
         });
         setItem(cryptoGiftId, identityCode);
+        await sleep(500);
+        await latestOnRefreshCryptoGiftDetail.current();
+        setBtnLoading(false);
       }
     } catch (error: any) {
       console.log('ERROR', error);
-    } finally {
-      await sleep(500);
-      await latestOnRefreshCryptoGiftDetail.current();
-      setBtnLoading(false);
+      latestOnRefreshCryptoGiftDetail.current();
     }
   }, [caHolderInfo?.caHash, cryptoGiftId, isSignUp, latestOnRefreshCryptoGiftDetail]);
 
@@ -296,14 +310,14 @@ const CryptoGift: React.FC = () => {
     return (
       <>
         <Avatar
-          alt={cryptoDetail?.sender?.nickname || ''}
+          alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
-          src={cryptoDetail?.sender?.avatar || ''}>
+          src={cryptoDetail?.sender?.avatar || ' '}>
           {cryptoDetail?.sender?.nickname?.[0] || ''}
         </Avatar>
 
-        <div className={styles.cryptoGiftSenderTitle}>{cryptoDetail?.prompt || ''}</div>
-        <div className={styles.cryptoGiftSenderMemo}>{`"${cryptoDetail?.memo || ''}"`}</div>
+        <div className={styles.cryptoGiftSenderTitle}>{cryptoDetail?.prompt || '-- sent you a crypto gift'}</div>
+        <div className={styles.cryptoGiftSenderMemo}>{`"${cryptoDetail?.memo || 'Best wishes!'}"`}</div>
       </>
     );
   }, [
@@ -385,7 +399,7 @@ const CryptoGift: React.FC = () => {
     let onAction = onClaim;
 
     // sub title
-    if (cryptoDetail?.isNewUsersOnly || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available) {
+    if (cryptoDetail?.isNewUsersOnly && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Available) {
       subText = 'Create a new Portkey account to claim';
     }
 
@@ -407,10 +421,6 @@ const CryptoGift: React.FC = () => {
         : 'Try to Claim Again';
       subText = '';
       onAction = onClaim;
-    }
-
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
-      text = 'Signup to Claim';
     }
 
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers && isSignUp) {
@@ -615,7 +625,7 @@ const CryptoGift: React.FC = () => {
 
         <div className={styles.referralMainContainer}>
           {BGDOM}
-          {!initializing && renderCryptoBoxHeaderDom()}
+          {renderCryptoBoxHeaderDom()}
           {renderCryptoBoxImgDom()}
           {!initializing && !isWeChat && !isPortkeyApp && renderCryptoGiftTipsDom()}
           {!initializing && renderGiftDetailDom()}
