@@ -313,7 +313,6 @@ const CryptoGift: React.FC = () => {
     return (
       <>
         <Avatar
-          onClick={onSignUp}
           alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ' '}>
