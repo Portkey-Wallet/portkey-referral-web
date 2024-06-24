@@ -34,7 +34,7 @@ import { privacyPolicy, termsOfService } from '@/constants/pageData';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
 import { PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
-import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
+import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, LoginTypes } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { BackEndNetworkType } from '@/types/network';
 import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
@@ -69,7 +69,7 @@ ConfigProvider.setGlobalConfig({
     baseURL: ApiHost,
   },
   loginConfig: {
-    loginMethodsOrder: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
+    loginMethodsOrder: LoginTypes,
   },
 });
 
@@ -146,6 +146,9 @@ const CryptoGift: React.FC = () => {
       serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
       requestDefaults: {
         baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
+      },
+      loginConfig: {
+        loginMethodsOrder: nodeInfo.loginType || LoginTypes,
       },
     });
   }, [networkType]);
@@ -310,6 +313,7 @@ const CryptoGift: React.FC = () => {
     return (
       <>
         <Avatar
+          onClick={onSignUp}
           alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ' '}>

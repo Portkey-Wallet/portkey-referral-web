@@ -1,4 +1,4 @@
-import { NetworkType } from '@portkey/did-ui-react';
+import { NetworkType, TSupportAccountType } from '@portkey/did-ui-react';
 
 export type BackEndNetworkType = 'test3' | 'testnet' | 'mainnet' | 'test4';
 export type NetworkItem = {
@@ -10,4 +10,5 @@ export type NetworkItem = {
   graphqlUrl: string;
   cmsUrl: string;
   portkeyWebsiteUrl: string;
+  loginType?: TSupportAccountType[];
 };
