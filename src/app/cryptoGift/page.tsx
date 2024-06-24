@@ -68,9 +68,6 @@ ConfigProvider.setGlobalConfig({
   requestDefaults: {
     baseURL: ApiHost,
   },
-  loginConfig: {
-    loginMethodsOrder: LoginTypes,
-  },
 });
 
 const CryptoGift: React.FC = () => {
@@ -146,9 +143,6 @@ const CryptoGift: React.FC = () => {
       serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
       requestDefaults: {
         baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
-      },
-      loginConfig: {
-        loginMethodsOrder: nodeInfo.loginType || LoginTypes,
       },
     });
   }, [networkType]);
