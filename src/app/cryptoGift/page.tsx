@@ -68,6 +68,9 @@ ConfigProvider.setGlobalConfig({
   requestDefaults: {
     baseURL: ApiHost,
   },
+  loginConfig: {
+    loginMethodsOrder: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
+  },
 });
 
 const CryptoGift: React.FC = () => {
