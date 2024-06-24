@@ -30,6 +30,7 @@ import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
+import googleAnalytics from '@/utils/googleAnalytics';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -136,6 +137,7 @@ const Referral: React.FC = () => {
       <div
         className={styles.inviteButton}
         onClick={() => {
+          googleAnalytics.referralInviteFriendsClickEvent();
           setIsModalOpen(true);
         }}>
         <div className={styles.inviteText}>Invite Friends</div>
