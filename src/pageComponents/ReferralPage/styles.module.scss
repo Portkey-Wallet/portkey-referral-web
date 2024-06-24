@@ -82,12 +82,16 @@
         height: 100px;
         margin-bottom: 32px;
       }
-
+      .sloganWrapperWidthPC {
+        width: 100%;
+      }
+      .sloganWrapperWidthH5 {
+        width: 297px;
+      }
       .sloganWrapper {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 100%;
         padding: $padding-24;
         margin: auto;
       }
@@ -118,7 +122,7 @@
         z-index: 1;
       }
 
-      .bgColorBox {
+      .bgColorBoxPC {
         position: relative;
         display: flex;
         justify-content: center;
@@ -129,6 +133,18 @@
         > img {
           width: 100%;
           min-width: $divide-440;
+        }
+      }
+      .bgColorBoxH5 {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+        width: 100%;
+        bottom: -50px;
+
+        > img {
+          width: 100%;
         }
       }
     }

@@ -102,11 +102,11 @@ const Referral: React.FC = () => {
 
   const SloganDOM = useMemo(() => {
     return (
-      <div className={styles.sloganWrapper}>
-        <BaseImage src={sloganReference} alt={sloganReference.src} height={100} />
+      <div className={`${styles.sloganWrapper} ${isLG ? styles.sloganWrapperWidthH5 : styles.sloganWrapperWidthPC}`}>
+        <BaseImage src={sloganReference} alt={sloganReference.src} height={isLG ? 94 : 100} />
       </div>
     );
-  }, []);
+  }, [isLG]);
 
   const qrcodeDom = useMemo(() => {
     return (
@@ -198,7 +198,12 @@ const Referral: React.FC = () => {
               />
               <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
               {SloganDOM}
-              <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
+              <BaseImage
+                src={referralColorBox}
+                className={`${isLG ? styles.bgColorBoxH5 : styles.bgColorBoxPC}`}
+                alt="bgColorBox"
+                priority
+              />
             </div>
           </div>
           <div className={styles.referralBlackWrapper}>
