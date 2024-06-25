@@ -83,7 +83,6 @@ const CryptoGift: React.FC = () => {
   const { setLoading } = useLoading();
   const [initializing, setInitializing] = useState(true);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
-  const [successClaimCurrentPage, setSuccessClaimCurrentPage] = useState(true);
 
   const [, copyToClipboard] = useCopyToClipboard();
   const signInRef = useRef<ISignIn>(null);
@@ -113,9 +112,6 @@ const CryptoGift: React.FC = () => {
         } else {
           setBtnLoading(false);
         }
-
-        if (init && result.cryptoGiftPhase === CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
-        if (circulate && result.cryptoGiftPhase === CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(true);
 
         if (result?.remainingWaitingSeconds || result?.remainingExpirationSeconds)
           rootTime.current = {
@@ -235,7 +231,6 @@ const CryptoGift: React.FC = () => {
         if (result.errorCode === '10001') return latestOnRefreshCryptoGiftDetail.current(false, undefined, true);
 
         if (result.result === RedPackageGrabStatus.Success) {
-          setSuccessClaimCurrentPage(true);
           await latestOnRefreshCryptoGiftDetail.current();
           setBtnLoading(false);
         }
@@ -274,7 +269,6 @@ const CryptoGift: React.FC = () => {
       setIsSignUp(false);
 
       await latestOnRefreshCryptoGiftDetail.current();
-      setSuccessClaimCurrentPage(false);
     } catch (error: any) {
       console.log('onLogout error', error);
       singleMessage.error(error?.message || 'fail');
@@ -308,7 +302,7 @@ const CryptoGift: React.FC = () => {
   );
 
   const renderCryptoBoxHeaderDom = useCallback(() => {
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && successClaimCurrentPage) return null;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
 
     return (
       <>
@@ -329,11 +323,10 @@ const CryptoGift: React.FC = () => {
     cryptoDetail?.prompt,
     cryptoDetail?.sender?.avatar,
     cryptoDetail?.sender?.nickname,
-    successClaimCurrentPage,
   ]);
 
   const renderCryptoBoxImgDom = useCallback(() => {
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && successClaimCurrentPage) return null;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed) return null;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) return null;
 
     let src = boxClosed;
@@ -358,7 +351,7 @@ const CryptoGift: React.FC = () => {
         />
       </>
     );
-  }, [cryptoDetail?.cryptoGiftPhase, successClaimCurrentPage]);
+  }, [cryptoDetail?.cryptoGiftPhase]);
 
   const renderCryptoGiftTipsDom = useCallback(() => {
     let text = '';
@@ -371,27 +364,20 @@ const CryptoGift: React.FC = () => {
     if (isSignUp && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
       text = `Oops, only newly registered Portkey users can claim this crypto gift.`;
 
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && !successClaimCurrentPage)
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed)
       return (
         <div className={styles.cryptoGiftTips}>
           <BreakWord text="You've already claimed this crypto gift and received " />
           <BreakWord
             className={styles.symbol}
-            text={`${divDecimalsStr(cryptoDetail.amount, cryptoDetail.decimals)} ${cryptoDetail.symbol}.`}
+            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${cryptoDetail?.symbol}.`}
           />
           <BreakWord text={`You can't claim it again.`} />
         </div>
       );
 
     return text ? <div className={styles.cryptoGiftTips}>{text}</div> : null;
-  }, [
-    cryptoDetail?.amount,
-    cryptoDetail?.cryptoGiftPhase,
-    cryptoDetail?.decimals,
-    cryptoDetail?.symbol,
-    isSignUp,
-    successClaimCurrentPage,
-  ]);
+  }, [cryptoDetail?.amount, cryptoDetail?.cryptoGiftPhase, cryptoDetail?.decimals, cryptoDetail?.symbol, isSignUp]);
 
   const renderActionButtonDom = useCallback(() => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
@@ -544,7 +530,6 @@ const CryptoGift: React.FC = () => {
 
   const renderSuccessFullDomFirstTime = useCallback(() => {
     if (cryptoDetail?.cryptoGiftPhase !== CryptoGiftPhase.Claimed) return null;
-    if (!successClaimCurrentPage) return null;
 
     return (
       <div className={styles.successSectionWrap}>
@@ -562,7 +547,7 @@ const CryptoGift: React.FC = () => {
             className={styles['amount-symbol']}
             text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${
               cryptoDetail?.assetType === AssetsType.ft
-                ? cryptoDetail?.label || cryptoDetail.symbol
+                ? cryptoDetail?.label || cryptoDetail?.symbol
                 : cryptoDetail?.nftAlias
             }`}
           />
@@ -588,7 +573,6 @@ const CryptoGift: React.FC = () => {
     cryptoDetail?.symbol,
     onCopyClick,
     onJumpToStore,
-    successClaimCurrentPage,
   ]);
 
   const BGDOM = useMemo(() => {
