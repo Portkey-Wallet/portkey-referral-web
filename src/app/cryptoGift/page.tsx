@@ -374,12 +374,12 @@ const CryptoGift: React.FC = () => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed && !successClaimCurrentPage)
       return (
         <div className={styles.cryptoGiftTips}>
-          <BreakWord text="You have already claimed " />
+          <BreakWord text="You've already claimed this crypto gift and received " />
           <BreakWord
             className={styles.symbol}
-            text={`${divDecimalsStr(cryptoDetail.amount, cryptoDetail.decimals)} ${cryptoDetail.symbol}`}
+            text={`${divDecimalsStr(cryptoDetail.amount, cryptoDetail.decimals)} ${cryptoDetail.symbol}.`}
           />
-          <BreakWord text={`of this Crypto Gift and can't reclaim it.`} />
+          <BreakWord text={`You can't claim it again.`} />
         </div>
       );
 
