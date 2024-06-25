@@ -22,7 +22,6 @@ interface MyInvitationSection {
 }
 
 interface MyInvitationProps {
-  invitationAmount: number;
   open: boolean;
   onClose: () => void;
 }
@@ -32,13 +31,24 @@ interface MyInvitationList {
   hasNextPage: boolean;
 }
 
-const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open, onClose }) => {
+const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
+  const [invitationAmount, setInvitationAmount] = useState(0);
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
   const { isLG } = useResponsive();
   const currentList = useRef<MyInvitationList>({
     skip: 0,
     hasNextPage: true,
   });
+
+  const fetchTotalCount = useCallback(async () => {
+    try {
+      const totalCount = await referralApi.referralTotalCount();
+      console.log('referralTotalCount : ', totalCount);
+      setInvitationAmount(totalCount ?? 0);
+    } catch (error) {
+      console.error('referralTotalCount error : ', error);
+    }
+  }, []);
 
   const fetchInvitationList = useCallback(async () => {
     if (!currentList.current.hasNextPage) {
@@ -77,6 +87,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ invitationAmount, open
 
   useEffectOnce(() => {
     fetchInvitationList();
+    fetchTotalCount();
   });
 
   const showInvitation = useMemo(() => {
