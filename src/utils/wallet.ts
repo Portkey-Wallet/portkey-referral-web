@@ -14,12 +14,14 @@ export const fetchCaHolderInfo = async () => {
   const originChainId = getItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID);
 
   // adjust data create
+  let caHolderInfo;
   try {
-    await walletInfo.getCAHolderInfo(originChainId || 'AELF');
+    caHolderInfo = await walletInfo.getCAHolderInfo(originChainId || 'AELF');
   } catch (error) {
     console.log('getCAHolderInfo err', error);
+    await sleep(1000);
+    caHolderInfo = await walletInfo.getCAHolderInfo(originChainId || 'AELF');
   }
-  await sleep(1000);
-  const caHolderInfo = await walletInfo.getCAHolderInfo(originChainId || 'AELF');
+
   return caHolderInfo;
 };
