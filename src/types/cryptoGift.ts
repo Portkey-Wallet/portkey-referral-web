@@ -21,6 +21,7 @@ export enum CryptoGiftPhase {
   OnlyNewUsers = 5,
   GrabbedQuota = 6,
   NoQuota = 7,
+  AlreadyClaimed = 8,
 }
 
 export type TCryptoDetail = {
