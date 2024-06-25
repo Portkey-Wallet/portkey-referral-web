@@ -381,6 +381,8 @@ const CryptoGift: React.FC = () => {
 
   const renderActionButtonDom = useCallback(() => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed) return null;
+
 
     let disabled = false;
     let text = 'Claim Crypto Gift';
