@@ -114,7 +114,8 @@ const CryptoGift: React.FC = () => {
           setBtnLoading(false);
         }
 
-        if (result.cryptoGiftPhase !== CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
+        if (init && result.cryptoGiftPhase === CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(false);
+        if (circulate && result.cryptoGiftPhase === CryptoGiftPhase.Claimed) setSuccessClaimCurrentPage(true);
 
         if (result?.remainingWaitingSeconds || result?.remainingExpirationSeconds)
           rootTime.current = {
@@ -213,7 +214,6 @@ const CryptoGift: React.FC = () => {
       setItem(CRYPTO_GIFT_ORIGIN_CHAIN_ID, didWallet.chainId);
 
       setIsSignUp(true);
-      setSuccessClaimCurrentPage(true);
       setCaHolderInfo({ caHash: didWallet.caInfo.caHash, avatar: '', nickName: '' });
       await sleep(1000);
       latestOnRefreshCryptoGiftDetail.current(false, didWallet.caInfo.caHash, true);
