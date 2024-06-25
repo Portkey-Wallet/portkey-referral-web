@@ -206,7 +206,7 @@ const Referral: React.FC = () => {
             />
           </div>
         </div>
-        <div className={styles.referralBlackWrapper}>
+        <div className={`${styles.referralBlackWrapper} ${isLG ? styles.referralBlackWrapperMarginTopH5 : styles.referralBlackWrapperMarginTopPC}`}>
           {isLogin ? (
             <>
               <MyInvitationBlock invitationAmount={myInvitedCount} />
