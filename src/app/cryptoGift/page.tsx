@@ -135,7 +135,7 @@ const CryptoGift: React.FC = () => {
   const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
 
   useEffectOnce(() => {
-    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift');
+    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift', {id: cryptoGiftId});
   });
 
   useEffect(() => {
