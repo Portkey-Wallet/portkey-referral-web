@@ -18,14 +18,14 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   return (
     <html lang="en">
       {/* Global site tag (gtag.js) - Google Analytics  */}
-      <Script src="https://www.googletagmanager.com/gtag/js?id=G-TE9REMNJM7" strategy="afterInteractive" />
+      <Script src="https://www.googletagmanager.com/gtag/js?id=G-28MESJ5HTM" strategy="afterInteractive" />
       <Script id="google-analytics" strategy="afterInteractive">
         {`
       window.dataLayer = window.dataLayer || [];
       function gtag(){window.dataLayer.push(arguments);}
       gtag('js', new Date());
 
-      gtag('config', 'G-TE9REMNJM7');
+      gtag('config', 'G-28MESJ5HTM');
     `}
       </Script>
 
