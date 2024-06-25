@@ -326,12 +326,12 @@ const CryptoGift: React.FC = () => {
   ]);
 
   const renderCryptoBoxImgDom = useCallback(() => {
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed) return null;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) return null;
 
     let src = boxClosed;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) src = boxEmpty;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) src = boxOpened;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed) src = boxOpened;
     if (
       cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired ||
       cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers
