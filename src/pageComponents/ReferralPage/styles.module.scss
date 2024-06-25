@@ -150,13 +150,20 @@
     }
   }
 
+  .referralBlackWrapperMarginTopPC {
+    margin-top: 96px;
+  }
+
+  .referralBlackWrapperMarginTopH5 {
+    margin-top: 51px;
+  }
+
   .referralBlackWrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 0px 16px;
-    margin-top: 96px;
 
     .QRcodeWrapper {
       margin: 16px auto 48px;
