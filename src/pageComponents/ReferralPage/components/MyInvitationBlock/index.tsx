@@ -28,7 +28,7 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ invitationAmount 
         <div className={styles.view_all_text}>View All</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </a>
-      {isMyInvitationModalVisible && <MyInvitationModal invitationAmount={invitationAmount} open={isMyInvitationModalVisible} onClose={onClose}/>}
+      {isMyInvitationModalVisible && <MyInvitationModal open={isMyInvitationModalVisible} onClose={onClose}/>}
     </div>
   );
 };
