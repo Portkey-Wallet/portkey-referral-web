@@ -41,7 +41,7 @@ export const BackEndNetWorkMap: {
     graphqlUrl: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
     cmsUrl: 'https://cms-aa-portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://portkey.finance',
-    loginType: ['Google', 'Email', 'Apple', 'Scan'],
+    loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
   },
 };
 
