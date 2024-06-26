@@ -1,0 +1,495 @@
+/* stylelint-disable selector-class-pattern */
+@import 'src/styles/variable.scss';
+
+.referralPage {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: $bg-light-blue;
+  min-width: $page-min-width;
+  overflow-x: hidden;
+
+  .referralBlueContainer {
+    width: 100%;
+    height: 100%;
+    padding: $padding-16;
+
+    .referralHeader {
+      position: relative;
+      z-index: 1000;
+      width: 100%;
+      height: 80px;
+      max-width: $content-width-large-desktop;
+      max-width: $content-width-large-desktop;
+      padding: $padding-16;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .portkeyLogo {
+        cursor: pointer;
+        width: 142px;
+        height: 32px;
+      }
+
+      .userLogo {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+      }
+    }
+
+    .referralMainContainer {
+      position: relative;
+      z-index: 100;
+      padding: 0 16px;
+      width: 375px;
+      height: calc(100% - 80px);
+      margin: auto;
+
+      .bgWrap {
+        position: absolute;
+        z-index: -1;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+
+        .bgPortkeyLogo {
+          position: absolute;
+          left: 0;
+          top: -100px;
+          width: 269px;
+          height: 278px;
+        }
+
+        .bgLine1 {
+          position: absolute;
+          right: -25px;
+          top: -80px;
+          width: 88px;
+          height: 250px;
+        }
+        .bgLine2 {
+          position: absolute;
+          top: 350px;
+          left: -50px;
+          width: 363px;
+          height: 104px;
+        }
+        .bgLine3 {
+          position: absolute;
+          bottom: 10px;
+          right: -25px;
+          width: 72px;
+          height: 104px;
+          z-index: 0;
+          overflow: hidden;
+        }
+      }
+
+      .cryptoGiftSenderImg {
+        display: block;
+        margin: 0 auto;
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        line-height: 48px;
+        border-radius: 24px;
+        overflow: hidden;
+      }
+
+      .cryptoGiftSenderTitle {
+        margin-top: 12px;
+        font-size: 16px;
+        line-height: 24px;
+        text-align: center;
+        color: #101114;
+      }
+
+      .cryptoGiftSenderMemo {
+        margin-top: 4px;
+        font-size: 14px;
+        line-height: 22px;
+        text-align: center;
+        color: #979aa1;
+      }
+
+      .cryptoGiftTopDom {
+        height: 10px;
+      }
+
+      .cryptoGiftImg {
+        overflow: hidden;
+        width: 343px;
+        height: 240px;
+      }
+
+      .cryptoGiftTips {
+        margin-top: 12px;
+        line-height: 26px;
+        font-size: 18px;
+        font-weight: $font-wight-bold;
+        text-align: center;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        .symbol {
+          color: $primary-color;
+        }
+      }
+
+      .giftDetailWrap {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 24px 12px;
+        margin-top: 12px;
+
+        .willGet {
+          font-size: 14px;
+          line-height: 20px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .symbol {
+          margin-top: 12px;
+          font-size: 30px;
+          font-weight: $font-wight-bold;
+          line-height: 38px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .usdtAmount {
+          margin-top: 4px;
+          line-height: 20px;
+          font-size: 14px;
+          color: $font-color-secondary;
+        }
+
+        .usdtAmount {
+          line-height: 20px;
+          font-size: 14px;
+          color: $font-color-secondary;
+          text-align: center;
+        }
+
+        .nftWrap {
+          position: relative;
+          margin: 12px auto 0;
+          width: 98px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+
+          .nftItem {
+            border-radius: 8px;
+            overflow: hidden;
+          }
+
+          .nftInfoWrap {
+            position: absolute;
+            left: 0px;
+            bottom: 0px;
+            right: 0;
+            height: 48px;
+            background-color: rgba(0, 0, 0, 0.4);
+            border-radius: 0 0 8px 8px;
+            padding: 6px 8px;
+
+            .nftName {
+              font-size: 14px;
+              line-height: 20px;
+              color: #ffffff;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .nftId {
+              font-size: 12px;
+              line-height: 16px;
+              color: #ffffff;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+        }
+
+        .nftCount {
+          font-size: 30px;
+          margin-top: 4px;
+          font-weight: $font-wight-bold;
+          line-height: 38px;
+          color: $font-color-primary;
+          text-align: center;
+        }
+
+        .alarmWrap {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          margin: 32px auto 0;
+          color: $font-color-yellow;
+          .alarmText {
+            margin-top: 2px;
+            margin-left: 8px;
+            font-size: 14px;
+            line-height: 20px;
+          }
+        }
+      }
+
+      .mobileClaimBtn {
+        background-color: $bg-btn;
+        width: 343px;
+        height: 48px;
+        display: flex;
+        justify-content: center;
+        padding-top: 10px;
+        border: none;
+        z-index: 100;
+        border-radius: 6px;
+      }
+
+      .actionBtn {
+        width: 343px;
+        height: 48px;
+        background-color: $bg-btn;
+        margin: 40px 0 16px;
+        border-radius: 8px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 16px;
+        border: 0;
+      }
+      .disabledBtn {
+        background-color: $bg-disabled-btn-color;
+        cursor: not-allowed;
+      }
+
+      .btnTips {
+        color: $font-color-primary;
+        font-size: 14px;
+        line-height: 20px;
+        text-align: center;
+      }
+
+      .successSectionWrap {
+        max-width: 343px;
+        overflow: hidden;
+
+        .successWrap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          width: 100%;
+          .amount-symbol {
+            color: $primary-color;
+            font-size: 16px;
+            font-weight: $font-wight-bold;
+            line-height: 24px;
+          }
+          .toAddress {
+            color: $font-color-primary;
+            font-size: 16px;
+            font-weight: $font-wight-bold;
+            line-height: 24px;
+          }
+        }
+        .viewDetails {
+          width: 100%;
+          border: 0;
+          background-color: transparent;
+          text-align: center;
+          font-size: 14px;
+          line-height: 22px;
+          color: $primary-color;
+          margin-top: 8px;
+          font-weight: $font-wight-bold;
+        }
+
+        .shareBtnWrap {
+          width: 343px;
+          height: 48px;
+          border: 1px solid $primary-color;
+          background-color: transparent;
+          color: $primary-color;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-radius: 6px;
+          margin-top: 40px;
+          cursor: pointer;
+
+          .buttonText {
+            margin-left: 8px;
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: $font-wight-bold;
+          }
+        }
+      }
+
+      .sloganWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: $padding-24;
+        margin: auto;
+      }
+
+      .sloganInvitee {
+        position: relative;
+        height: 86px;
+        width: 461px;
+        margin: auto;
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+
+      .bgSlogan {
+        max-width: 480px;
+        height: 100px;
+      }
+
+      .inviteeText {
+        margin: auto;
+        margin-top: 18px;
+        color: #fff;
+        text-align: center;
+        font-size: 16px;
+        font-weight: $font-wight-bold;
+        line-height: 22px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .bgColorBox {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+        width: 100%;
+        bottom: -50px;
+
+        > img {
+          width: 100%;
+          min-width: $divide-440;
+        }
+      }
+    }
+  }
+
+  .downloadWrap {
+    position: absolute;
+    bottom: 8px;
+    left: 12px;
+    z-index: 100;
+    margin: 0 auto;
+    width: 351px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 16px 12px;
+    border-radius: 6px;
+    border: 1px solid #d7d6ff;
+    z-index: 100;
+    cursor: pointer;
+
+    .portkeyLogo {
+      width: 40px;
+      height: 40px;
+    }
+    .downloadTips {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: $font-wight-bold;
+      margin: 0 8px;
+    }
+    .downloadBtn {
+      height: 24px;
+      line-height: 24px;
+      padding: 0 8px;
+      font-size: 12px;
+      font-weight: 500;
+      color: #ffffff;
+      text-align: center;
+      border-radius: 4px;
+      background-color: $bg-btn;
+    }
+  }
+
+  .invitee-sign-in {
+    :global {
+      .portkey-ant-drawer-content-wrapper {
+        height: 80vh !important;
+        transition: none !important;
+      }
+    }
+  }
+
+  @media screen and (max-width: $divide-768) {
+    .referralBlackWrapper {
+      .QRcodeWrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .QRcodeImg {
+          margin-right: 0;
+        }
+
+        .QRcodeContent {
+          margin-top: 24px;
+          max-width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+  }
+
+  @media screen and (max-width: $divide-510) {
+    .referralBlueContainer {
+      padding: 0;
+
+      .referralHeader {
+        height: 60px;
+        margin-bottom: 12px;
+        .portkeyLogo {
+          cursor: pointer;
+          width: 106px;
+          height: 24px;
+        }
+
+        .userLogo {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  :global {
+    .social-login-title {
+      .backleft-icon {
+        display: none;
+      }
+    }
+  }
+}

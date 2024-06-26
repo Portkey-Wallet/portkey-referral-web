@@ -1,0 +1,2 @@
+export const CRYPTO_GIFT_PROJECT_CODE= "20000"
+export const REFERRAL_PROJECT_CODE= "10000"

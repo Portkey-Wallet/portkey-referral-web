@@ -1,0 +1,34 @@
+@import 'src/styles/common.scss';
+.modal_web {
+  max-width: 600px;
+  min-width: 440px;
+  min-height: 600px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.headerWrap {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  .closeImage {
+    position: absolute;
+    right: 16px;
+    top: 20px;
+  }
+}
+.titleWrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .titleText {
+    color: white;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 26px;
+  }
+}

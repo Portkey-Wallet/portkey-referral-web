@@ -1,0 +1,418 @@
+/* stylelint-disable selector-class-pattern */
+@import 'src/styles/variable.scss';
+
+.referralPage {
+  width: 100%;
+  min-height: 100vh;
+  background-color: $bg-black;
+  min-width: $page-min-width;
+  box-sizing: border-box;
+
+  .referralBlueContainer {
+    width: 100%;
+    min-height: 420px;
+
+    padding: $padding-24;
+    background-color: $bg-blue;
+
+    .referralHeader {
+      z-index: 100;
+      width: 100%;
+      height: 80px;
+      max-width: $content-width-large-desktop;
+      padding: $padding-24;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .portkeyLogo {
+        width: 142px;
+        height: 32px;
+        cursor: pointer;
+      }
+      .profileButton {
+        width: 40px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+        .profileImage {
+          width: 24px;
+          height: 24px;
+        }
+      }
+    }
+
+    .referralMainContainer {
+      position: relative;
+      max-width: 480px;
+      width: 100%;
+      // min-width: 440px;
+      min-height: 340px;
+      margin: auto;
+      padding-top: 16px;
+
+      .bgWaterMark {
+        position: absolute;
+        top: -80px;
+        left: -95px;
+        width: 253px;
+        height: 378px;
+      }
+
+      .bgLines {
+        position: absolute;
+        top: -70px;
+        width: 100%;
+        overflow-x: clip;
+        // height: 428px;
+
+        > img {
+          width: 480px;
+          height: 428px;
+        }
+      }
+
+      .slogan {
+        width: 100%;
+        height: 100px;
+        margin-bottom: 32px;
+      }
+      .sloganWrapperWidthPC {
+        width: 100%;
+      }
+      .sloganWrapperWidthH5 {
+        width: 297px;
+      }
+      .sloganWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: $padding-24;
+        margin: auto;
+      }
+
+      .sloganInvitee {
+        position: relative;
+        height: 86px;
+        width: 461px;
+        margin: auto;
+        background-size: 100%;
+        background-repeat: no-repeat;
+      }
+
+      .bgSlogan {
+        max-width: 480px;
+        height: 100px;
+      }
+
+      .inviteeText {
+        margin: auto;
+        margin-top: 18px;
+        color: #fff;
+        text-align: center;
+        font-size: 16px;
+        font-weight: 400;
+        line-height: 22px;
+        position: relative;
+        z-index: 1;
+      }
+
+      .bgColorBoxPC {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+        width: 100%;
+        bottom: -50px;
+
+        > img {
+          width: 100%;
+          min-width: $divide-440;
+        }
+      }
+      .bgColorBoxH5 {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        overflow-x: clip;
+        width: 100%;
+        bottom: -50px;
+
+        > img {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .referralBlackWrapperMarginTopPC {
+    margin-top: 96px;
+  }
+
+  .referralBlackWrapperMarginTopH5 {
+    margin-top: 51px;
+  }
+
+  .referralBlackWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0px 16px;
+
+    .QRcodeWrapper {
+      margin: 16px auto 48px;
+      display: flex;
+      align-items: center;
+      max-width: 600px;
+      padding: 16px 24px;
+      border: 2px solid transparent;
+      border-image: linear-gradient(to right, #2f31a1 0%, #707eff 50%, #2f31a1 100%) 1;
+
+      .QRcodeImg {
+        margin-right: 24px;
+      }
+
+      .QRcodeContent {
+        flex: auto;
+        margin-left: 24px;
+        max-width: 396px;
+        min-width: 100px;
+        width: 100%;
+
+        .QRcodeTitle {
+          color: rgb(255 255 255 / 60%);
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 20px;
+        }
+
+        .QRcodeUrlWrapper {
+          display: flex;
+          align-items: center;
+          justify-content: flex-start;
+          width: 100%;
+          margin-top: 8px;
+
+          .QRcodeUrl {
+            flex: 1;
+            overflow: hidden;
+            color: $font-white;
+            font-size: 18px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 22px;
+            word-break: break-all;
+          }
+
+          .QRcodeCopyWrap {
+            background-color: aliceblue;
+            width: 32px;
+            height: 32px;
+            margin-left: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+
+            .QRcodeCopy {
+              width: 16px;
+              height: 16px;
+            }
+          }
+        }
+      }
+    }
+
+    .inviteButton {
+      max-width: 600px;
+      margin: 16px auto 48px;
+      width: 100%;
+      height: 48px;
+      padding: 8px;
+      background: #5b5cff;
+      border-radius: 8px;
+      border-bottom: 3px #3334ba solid;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      display: inline-flex;
+      .inviteText {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 22px;
+      }
+    }
+
+    .loginButton {
+      max-width: 600px;
+      margin: 16px auto 48px;
+      width: 100%;
+      height: 48px;
+      padding: 8px;
+      background: #5b5cff;
+      border-radius: 8px;
+      border-bottom: 3px #3334ba solid;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      display: inline-flex;
+      .loginText {
+        color: white;
+        font-size: 18px;
+        font-weight: 500;
+        line-height: 22px;
+      }
+    }
+
+    .referralBtn {
+      width: 328px;
+      height: 48px;
+      background-color: $bg-btn;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      border: none;
+      color: #fff;
+      border-bottom: 3px solid #3334ba;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .mobileReferralBtn {
+      background-color: $bg-black;
+      width: 100%;
+      position: fixed;
+      bottom: env(safe-area-inset-bottom);
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+      border: none;
+    }
+
+    .downTipsPC {
+      margin-bottom: 16px;
+      color: rgba(255, 255, 255, 0.6);
+      text-align: center;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+    .Mdownload {
+      position: fixed;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 16px 12px;
+      background-color: #fff;
+    }
+
+    .downTipM {
+      color: #25272a;
+      font-size: 13px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 20px;
+      margin: 0 8px;
+      text-align: left;
+    }
+  }
+
+  .invitee-sign-in {
+    :global {
+      .portkey-ant-drawer-content-wrapper {
+        height: 80vh !important;
+        transition: none !important;
+      }
+    }
+  }
+
+  // .portkeyModal {
+  //   :global {
+  //     .portkey-ant-modal-content {
+  //       .portkey-ant-modal-body {
+  //         padding: 16px !important;
+  //         .portkey-ant-modal-confirm-body-wrapper {
+  //           .portkey-ant-modal-confirm-body {
+  //             padding: 8px 8px 24px  !important;
+  //             .portkey-ant-modal-confirm-content {
+  //               text-align: center;
+  //             }
+  //           }
+  //           .portkey-ant-modal-confirm-btns {
+  //             padding: 16px 0 0 !important;
+  //             .portkey-ant-btn-primary {
+  //               margin: 0 !important;
+  //             }
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+  @media screen and (max-width: $divide-768) {
+    .referralBlackWrapper {
+      .QRcodeWrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .QRcodeImg {
+          margin-right: 0;
+        }
+
+        .QRcodeContent {
+          margin-top: 24px;
+          max-width: 100%;
+          margin-left: 0;
+        }
+      }
+    }
+  }
+  @media screen and (max-width: $divide-510) {
+    .inviteeText {
+      .row2 {
+        display: block;
+      }
+    }
+  }
+
+  @media screen and (max-width: $divide-510) {
+    .referralBlueContainer {
+      padding: 0;
+      .referralMainContainer {
+        .sloganInvitee {
+          position: relative;
+          height: 140px;
+          width: 302px;
+          margin: auto;
+          // background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
+          background-size: 100%;
+        }
+
+        .inviteeText {
+          width: 280px;
+        }
+      }
+    }
+  }
+
+  :global {
+    .social-login-title {
+      .backleft-icon {
+        display: none;
+      }
+    }
+  }
+}
