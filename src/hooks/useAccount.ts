@@ -4,6 +4,7 @@ import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 import { getAAConnectToken, getConnectToken, logoutPortkeyApi } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
 import { WalletTypeEnum } from '@aelf-web-login/wallet-adapter-base';
+import { singleMessage } from '@portkey/did-ui-react';
 
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
@@ -11,12 +12,11 @@ export default function useAccount() {
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
     try {
-      console.log('wfs=== connectWallet start');
       const walletInfo = await connectWallet();
-      console.log('wfs=== walletInfo', walletInfo);
       return true;
     } catch (e: any) {
-      console.log('connect failed', e.message)
+      singleMessage.error(e?.nativeError?.message || e.message || 'login failed');
+      console.log('connect failed', e)
       return false;
     }
   }, [connectWallet]);
