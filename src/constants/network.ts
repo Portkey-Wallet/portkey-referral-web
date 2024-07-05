@@ -32,6 +32,7 @@ export const BackEndNetWorkMap: {
     cmsUrl: 'https://cms-test-aa.portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://test.portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
+    defaultChain: 'tDVW',
   },
   mainnet: {
     name: 'aelf Mainnet',
@@ -42,6 +43,7 @@ export const BackEndNetWorkMap: {
     cmsUrl: 'https://cms-aa-portkey.finance/graphql',
     portkeyWebsiteUrl: 'https://portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
+    defaultChain: 'tDVV',
   },
 };
 
