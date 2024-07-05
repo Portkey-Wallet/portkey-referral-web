@@ -383,7 +383,6 @@ const CryptoGift: React.FC = () => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed) return null;
 
-
     let disabled = false;
     let text = 'Claim Crypto Gift';
     let subText = '';
@@ -627,6 +626,7 @@ const CryptoGift: React.FC = () => {
       {!isPortkeyApp && (
         <PortkeyProvider networkType={CurrentNetWork.networkType}>
           <SignIn
+            defaultChainId={CurrentNetWork.defaultChain}
             className={styles['invitee-sign-in']}
             defaultLifeCycle={{
               SignUp: undefined,
