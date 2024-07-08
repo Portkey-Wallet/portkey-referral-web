@@ -132,7 +132,7 @@ const CryptoGift: React.FC = () => {
   const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
 
   useEffectOnce(() => {
-    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift', {id: cryptoGiftId});
+    googleAnalytics.firePageViewEvent('crypto_gift_home', 'crypto_gift', { id: cryptoGiftId });
   });
 
   useEffect(() => {
@@ -355,12 +355,14 @@ const CryptoGift: React.FC = () => {
 
   const renderCryptoGiftTipsDom = useCallback(() => {
     let text = '';
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed) text = `Oops! None left...`;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) text = `Oops! The crypto gift has been Expired`;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota)
-      text = `Don't worry, it hasn't been claimed yet! You can keep trying to claim after the countdown ends`;
-    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased)
-      text = `Sorry, you miss the claim expiration time.`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed)
+      text = `Oh no, all the crypto gifts have been claimed.`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Expired) text = `Oops, the crypto gift has expired.`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota && claimAgainCountdownSecond)
+      text = `Unclaimed gifts may be up for grabs! Try to claim once the countdown ends.`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota && !claimAgainCountdownSecond)
+      text = `Unclaimed gifts are up for grabs! Try your luck and claim now.`;
+    if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased) text = `Oops, the crypto gift has expired.`;
     if (isSignUp && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
       text = `Oops, only newly registered Portkey users can claim this crypto gift.`;
 
@@ -377,7 +379,14 @@ const CryptoGift: React.FC = () => {
       );
 
     return text ? <div className={styles.cryptoGiftTips}>{text}</div> : null;
-  }, [cryptoDetail?.amount, cryptoDetail?.cryptoGiftPhase, cryptoDetail?.decimals, cryptoDetail?.symbol, isSignUp]);
+  }, [
+    claimAgainCountdownSecond,
+    cryptoDetail?.amount,
+    cryptoDetail?.cryptoGiftPhase,
+    cryptoDetail?.decimals,
+    cryptoDetail?.symbol,
+    isSignUp,
+  ]);
 
   const renderActionButtonDom = useCallback(() => {
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed) return null;
@@ -395,8 +404,8 @@ const CryptoGift: React.FC = () => {
 
     // others
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
-      text = `Signup to Claim`;
-      subText = 'Claim to your Portkey address';
+      text = `Sign up to Receive`;
+      subText = 'Receive crypto assets in your Portkey address';
       onAction = onSignUp;
     }
 
@@ -407,8 +416,8 @@ const CryptoGift: React.FC = () => {
     if (claimAgainCountdownSecond || cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.NoQuota) {
       disabled = !!claimAgainCountdownSecond;
       text = !!claimAgainCountdownSecond
-        ? `Try to Claim Again (${formatSecond2CountDownTime(claimAgainCountdownSecond)})`
-        : 'Try to Claim Again';
+        ? `Try Luck (${formatSecond2CountDownTime(claimAgainCountdownSecond)})`
+        : 'Try Luck Once More';
       subText = '';
       onAction = onClaim;
     }
@@ -552,7 +561,7 @@ const CryptoGift: React.FC = () => {
                 : cryptoDetail?.nftAlias
             }`}
           />
-          <BreakWord className={styles.toAddress} text={`has sent to your address`} />
+          <BreakWord className={styles.toAddress} text={`sent to your Portkey address`} />
         </div>
         <button onClick={onJumpToStore} className={styles.viewDetails}>
           View Details
@@ -560,7 +569,7 @@ const CryptoGift: React.FC = () => {
 
         <button className={styles.shareBtnWrap} onClick={onCopyClick}>
           <BaseImage src={cryptoShare} alt="cryptoShare" priority width={20} height={20} />
-          <p className={styles.buttonText}>Share with your friends</p>
+          <p className={styles.buttonText}>Share with Friends</p>
         </button>
       </div>
     );
