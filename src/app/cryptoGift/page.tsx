@@ -423,8 +423,9 @@ const CryptoGift: React.FC = () => {
     }
 
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers && isSignUp) {
-      text = '';
+      text = 'Log out';
       subText = '';
+      onAction = onLogout;
     }
 
     if (
