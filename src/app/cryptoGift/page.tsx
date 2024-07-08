@@ -364,7 +364,7 @@ const CryptoGift: React.FC = () => {
       text = `Unclaimed gifts are up for grabs! Try your luck and claim now.`;
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased) text = `Oops, the crypto gift has expired.`;
     if (isSignUp && cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
-      text = `Oops, only newly registered Portkey users can claim this crypto gift.`;
+      text = `Oops, only newly created Portkey users can claim this crypto gift. Please log out and create a new account to try again.`;
 
     if (cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed)
       return (
@@ -457,6 +457,7 @@ const CryptoGift: React.FC = () => {
     cryptoDetail?.isNewUsersOnly,
     isSignUp,
     onClaim,
+    onLogout,
   ]);
 
   const renderDownLoadDom = useCallback(() => {
@@ -474,7 +475,7 @@ const CryptoGift: React.FC = () => {
         cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.Claimed ||
         cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.FullyClaimed ||
         cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.ExpiredReleased ||
-        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.OnlyNewUsers)
+        cryptoDetail?.cryptoGiftPhase === CryptoGiftPhase.AlreadyClaimed)
     )
       isShow = true;
 
