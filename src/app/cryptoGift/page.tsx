@@ -372,7 +372,7 @@ const CryptoGift: React.FC = () => {
           <BreakWord text="You've already claimed this crypto gift and received " />
           <BreakWord
             className={styles.symbol}
-            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${cryptoDetail?.symbol}.`}
+            text={`${divDecimalsStr(cryptoDetail?.amount, cryptoDetail?.decimals)} ${cryptoDetail?.label || cryptoDetail?.symbol}.`}
           />
           <BreakWord text={`You can't claim it again.`} />
         </div>
