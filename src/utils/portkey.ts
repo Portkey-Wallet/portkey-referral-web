@@ -16,13 +16,10 @@ export const getCaHashAndOriginChainIdByWallet = async (
   walletType: WalletTypeEnum,
 ): Promise<{ caHash: string; originChainId: ChainId }> => {
   let caHash, originChainId;
-  console.log('wallet is:', wallet);
-  console.log('walletType is:', walletType);
   if (walletType === WalletTypeEnum.discover) {
     const res = await did.services.communityRecovery.getHolderInfoByManager({
       caAddresses: [wallet?.address],
     } as unknown as GetCAHolderByManagerParams);
-    console.log('wfs res===', res);
     const caInfo = res[0];
     caHash = caInfo?.caHash;
     originChainId = caInfo?.originChainId as ChainId;
