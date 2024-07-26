@@ -50,6 +50,11 @@ a {
   justify-content: center;
 }
 
+.flex {
+  display: flex;
+  flex-direction: row;
+}
+
 .flex-row-center {
   display: flex;
   flex-direction: row;
@@ -60,6 +65,15 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-1 {
+  flex: 1;
 }
 
 .ios-safe-bottom {

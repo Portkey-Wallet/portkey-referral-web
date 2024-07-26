@@ -17,6 +17,7 @@ import invitationRankThird from './referral/invitationRankThird.png'
 import userProfile from './referral/userProfile.png'
 import myInvitationLeftBg from'./referral/myInvitationLeftBg.png';
 import myInvitationRightBg from'./referral/myInvitationRightBg.png';
+import correctIcon from './referral/correctIcon.png'
 
 import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
@@ -82,4 +83,5 @@ export {
   cryptoShare,
   cryptoSuccess,
   alarm,
+  correctIcon,
 };
