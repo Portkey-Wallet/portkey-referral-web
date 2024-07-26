@@ -6,6 +6,8 @@ import VirtualList from 'rc-virtual-list';
 import referralApi from '@/utils/axios/referral';
 import { useEffectOnce } from '@/hooks/commonHooks';
 import { useResponsive } from '@/hooks/useResponsive';
+import { IRewardProgress } from '@/types/referral';
+import { ActivityEnums } from '@/utils/axios/referral';
 
 const ContainerHeight = 434;
 
@@ -14,6 +16,7 @@ interface MyInvitationItem {
   walletName: string;
   referralDate: string;
   avatar: string;
+  recordDesc: string;
 }
 
 interface MyInvitationSection {
@@ -32,7 +35,7 @@ interface MyInvitationList {
 }
 
 const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
-  const [invitationAmount, setInvitationAmount] = useState(0);
+  const [myRewardProgress, setMyRewardProgress] = useState<IRewardProgress>();
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
   const { isLG } = useResponsive();
   const currentList = useRef<MyInvitationList>({
@@ -40,13 +43,13 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
     hasNextPage: true,
   });
 
-  const fetchTotalCount = useCallback(async () => {
+  const fetchRewardProgress = useCallback(async () => {
     try {
-      const totalCount = await referralApi.referralTotalCount();
-      console.log('referralTotalCount : ', totalCount);
-      setInvitationAmount(totalCount ?? 0);
+      const rewardProgress = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
+      console.log('rewardProgress : ', rewardProgress);
+      setMyRewardProgress(rewardProgress);
     } catch (error) {
-      console.error('referralTotalCount error : ', error);
+      console.error('rewardProgress error : ', error);
     }
   }, []);
 
@@ -87,21 +90,27 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
 
   useEffectOnce(() => {
     fetchInvitationList();
-    fetchTotalCount();
+    fetchRewardProgress();
   });
 
-  const showInvitation = useMemo(() => {
-    return invitationAmount > 0 && sections.length > 0;
-  }, [invitationAmount, sections.length]);
+  const showRewardProgress = useMemo(() => {
+    return !!myRewardProgress?.data.length;
+  }, [myRewardProgress]);
 
   const headerDom = useMemo(() => {
     return (
       <div className={styles.headerWrap}>
-        <div className={styles.invitationText}>My Invitation</div>
-        <div className={styles.headerTitle}>{invitationAmount}</div>
+        {myRewardProgress?.data?.map((item, index) => {
+        return (
+          <div key={index} className={styles.reward_wrap}>
+            <div className={styles.reward_name}>{item.activityName}</div>
+            <div className={styles.reward_value}>{item.referralCount}</div>
+          </div>
+        );
+      })}
       </div>
     );
-  }, [invitationAmount]);
+  }, [myRewardProgress]);
 
   const invitationSectionHeaderDom = useCallback((date: string) => {
     return <div className={styles.sectionHeader}>{date}</div>;
@@ -117,8 +126,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
           src={item.avatar}>
           {item?.walletName ? item.walletName[0].toUpperCase() : ''}
         </Avatar>
-        <div className={styles.inviteMethod}>{item.isDirectlyInvite ? 'Invite' : 'Indirectly invite'}</div>
-        <div className={styles.walletName}>{item.walletName}</div>
+        <div className={styles.inviteMethod}>{item.recordDesc}</div>
       </div>
     );
   }, []);
@@ -154,7 +162,7 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
   return (
     <CommonModal title={'My Invitation'} open={open} onCancel={onClose}>
       <div className={`${styles.container} ${isLG ? styles.padding_h5 : styles.padding_pc}`}>
-        {showInvitation ? (
+        {showRewardProgress ? (
           <div className={styles.contentWrap}>
             {headerDom}
             {invitationListDom}

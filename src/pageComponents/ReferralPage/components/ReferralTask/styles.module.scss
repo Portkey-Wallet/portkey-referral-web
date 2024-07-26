@@ -1,0 +1,49 @@
+@import 'src/styles/common.scss';
+
+.container {
+  max-width: 600px;
+  width: 100%;
+  margin-top: 40px;
+  padding-left: 12px;
+  padding-right: 12px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-image: linear-gradient(to right, #2f31a1 0%, #707eff 50%, #2f31a1 100%) 1;
+  .header_wrap {
+    width: 177px;
+    height: 28px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .header_bg {
+      width: 177px;
+      height: 28px;
+      position: absolute;
+    }
+    .header_title {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 24px;
+      position: absolute;
+    }
+  }
+  .task_image_pc {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    width: 552px;
+    height: 236px;
+  }
+  .task_image_h5 {
+    margin-top: 24px;
+    margin-bottom: 8px;
+    width: 311px;
+    height: 300px;
+  }
+}
