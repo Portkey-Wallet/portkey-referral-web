@@ -15,16 +15,11 @@ import portkeyLogoWhite from '/public/portkeyLogoWhite.svg';
 import logoWhite from '/public/logoWhite.svg';
 import styles from './page.module.scss';
 import {
-  referralWaterMark,
   referralColorBox,
-  referralBgLines,
-  sloganReference,
-  sloganInviteeCreate,
-  sloganInviteeCreateMobile,
-  sloganInviteeExist,
-  sloganInviteeExistMobile,
   sloganInviteeDefault,
   sloganInviteeDefaultMobile,
+  logoutIcon,
+  suggestCloseIcon,
 } from '@/assets/images';
 import { downloadData, portkeyDownloadPage, privacyPolicy, termsOfService } from '@/constants/pageData';
 import IOSDownloadBtn from '@/components/DownloadButtons/IOSDownloadBtn';
@@ -40,6 +35,22 @@ import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
 import { StaticImageData } from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
+import { useFetchAndStoreCaHolderInfo } from '@/hooks/invitee';
+import { Avatar, Dropdown, MenuProps } from 'antd';
+import { useLoading } from '@/hooks/global';
+import { getItem, removeItem, setItem } from '@/utils/storage';
+import {
+  DEFAULT_INVITEE_WALLET_KEY,
+  DEFAULT_INVITEE_WALLET_PIN,
+  INVITEE_CA_ADDRESS,
+  INVITEE_CA_HOLDER_INFO,
+  INVITEE_IS_NEW_ACCOUNT,
+  INVITEE_ORIGIN_CHAIN_ID,
+} from '@/constants/storage';
+import { PORTKEY_API, portkeyGet } from '@/utils/axios/index';
+import { sleep } from '@/utils';
+import googleAnalytics from '@/utils/googleAnalytics';
+import { useEffectOnce } from '@/hooks/commonHooks';
 
 const AElf = require('aelf-sdk');
 ConfigProvider.setGlobalConfig({
@@ -50,10 +61,16 @@ ConfigProvider.setGlobalConfig({
   },
 });
 
+export enum StepEnum {
+  UnLogin = 'UnLogin',
+  TaskOneCompleted = 'TaskOneCompleted',
+  SocialRecovery = 'SocialRecovery',
+}
+
 const Invitee: React.FC = () => {
+  const { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
   const { isMobile, isAndroid, isIOS } = useEnvironment();
   const [isShowMask, setIsShowMask] = useState(false);
-
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [isNewAccount, setIsNewAccount] = useState<boolean>(false);
   const [androidStoreUrl, setAndroidStoreUrl] = useState('');
@@ -64,8 +81,14 @@ const Invitee: React.FC = () => {
   const [src, setSrc] = useState<StaticImageData>();
   const referralCode = searchParams.get('referral_code');
   const projectCode = searchParams.get('project_code');
-  const shortLink = searchParams.get('shortLink') || '';
   const networkType = searchParams.get('networkType') || '';
+  const { setLoading } = useLoading();
+  const [configAllData, setConfigAllData] = useState<any>();
+  const [step, setStep] = useState<StepEnum>(StepEnum.UnLogin);
+
+  const currentStepConfigData = useMemo(() => {
+    return configAllData?.[step];
+  }, [configAllData, step]);
 
   useEffect(() => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
@@ -99,6 +122,20 @@ const Invitee: React.FC = () => {
     }
   }, []);
 
+  useEffectOnce(() => {
+    const _isSignUp = !!getItem(INVITEE_CA_ADDRESS);
+    const _isNewAccount = getItem(INVITEE_IS_NEW_ACCOUNT);
+    setIsSignUp(_isSignUp);
+    setIsNewAccount(_isNewAccount);
+    if (_isSignUp) {
+      setStep(_isNewAccount ? StepEnum.TaskOneCompleted : StepEnum.SocialRecovery);
+    }
+  });
+
+  // useEffectOnce(() => {
+  // googleAnalytics.firePageViewEvent('invitee_hamster_home', 'hamster');
+  // });
+
   did.setConfig({
     referralInfo: {
       referralCode: referralCode || undefined,
@@ -106,132 +143,256 @@ const Invitee: React.FC = () => {
     },
   });
 
+  const getInviteeConfig = useCallback(async () => {
+    const res = await portkeyGet(PORTKEY_API.GET.INVITEE_CONFIG);
+    setConfigAllData(res.data);
+  }, []);
+
+  useEffectOnce(() => {
+    getInviteeConfig();
+  });
+
   const onSignUp = () => {
-    console.log('singup');
     signInRef.current?.setOpen(true);
   };
 
   const onCancel = useCallback(() => signInRef.current?.setOpen(false), [signInRef]);
 
-  const onFinish = useCallback(async (didWallet: DIDWalletInfo) => {
-    console.log('didWallet', didWallet);
-    setIsSignUp(true);
-    setIsNewAccount(didWallet.createType === 'register');
+  const onFinish = useCallback(
+    async (didWallet: DIDWalletInfo) => {
+      console.log('didWallet', didWallet);
+      signInRef.current?.setOpen(false);
 
-    const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
-    setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
-    setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
-    
-    await getAAConnectToken(didWallet);
-  }, []);
+      googleAnalytics.portkeyLoginEvent(didWallet.createType, didWallet.accountInfo.accountType);
+
+      const _isNewAccount = didWallet.createType === 'register';
+
+      await did.save(DEFAULT_INVITEE_WALLET_PIN, DEFAULT_INVITEE_WALLET_KEY);
+      setItem(INVITEE_CA_ADDRESS, didWallet.caInfo.caAddress);
+      setItem(INVITEE_ORIGIN_CHAIN_ID, didWallet.chainId);
+      setItem(INVITEE_IS_NEW_ACCOUNT, `${_isNewAccount}`);
+
+      setIsSignUp(true);
+      setIsNewAccount(_isNewAccount);
+      setCaHolderInfo({ caHash: didWallet.caInfo.caHash, avatar: '', nickName: '' });
+      setStep(_isNewAccount ? StepEnum.TaskOneCompleted : StepEnum.SocialRecovery);
+      await sleep(1000);
+      fetchAndStoreCaHolderInfo();
+
+      const downloadResource = await cmsGet(CMS_API.GET.DOWNLOAD);
+      setAndroidStoreUrl(downloadResource?.data?.androidDownloadUrl || '');
+      setIOSStoreUrl(downloadResource?.data?.iosDownloadUrl || '');
+
+      await getAAConnectToken(didWallet);
+    },
+    [fetchAndStoreCaHolderInfo, setCaHolderInfo],
+  );
 
   const onDownload = useCallback(() => {
     openWithBlank(portkeyDownloadPage);
   }, []);
 
+  const onLogout = useCallback(async () => {
+    try {
+      setLoading(true);
+      const originChainId = getItem(INVITEE_ORIGIN_CHAIN_ID);
+      await did.logout({ chainId: originChainId });
+      setCaHolderInfo(undefined);
+
+      removeItem(INVITEE_CA_HOLDER_INFO);
+      removeItem(DEFAULT_INVITEE_WALLET_KEY);
+      removeItem(INVITEE_CA_ADDRESS);
+      removeItem(INVITEE_IS_NEW_ACCOUNT);
+      setIsSignUp(false);
+      setIsNewAccount(false);
+      setStep(StepEnum.UnLogin);
+    } catch (error: any) {
+      console.log('onLogout error', error);
+      singleMessage.error(error?.message || 'fail');
+    } finally {
+      setLoading(false);
+    }
+  }, [setCaHolderInfo, setLoading]);
+
+  const createNewAccount = useCallback(async () => {
+    await onLogout();
+    onSignUp();
+  }, [onLogout]);
 
   useEffect(() => {
     const isInMobile = !isBrowser() || isMobile;
-    let sourceUri = sloganReference;
+    let sourceUri = isInMobile ? sloganInviteeDefaultMobile : sloganInviteeDefault;
 
-    // default
-    if (!isSignUp && !isInMobile) {
-      sourceUri = sloganInviteeDefault;
+    if (currentStepConfigData) {
+      if (isInMobile) {
+        sourceUri = currentStepConfigData.mobileTitleCopyWriting;
+      } else {
+        sourceUri = currentStepConfigData.pcTitleCopyWriting;
+      }
     }
-    if (!isSignUp && isInMobile) sourceUri = sloganInviteeDefaultMobile;
-
-    // registered
-    if (isSignUp && !isInMobile) sourceUri = sloganInviteeCreate;
-    if (isSignUp && isNewAccount && isInMobile) sourceUri = sloganInviteeCreateMobile;
-
-    // others
-    if (isSignUp && !isNewAccount && !isInMobile) sourceUri = sloganInviteeExist;
-    if (isSignUp && !isNewAccount && isInMobile) sourceUri = sloganInviteeExistMobile;
-
     setSrc(sourceUri);
-  }, [isMobile, isNewAccount, isSignUp]);
+  }, [currentStepConfigData, isMobile, isNewAccount, isSignUp]);
 
   const SloganDOM = useMemo(() => {
     if (!src) return <div style={{ height: 100 }} />;
 
     return (
       <div className={styles.sloganWrapper}>
-        <BaseImage src={src} alt={src.src} height={100} />
+        <BaseImage src={src} alt={src.src} height={100} width={isMobile ? 302 : 480} />
       </div>
     );
-  }, [src]);
+  }, [isMobile, src]);
 
-  const InviteeChapterDom = useMemo(() => {
-    if (!isSignUp)
-      return (
-        <div className={styles.inviteeText}>
-          <span className={styles.row2}>{`Seize the opportunity.`}</span>
-          <span className={styles.row2}>{` Expect upcoming surprises!`}</span>
-        </div>
-      );
+  const blackContainerTitle = useMemo(() => {
+    if (isSignUp) {
+      return isNewAccount ? 'Tasks' : 'Notice';
+    } else {
+      return 'Tasks';
+    }
+  }, [isNewAccount, isSignUp]);
 
-    if (isNewAccount)
-      return (
-        <div className={styles.inviteeText}>
-          <span>{`You have signed up on Portkey successfully!`}</span>
-        </div>
-      );
+  const TaskDom = useMemo(() => {
+    const taskConfig = currentStepConfigData?.taskConfigs;
+    if (!(taskConfig ?? []).length) return null;
+
+    const onClick = (item: any) => {
+      if (item.buttonAbled) {
+        if (item.taskName === 'SignUp') {
+          onSignUp();
+        } else {
+          openWithBlank(item.buttonLink);
+        }
+      }
+    };
 
     return (
-      <div className={styles.inviteeText}>
-        <div>
-          <span className={styles.row2}>{`This is an existing account and can't`}</span>
-          <span className={styles.row2}>{` accept invitation.`}</span>
-        </div>
-        <div>
-          <span className={styles.row2}>{`You can access your own Portkey and`}</span>
-          <span className={styles.row2}>{` experience Web3 now!`}</span>
-        </div>
+      <div className={clsx(styles.taskWrapper, 'flex-column')}>
+        {taskConfig.map((item: any, index: number) => (
+          <div className={clsx('flex', styles.taskItem)} key={index}>
+            <div className={styles.leftTaskItem}>
+              <BaseImage src={item.taskNo} alt={`correct-icon`} height={20} width={20} />
+              <div className={styles.dividingLine}></div>
+            </div>
+            <div className={clsx(styles.rightTaskItem, 'flex-1')}>
+              <div className={styles.title}>{item.topic}</div>
+              <div className={styles.description}>{item.taskCopyWriting}</div>
+              {item.buttonName && (
+                <div className={clsx(styles.btn)} onClick={() => onClick(item)}>
+                  <button className={clsx(styles.referralBtn, item.buttonAbled ? '' : styles.btnDisabled)}>
+                    {item.buttonName}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     );
-  }, [isNewAccount, isSignUp]);
+  }, [currentStepConfigData?.taskConfigs]);
+
+  const NoticeDom = useMemo(() => {
+    const noticeConfig = currentStepConfigData?.notice;
+    const onClick = () => {
+      if (noticeConfig.buttonAbled) {
+        if (noticeConfig.noticeName === 'CreateNewAccount') {
+          createNewAccount();
+        } else {
+          openWithBlank(noticeConfig.buttonLink);
+        }
+      }
+    };
+    if (noticeConfig) {
+      return (
+        <div className={clsx(styles.notice, 'flex-column')}>
+          <div>{noticeConfig.copyWriting ?? ''}</div>
+          <button
+            className={clsx(styles.referralBtn, noticeConfig.buttonAbled ? '' : styles.btnDisabled)}
+            onClick={onClick}>
+            {noticeConfig.buttonName ?? ''}
+          </button>
+        </div>
+      );
+    }
+    return null;
+  }, [createNewAccount, currentStepConfigData?.notice]);
+
+  const dropDownItems: MenuProps['items'] = useMemo(
+    () => [
+      {
+        key: '1',
+        label: 'Log Out',
+        icon: <BaseImage src={logoutIcon} alt={'logout'} width={16} height={16} />,
+        onClick: () => {
+          onLogout();
+        },
+      },
+    ],
+    [onLogout],
+  );
 
   return (
     <div className={styles.referralPage}>
       <div className={styles.referralBlueContainer}>
         <header className="row-center">
           <div className={clsx(['flex-row-center', styles.referralHeader])}>
-            <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+            {currentStepConfigData?.logo ? (
+              <div className={clsx('row-center', styles.cooperateLogo)}>
+                <BaseImage
+                  width={isMobile ? 100 : 134}
+                  height={isMobile ? 24 : 32}
+                  src={portkeyLogoWhite}
+                  priority
+                  alt="portkeyLogo"
+                />
+                <BaseImage width={12} height={12} src={suggestCloseIcon} priority alt="closeLogo" />
+                <BaseImage
+                  width={isMobile ? 40 : 52}
+                  height={isMobile ? 28 : 36}
+                  src={currentStepConfigData?.logo}
+                  priority
+                  alt="GameLogo"
+                />
+              </div>
+            ) : (
+              <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+            )}
+
+            {caHolderInfo?.nickName && (
+              <Dropdown overlayClassName="logout-drop-down" trigger={['click']} menu={{ items: dropDownItems }}>
+                <Avatar alt="avatar" className={styles.userLogo} src={caHolderInfo?.avatar || ''}>
+                  {caHolderInfo?.nickName?.[0]}
+                </Avatar>
+              </Dropdown>
+            )}
           </div>
         </header>
         <div className={styles.referralMainContainer}>
-          <BaseImage
-            src={referralWaterMark}
-            className={styles.bgWaterMark}
-            alt="waterMark"
-            priority
-            width={253}
-            height={378}
-          />
-          <BaseImage src={referralBgLines} className={styles.bgLines} alt="bglines" priority />
           {SloganDOM}
-          {InviteeChapterDom}
+          <div className={styles.inviteeText}>
+            <span>{currentStepConfigData?.copyWriting}</span>
+          </div>
           <BaseImage src={referralColorBox} className={styles.bgColorBox} alt="bgColorBox" priority />
         </div>
       </div>
 
       <div className={styles.referralBlackWrapper}>
         <>
-          {!isSignUp && !isPortkeyApp && (
-            <div className={clsx(isMobile && styles.mobileReferralBtn)}>
-              <button className={styles.referralBtn} onClick={onSignUp}>
-                Sign up
-              </button>
-            </div>
-          )}
+          <div className={clsx('flex-column', styles.referralBlackContainer)}>
+            <div className={clsx(styles.blackContainerTitle, 'row-center')}>{blackContainerTitle}</div>
+            {TaskDom}
+            {NoticeDom}
+          </div>
 
           {isSignUp && !isMobile && (
-            <>
-              <div className={styles.downTipsPC}>{downloadData.downloadText}</div>
-              <button className={styles.referralBtn} onClick={onDownload}>
+            <div className={clsx(styles.downloadPCWrapper, 'row-center')}>
+              <div className="row-center">
+                <BaseImage src={logoWhite} width={32} height={32} alt="logo" />
+                <div className={styles.downTipsPC}>{downloadData.downloadText}</div>
+              </div>
+              <button className={styles.downloadPcBtn} onClick={onDownload}>
                 Download
               </button>
-            </>
+            </div>
           )}
 
           {isSignUp && isMobile && (
@@ -258,6 +419,7 @@ const Invitee: React.FC = () => {
             ref={signInRef}
             onFinish={onFinish}
             onCancel={onCancel}
+            pin={DEFAULT_INVITEE_WALLET_PIN}
           />
         </PortkeyProvider>
       )}
