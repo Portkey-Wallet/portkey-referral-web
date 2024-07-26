@@ -84,6 +84,9 @@ a {
 }
 
 .logout-drop-down{
+  .ant-dropdown-menu-item-icon {
+    display: flex;
+  }
   .ant-dropdown-menu-title-content{
     color: #F53F3F ;
     font-weight: 400;

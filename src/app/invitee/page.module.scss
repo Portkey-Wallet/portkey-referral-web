@@ -15,6 +15,10 @@
     padding: $padding-24;
     background-color: $bg-blue;
 
+    background-image: url('../../assets/images/referral/waterMark.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+
     .referralHeader {
       width: 100%;
       height: 80px;
@@ -26,18 +30,21 @@
       justify-content: space-between;
 
       .portkeyLogo {
-        width: 213px;
+        width: 142px;
+        height: 32px;
+        cursor: pointer;
+      }
+
+      .cooperateLogo {
+        gap: 8px;
         height: 36px;
         cursor: pointer;
-        img {
-          width: 100%;
-          height: 100%;
-        }
       }
 
       .userLogo {
-        width: 40px;
-        height: 40px;
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
         line-height: 40px;
         border-radius: 20px;
         overflow: hidden;
@@ -47,12 +54,15 @@
 
     .referralMainContainer {
       position: relative;
-      // max-width: 480px;
       width: 100%;
-      // min-width: 440px;
       min-height: 340px;
       margin: auto;
       padding-top: 16px;
+
+      background-image: url('../../assets/images/referral/bgLines.svg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
 
       .bgWaterMark {
         position: absolute;
@@ -143,17 +153,19 @@
     .referralBlackContainer {
       position: relative;
       width: 600px;
-      margin: 0 12px 24px;
+      margin: 0 12px 64px;
       padding: 0 12px 24px;
+      background-image: url('../../assets/images/referral/waterMark.png');
+      background-size: contain;
+      background-repeat: no-repeat;
       background-color: #23236B;
       border: 2px solid #2F31A1;
-      // border: 2px solid linear-gradient(#2F31A1, #707EFF, #2F31A1);
       color: $font-white;
       .bgWaterMark {
         position: absolute;
       }
       .blackContainerTitle {
-        width: 177px;
+        width: 182px;
         height: 28px;
         align-self: center;
         margin-bottom: 18px;
@@ -189,9 +201,10 @@
               line-height: 22px;
               color: $font-color-secondary;
             }
-            .referralBtn {
+            .btn {
               margin-top: 16px;
               width: 100%;
+              cursor: pointer;
             }
           }
         }
@@ -291,7 +304,7 @@
     }
 
     .referralBtn {
-      width: 328px;
+      width: 100%;
       height: 48px;
       background-color: $bg-btn;
       border-radius: 8px;
@@ -316,7 +329,6 @@
     }
 
     .downloadPCWrapper {
-      margin-top: 64px;
       width: 600px;
       display: flex;
       justify-content: space-between;
@@ -431,12 +443,15 @@
     .referralBlueContainer {
       padding: 0;
       .referralHeader {
+        padding: $padding-16;
   
         .portkeyLogo {
           width: 168px;
           height: 28px;
         }
-
+        .cooperateLogo {
+          height: 28px;
+        }
         .userLogo {
           width: 24px;
           height: 24px;
