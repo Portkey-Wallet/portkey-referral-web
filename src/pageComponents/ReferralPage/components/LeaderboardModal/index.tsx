@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import Image from 'next/image';
@@ -11,18 +11,36 @@ import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import VirtualList from 'rc-virtual-list';
 import { useEffectOnce } from '@/hooks/commonHooks';
 import { useResponsive } from '@/hooks/useResponsive';
+import { IActivityBaseInfoItem } from '@/types/referral';
 
 interface LeaderBoardModalProps {
+  activityItems?: IActivityBaseInfoItem[];
   open: boolean;
   onClose: () => void;
 }
 
-const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) => {
+const defaultActivityItem: IActivityBaseInfoItem = {
+  activityName: 'All',
+  activityValue: 0,
+  isDefault: true,
+  startDate: '',
+  endDate: '',
+  dateRange: 'All',
+};
+
+const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({
+  open,
+  onClose,
+  activityItems = [defaultActivityItem],
+}) => {
   const { referralRankList: list, myRank, next, init } = useReferralRank();
+  const [selectItem, setSelectItem] = useState<IActivityBaseInfoItem>(
+    activityItems.find((item) => item.isDefault) ?? activityItems[0],
+  );
   const { isLG } = useResponsive();
 
   useEffectOnce(() => {
-    init();
+    init(selectItem.activityValue);
   });
 
   const containerHeight = useMemo(() => {
@@ -39,10 +57,10 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
     (e: React.UIEvent<HTMLElement, UIEvent>) => {
       // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
       if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - containerHeight) <= 1) {
-        next();
+        next(false, selectItem.activityValue);
       }
     },
-    [containerHeight, next],
+    [containerHeight, next, selectItem.activityValue],
   );
 
   const marginHorizontal = useMemo(() => {
@@ -50,7 +68,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
   }, [isLG]);
 
   const selectorDom = useMemo(() => {
-    const selectItems = ['All'];
+    const selectItems = activityItems;
     const items: MenuProps['items'] = selectItems.map((item, index) => {
       return {
         key: index.toString(),
@@ -58,9 +76,12 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
           <a
             target="_blank"
             onClick={() => {
-              console.log('click item : ', item);
+              if (selectItem !== item) {
+                setSelectItem(item);
+                init(item.activityValue);
+              }
             }}>
-            {item}
+            {item.dateRange}
           </a>
         ),
       };
@@ -69,13 +90,13 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
       <Dropdown menu={{ items }} trigger={['click']}>
         <div className={`${styles.dropdownWrap} ${marginHorizontal}`}>
           <div className={styles.dropdown}>
-            <div className={styles.text}>All</div>
+            <div className={styles.text}>{selectItem?.dateRange}</div>
             <Image className={styles.down_arrow} src={directionDown} alt="rank" />
           </div>
         </div>
       </Dropdown>
     );
-  }, [marginHorizontal]);
+  }, [activityItems, init, marginHorizontal, selectItem]);
 
   const headerDom = useMemo(() => {
     return (
@@ -128,6 +149,7 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({ open, onClose }) =>
               caAddress={item.caAddress}
               referralTotalCount={item.referralTotalCount}
               walletName={item?.walletName ? item.walletName[0].toUpperCase() : ''}
+              recordDesc={item.recordDesc}
             />
           )}
         </VirtualList>

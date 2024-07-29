@@ -17,6 +17,7 @@ import invitationRankThird from './referral/invitationRankThird.png'
 import userProfile from './referral/userProfile.png'
 import myInvitationLeftBg from'./referral/myInvitationLeftBg.png';
 import myInvitationRightBg from'./referral/myInvitationRightBg.png';
+import referralTaskHeaderBg from './referral/referralTaskHeaderBg.svg';
 import suggestCloseIcon from './referral/suggestClose.png';
 
 import QRCodeLogo from './common/qrcodeLogo.png';
@@ -27,6 +28,8 @@ import directionDown from './common/directionDown.svg';
 import close from './common/close.svg';
 import interactiveCopy from './common/interactiveCopy.svg';
 import interactiveCopyWhite from './common/interactiveCopyWhite.svg';
+import suggestCircle from './common/suggest-circle.svg';
+import suggestClose from './common/suggest-close.svg';
 
 import bgPortkeyLogo from './cryptoGift/bgPortkeyLogo.svg';
 import bgLine1 from './cryptoGift/bgLine1.svg';
@@ -55,6 +58,7 @@ export {
   referralColorBox,
   referralDiscover,
   myInvitationHeaderBg,
+  referralTaskHeaderBg,
   invitationRankFirst,
   invitationRankSecond,
   invitationRankThird,
@@ -69,6 +73,8 @@ export {
   close,
   interactiveCopy,
   interactiveCopyWhite,
+  suggestCircle,
+  suggestClose,
   sloganReference,
   bgPortkeyLogo,
   bgLine1,

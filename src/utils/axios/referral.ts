@@ -1,6 +1,14 @@
 import { portkeyGet } from './portkey';
 import { AxiosRequestConfig } from 'axios';
-import { IReferralRecordResponseDto, IReferralRecordsRankResponseDto, IActivityDateRange, IReferralShortLink } from '@/types/referral';
+import {
+  IReferralRecordResponseDto,
+  IReferralRecordsRankResponseDto,
+  IActivityBaseInfo,
+  IActivityDateRange,
+  IReferralShortLink,
+  IActivityDetail,
+  IRewardProgress,
+} from '@/types/referral';
 import { REFERRAL_PROJECT_CODE } from '@/constants/project';
 
 const ReferralPath = {
@@ -13,14 +21,23 @@ const ReferralPath = {
   referralRecordRank: {
     path: '/growth/referralRecordRank',
   },
+  getBaseInfo: {
+    path: '/growth/get-activity-baseInfos',
+  },
   activityDateRange: {
     path: '/growth/activityDateRange',
+  },
+  activityDetail: {
+    path: 'growth/activityDetails',
+  },
+  rewardProgress: {
+    path: 'growth/rewardProgress',
   },
   getReferralShortLink: {
     path: '/growth/shortLink',
     params: {
       projectCode: REFERRAL_PROJECT_CODE,
-    }
+    },
   },
 };
 interface IApiConfig {
@@ -36,6 +53,7 @@ export enum ActivityCycleEnums {
 }
 export enum ActivityEnums {
   Invitation = 1,
+  Hamster = 2,
 }
 interface IReferralRecordRankParams {
   activityCycleEnums?: ActivityCycleEnums;
@@ -48,14 +66,20 @@ class ReferralApi {
   private referralRecordListConfig: IApiConfig;
   private referralTotalCountConfig: IApiConfig;
   private referralRecordRankConfig: IApiConfig;
+  private getBaseInfoConfig: IApiConfig;
   private activityDateRangeConfig: IApiConfig;
   private getReferralShortLinkConfig: IApiConfig;
+  private activityDetailConfig: IApiConfig;
+  private rewardProgressConfig: IApiConfig;
   constructor() {
     this.referralRecordListConfig = ReferralPath.referralRecordList;
     this.referralTotalCountConfig = ReferralPath.referralTotalCount;
     this.referralRecordRankConfig = ReferralPath.referralRecordRank;
+    this.getBaseInfoConfig = ReferralPath.getBaseInfo;
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
     this.getReferralShortLinkConfig = ReferralPath.getReferralShortLink;
+    this.activityDetailConfig = ReferralPath.activityDetail;
+    this.rewardProgressConfig = ReferralPath.rewardProgress;
   }
   async referralRecordList(params: {
     caHash?: string;
@@ -64,7 +88,7 @@ class ReferralApi {
   }): Promise<IReferralRecordResponseDto> {
     return await portkeyGet(
       this.referralRecordListConfig.path,
-      { ...this.referralRecordListConfig.params, ...params },
+      { ...this.referralRecordListConfig.params, ...params, activityEnums: ActivityEnums.Hamster },
       this.referralRecordListConfig.config,
     );
   }
@@ -82,6 +106,13 @@ class ReferralApi {
       this.referralRecordRankConfig.config,
     );
   }
+  async getActivityBaseInfo(): Promise<IActivityBaseInfo> {
+    return await portkeyGet(
+      this.getBaseInfoConfig.path,
+      { ...this.getBaseInfoConfig.params,},
+      this.getBaseInfoConfig.config,
+    );
+  }
   async activityDateRange(params: { activityEnums: ActivityEnums }): Promise<IActivityDateRange> {
     return await portkeyGet(
       this.activityDateRangeConfig.path,
@@ -94,6 +125,20 @@ class ReferralApi {
       this.getReferralShortLinkConfig.path,
       { ...this.getReferralShortLinkConfig.params },
       this.getReferralShortLinkConfig.config,
+    );
+  }
+  async getActivityDetail(params: { activityEnums: ActivityEnums }): Promise<IActivityDetail> {
+    return await portkeyGet(
+      this.activityDetailConfig.path,
+      { ...this.activityDetailConfig.params, ...params },
+      this.activityDetailConfig.config,
+    );
+  }
+  async getRewardProgress(params: { activityEnums: ActivityEnums }): Promise<IRewardProgress> {
+    return await portkeyGet(
+      this.rewardProgressConfig.path,
+      { ...this.rewardProgressConfig.params, ...params },
+      this.rewardProgressConfig.config,
     );
   }
 }
