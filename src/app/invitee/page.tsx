@@ -61,7 +61,7 @@ ConfigProvider.setGlobalConfig({
   },
 });
 
-export enum StepEnum {
+enum StepEnum {
   UnLogin = 'UnLogin',
   TaskOneCompleted = 'TaskOneCompleted',
   SocialRecovery = 'SocialRecovery',
