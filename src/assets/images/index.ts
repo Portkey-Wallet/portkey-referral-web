@@ -18,6 +18,7 @@ import userProfile from './referral/userProfile.png'
 import myInvitationLeftBg from'./referral/myInvitationLeftBg.png';
 import myInvitationRightBg from'./referral/myInvitationRightBg.png';
 import referralTaskHeaderBg from './referral/referralTaskHeaderBg.svg';
+import suggestCloseIcon from './referral/suggestClose.png';
 
 import QRCodeLogo from './common/qrcodeLogo.png';
 import appStoreDownload from './common/appStoreDownload.svg';
@@ -88,4 +89,5 @@ export {
   cryptoShare,
   cryptoSuccess,
   alarm,
+  suggestCloseIcon,
 };

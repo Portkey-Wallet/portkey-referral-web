@@ -15,27 +15,54 @@
     padding: $padding-24;
     background-color: $bg-blue;
 
+    background-image: url('../../assets/images/referral/waterMark.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+
     .referralHeader {
       width: 100%;
       height: 80px;
       max-width: $content-width-large-desktop;
       padding: $padding-24;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
 
       .portkeyLogo {
         width: 142px;
         height: 32px;
         cursor: pointer;
       }
+
+      .cooperateLogo {
+        gap: 8px;
+        height: 36px;
+        cursor: pointer;
+      }
+
+      .userLogo {
+        flex-shrink: 0;
+        width: 30px;
+        height: 30px;
+        line-height: 40px;
+        border-radius: 20px;
+        overflow: hidden;
+        cursor: pointer;
+      }
     }
 
     .referralMainContainer {
       position: relative;
-      max-width: 480px;
       width: 100%;
-      // min-width: 440px;
       min-height: 340px;
       margin: auto;
       padding-top: 16px;
+
+      background-image: url('../../assets/images/referral/bgLines.svg');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
 
       .bgWaterMark {
         position: absolute;
@@ -90,7 +117,7 @@
       .inviteeText {
         margin: auto;
         margin-top: 18px;
-        color: #fff;
+        color: #DEE2E8;
         text-align: center;
         font-size: 16px;
         font-weight: 400;
@@ -122,6 +149,98 @@
     align-items: center;
     padding: $padding-24;
     margin-top: 96px;
+
+    .referralBlackContainer {
+      position: relative;
+      width: 600px;
+      margin: 0 12px 64px;
+      padding: 0 12px 24px;
+      background-image: url('../../assets/images/referral/waterMark.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-color: #23236B;
+      border: 2px solid #2F31A1;
+      color: $font-white;
+      .bgWaterMark {
+        position: absolute;
+      }
+      .blackContainerTitle {
+        width: 182px;
+        height: 28px;
+        align-self: center;
+        margin-bottom: 18px;
+        font-size: 14px;
+        line-height: 24px;
+        font-weight: 500;
+        background-image: url('../../assets/images/referral/TaskBg.png');
+        background-size: cover;
+      }
+      .taskWrapper {
+        gap: 24px;
+        .taskItem {
+          gap: 8px;
+          width: 100%;
+          .leftTaskItem {
+            display: flex;
+            flex-direction: column;
+            padding-top: 2px;
+            .dividingLine {
+              flex: 1;
+              margin: 10px 0 0 10px;
+            }
+          }
+          .rightTaskItem {
+            .title {
+              font-size: 16px;
+              line-height: 24px;
+              font-weight: 500;
+            }
+            .description {
+              margin-top: 2px;
+              font-size: 14px;
+              line-height: 22px;
+              color: $font-color-secondary;
+            }
+            .btn {
+              margin-top: 16px;
+              width: 100%;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+      .notice {
+        gap: 16px;
+        justify-content: flex-start;
+        font-size: 14px;
+        line-height: 22px;
+        .referralBtn {
+          width: 100%;
+        }
+      }
+      .btnDisabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .numberList {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      line-height: 16px;
+      font-weight: 500px;
+      color: #161630;
+      border-radius: 50%;
+      background-color: $bg-light-blue;
+    }
+
+    .dividingLine {
+      width: 0.5px;
+      height: 100%;
+      background-color: $bg-light-blue;
+    }
 
     .QRcodeWrapper {
       margin: -43px auto 80px;
@@ -185,13 +304,12 @@
     }
 
     .referralBtn {
-      width: 328px;
+      width: 100%;
       height: 48px;
       background-color: $bg-btn;
-      margin-bottom: 16px;
       border-radius: 8px;
       border: none;
-      color: #fff;
+      color: $font-white;
       border-bottom: 3px solid #3334ba;
       cursor: pointer;
       font-size: 16px;
@@ -210,12 +328,34 @@
       border: none;
     }
 
+    .downloadPCWrapper {
+      width: 600px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 12px;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
     .downTipsPC {
-      margin-bottom: 16px;
-      color: rgba(255, 255, 255, 0.6);
+      margin-left: 8px;
+      color: #25272A;
       text-align: center;
       font-size: 14px;
       line-height: 20px;
+      font-weight: 500;
+    }
+
+    .downloadPcBtn {
+      padding: 9px 24px;
+      font-size: 16px;
+      line-height: 22px;
+      font-weight: 500;
+      border-radius: 8px;
+      color: $font-white;
+      background-color: #5B5CFF;
+      border: 1px solid #5B5CFF;
     }
 
     .Mdownload {
@@ -302,7 +442,27 @@
   @media screen and (max-width: $divide-510) {
     .referralBlueContainer {
       padding: 0;
+      .referralHeader {
+        padding: $padding-16;
+  
+        .portkeyLogo {
+          width: 168px;
+          height: 28px;
+        }
+        .cooperateLogo {
+          height: 28px;
+        }
+        .userLogo {
+          width: 24px;
+          height: 24px;
+          line-height: 24px;
+          border-radius: 12px;
+          overflow: hidden;
+          cursor: pointer;
+        }
+      }
       .referralMainContainer {
+        padding-top: 0;
         .sloganInvitee {
           position: relative;
           height: 140px;
@@ -311,10 +471,17 @@
           // background-image: url('../../assets/images/referral/sloganInviteeMobile.png');
           background-size: 100%;
         }
-
+        .bgColorBox > img {
+            min-width: 375px;
+        }
         .inviteeText {
           width: 280px;
         }
+      }
+    }
+    .referralBlackWrapper {
+      .referralBlackContainer {
+        width: 343px;
       }
     }
   }
