@@ -29,9 +29,25 @@
     right: 0;
     bottom: 0;
   }
-  .header_bg {
-    width: 145px;
+  .header_wrap {
+    width: 177px;
     height: 28px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .header_bg {
+      width: 177px;
+      height: 28px;
+      position: absolute;
+    }
+    .header_title {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 24px;
+      position: absolute;
+    }
   }
   .estimated_reward {
     margin-top: 14px;

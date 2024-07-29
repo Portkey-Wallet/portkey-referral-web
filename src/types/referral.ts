@@ -20,6 +20,19 @@ export interface IReferralRecordsRankResponseDto {
   invitations: string;
 }
 
+export interface IActivityBaseInfo {
+  data: IActivityBaseInfoItem[];
+}
+
+export interface IActivityBaseInfoItem {
+  activityName: string;
+  activityValue: number;
+  isDefault: Boolean;
+  startDate: string;
+  endDate: string;
+  dateRange: string;
+}
+
 export interface IReferralRecordsRankDetail {
   caAddress: string;
   referralTotalCount: number;

@@ -3,6 +3,7 @@ import { AxiosRequestConfig } from 'axios';
 import {
   IReferralRecordResponseDto,
   IReferralRecordsRankResponseDto,
+  IActivityBaseInfo,
   IActivityDateRange,
   IReferralShortLink,
   IActivityDetail,
@@ -19,6 +20,9 @@ const ReferralPath = {
   },
   referralRecordRank: {
     path: '/growth/referralRecordRank',
+  },
+  getBaseInfo: {
+    path: '/growth/get-activity-baseInfos',
   },
   activityDateRange: {
     path: '/growth/activityDateRange',
@@ -62,6 +66,7 @@ class ReferralApi {
   private referralRecordListConfig: IApiConfig;
   private referralTotalCountConfig: IApiConfig;
   private referralRecordRankConfig: IApiConfig;
+  private getBaseInfoConfig: IApiConfig;
   private activityDateRangeConfig: IApiConfig;
   private getReferralShortLinkConfig: IApiConfig;
   private activityDetailConfig: IApiConfig;
@@ -70,6 +75,7 @@ class ReferralApi {
     this.referralRecordListConfig = ReferralPath.referralRecordList;
     this.referralTotalCountConfig = ReferralPath.referralTotalCount;
     this.referralRecordRankConfig = ReferralPath.referralRecordRank;
+    this.getBaseInfoConfig = ReferralPath.getBaseInfo;
     this.activityDateRangeConfig = ReferralPath.activityDateRange;
     this.getReferralShortLinkConfig = ReferralPath.getReferralShortLink;
     this.activityDetailConfig = ReferralPath.activityDetail;
@@ -96,8 +102,15 @@ class ReferralApi {
   async referralRecordRank(params: IReferralRecordRankParams): Promise<IReferralRecordsRankResponseDto> {
     return await portkeyGet(
       this.referralRecordRankConfig.path,
-      { ...this.referralRecordRankConfig.params, ...params, activityEnums: ActivityEnums.Hamster },
+      { ...this.referralRecordRankConfig.params, ...params },
       this.referralRecordRankConfig.config,
+    );
+  }
+  async getActivityBaseInfo(): Promise<IActivityBaseInfo> {
+    return await portkeyGet(
+      this.getBaseInfoConfig.path,
+      { ...this.getBaseInfoConfig.params,},
+      this.getBaseInfoConfig.config,
     );
   }
   async activityDateRange(params: { activityEnums: ActivityEnums }): Promise<IActivityDateRange> {

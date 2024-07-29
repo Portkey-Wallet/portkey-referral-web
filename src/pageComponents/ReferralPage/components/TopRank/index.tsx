@@ -9,11 +9,14 @@ import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { useReferralRank } from '../../hook';
 import { useResponsive } from '@/hooks/useResponsive';
 import { useEnvironment } from '@/hooks/environment';
+import { IActivityBaseInfoItem } from '@/types/referral';
+import referralApi from '@/utils/axios/referral';
 
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
   const { referralRankList: originalReferralRankList, init, next, myRank, invitations } = useReferralRank();
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activityBaseInfoItems, setActivityBaseInfoItems] = useState<IActivityBaseInfoItem[]>();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
 
@@ -22,10 +25,23 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
     return sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex);
   }, [originalReferralRankList]);
 
+  const fetchActivityBaseInfo = useCallback(async () => {
+    try {
+      const res = await referralApi.getActivityBaseInfo();
+      setActivityBaseInfoItems(res?.data);
+    } catch (error) {
+      console.error('referralActivityBaseInfo error : ', error);
+    }
+  }, []);
+
   useEffect(() => {
     init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin]);
+
+  useEffect(() => {
+    fetchActivityBaseInfo();
+  }, [fetchActivityBaseInfo]);
 
   useEffect(() => {
     if (referralRankList.length < 0) return;
@@ -208,6 +224,7 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
       </a>
       {showLeaderBoardModal && (
         <LeaderBoardModal
+          activityItems={activityBaseInfoItems}
           open={showLeaderBoardModal}
           onClose={() => {
             setShowLeaderBoardModal(false);

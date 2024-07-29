@@ -34,14 +34,14 @@ export const useReferralRank = () => {
   const [invitations, setInvitations] = useState<string>('');
   const pageRef = useRef<{ hasNext: boolean; skip: number; limit: number }>(INIT_PAGE);
   const next = useCallback(
-    async (init?: boolean) => {
+    async (init?: boolean, activityEnum?: number) => {
       if (!pageRef.current?.hasNext) return;
       if (init) {
         setReferralRankList([]);
         setMyRank(null);
       }
       const result = await referralApi.referralRecordRank({
-        activityEnums: ActivityEnums.Hamster,
+        activityEnums: activityEnum ?? ActivityEnums.Hamster,
         skip: pageRef.current?.skip,
         limit: pageRef.current?.limit,
       });
@@ -57,9 +57,9 @@ export const useReferralRank = () => {
     },
     [referralRankList],
   );
-  const init = useCallback(() => {
+  const init = useCallback((activityEnum?: number) => {
     pageRef.current = INIT_PAGE;
-    return next(true);
+    return next(true, activityEnum);
   }, [next]);
-  return { referralRankList, myRank, invitations,init, next };
+  return { referralRankList, myRank, invitations, init, next };
 };

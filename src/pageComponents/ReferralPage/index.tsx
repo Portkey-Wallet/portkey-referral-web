@@ -33,7 +33,7 @@ import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
 import googleAnalytics from '@/utils/googleAnalytics';
-import { IRewardProgress, IActivityDetail } from '@/types/referral';
+import { IRewardProgress, IActivityDetail, IActivityBaseInfoItem } from '@/types/referral';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();

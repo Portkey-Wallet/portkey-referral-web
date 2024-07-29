@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import styles from './styles.module.scss';
 import BaseImage from '@/components/BaseImage';
-import { myInvitationHeaderBg, directionRight, myInvitationLeftBg, myInvitationRightBg } from '@/assets/images';
+import { referralTaskHeaderBg, directionRight, myInvitationLeftBg, myInvitationRightBg } from '@/assets/images';
 import Image from 'next/image';
 import MyInvitationModal from '../MyInvitationModal';
 import { IRewardProgress } from '@/types/referral';
@@ -24,7 +24,10 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ rewardProgress })
     <div className={styles.container}>
       <Image className={styles.leftBg} src={myInvitationLeftBg} alt="" />
       <Image className={styles.rightBg} src={myInvitationRightBg} alt="" />
-      <BaseImage className={styles.header_bg} src={myInvitationHeaderBg} priority alt="my invitation" />
+      <div className={styles.header_wrap}>
+        <BaseImage className={styles.header_bg} src={referralTaskHeaderBg} priority alt="invitation records" />
+        <div className={styles.header_title}>Invitation Records</div>
+      </div>
       <div className={styles.estimated_reward}>Estimated Reward</div>
       <div className={styles.invitation_amount}>{rewardProcessCount ?? 0}</div>
       {data?.map((item, index) => {
