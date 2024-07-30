@@ -37,7 +37,6 @@ import { IRewardProgress, IActivityDetail, IActivityBaseInfoItem } from '@/types
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
-  const shortLink = searchParams.get('shortLink') || '';
   const [, copyToClipboard] = useCopyToClipboard();
   const { isLogin, login, logout } = useAccount();
   const { isLG } = useResponsive();
@@ -47,13 +46,10 @@ const Referral: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const { setLoading } = useLoading();
-  const [referralLink, setReferralLink] = useState(shortLink);
+  const [referralLink, setReferralLink] = useState('');
 
   useEffect(() => {
     (async () => {
-      if (shortLink?.length > 0) {
-        return;
-      }
       if (!isLogin) {
         return;
       }
@@ -64,7 +60,7 @@ const Referral: React.FC = () => {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]);
+  }, [isLogin]);
 
   const fetchRewardProgress = useCallback(async () => {
     try {
