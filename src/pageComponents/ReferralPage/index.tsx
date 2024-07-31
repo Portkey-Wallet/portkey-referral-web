@@ -114,6 +114,9 @@ const Referral: React.FC = () => {
       }, REFRESH_REWARD_PROGRESS_INTERVAL);
     }
     fetchActivityDetail();
+    return () => {
+      clearRewardProgressTimer();
+    };
   }, [clearRewardProgressTimer, fetchActivityDetail, fetchRewardProgress, isLogin]);
 
   const onLogout = useCallback(async () => {

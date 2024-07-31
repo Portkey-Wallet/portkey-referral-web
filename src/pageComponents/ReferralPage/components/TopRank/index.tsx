@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { List, Avatar, Popover, ConfigProvider, Modal as AntdModal } from 'antd';
 import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
@@ -8,22 +8,39 @@ import LeaderBoardModal from '../LeaderboardModal';
 import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { useReferralRank } from '../../hook';
 import { useResponsive } from '@/hooks/useResponsive';
-import { useEnvironment } from '@/hooks/environment';
-import { IActivityBaseInfoItem } from '@/types/referral';
+import { IActivityBaseInfoItem, IReferralRecordsRankDetail } from '@/types/referral';
+import { ActivityEnums } from '@/utils/axios/referral';
 import referralApi from '@/utils/axios/referral';
 
+const REFRESH_INTERVAL = 1000 * 10;
+
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
-  const { referralRankList: originalReferralRankList, init, next, myRank, invitations } = useReferralRank();
+  const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>([]);
+  const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
+  const [invitations, setInvitations] = useState<string>('');
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activityBaseInfoItems, setActivityBaseInfoItems] = useState<IActivityBaseInfoItem[]>();
   const { isLG } = useResponsive();
-  const { isPortkeyApp } = useEnvironment();
+  const timerRef = useRef<NodeJS.Timeout>();
 
-  const referralRankList = useMemo(() => {
-    const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
-    return sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex);
-  }, [originalReferralRankList]);
+  const fetchRecordTopRank = useCallback(async () => {
+    try {
+      const result = await referralApi.referralRecordRank({
+        activityEnums: ActivityEnums.Hamster,
+        skip: 0,
+        limit: 20,
+      });  
+      setMyRank(result.currentUserReferralRecordsRankDetail);
+      setInvitations(result.invitations);
+      const originalReferralRankList = result.referralRecordsRank;
+      const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
+      setReferralRankList(sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex));
+    } catch (error) {
+      console.error('referralRecordRank error : ', error);
+    }
+    
+  }, []);
 
   const fetchActivityBaseInfo = useCallback(async () => {
     try {
@@ -34,23 +51,28 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
     }
   }, []);
 
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = undefined;
+    }
+  }, []);
+
   useEffect(() => {
-    init();
+    clearTimer();
+    fetchRecordTopRank();
+    timerRef.current = setInterval(() => {
+      fetchRecordTopRank();
+    }, REFRESH_INTERVAL);
+    return () => {
+      clearTimer();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin]);
 
   useEffect(() => {
     fetchActivityBaseInfo();
   }, [fetchActivityBaseInfo]);
-
-  useEffect(() => {
-    if (referralRankList.length < 0) return;
-    const lastItem = referralRankList[referralRankList.length - 1];
-    if (lastItem && lastItem.rank <= 10) {
-      next();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [referralRankList]);
 
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
