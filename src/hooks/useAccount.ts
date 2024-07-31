@@ -9,6 +9,7 @@ import { singleMessage } from '@portkey/did-ui-react';
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
   const [synced, setSynced] = useState<boolean>(false);
+  const [token, setToken] = useState<string>('');
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
     try {
@@ -16,45 +17,51 @@ export default function useAccount() {
       return true;
     } catch (e: any) {
       singleMessage.error(e?.nativeError?.message || e.message || 'login failed');
-      console.log('connect failed', e)
+      console.log('connect failed', e);
       return false;
     }
   }, [connectWallet]);
   const sync = useCallback(async () => {
     try {
-      if(!isConnected) {
+      if (!isConnected) {
         console.error('please connect wallet first!');
         return;
       }
       const { caHash, originChainId } = await getCaHashAndOriginChainIdByWallet(walletInfo, walletType);
-      if(walletType === WalletTypeEnum.discover){
-      const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
-      const token  = await getConnectToken({
-        grant_type: 'signature',
-        client_id: 'CAServer_App',
-        scope: 'CAServer',
-        signature: signatureStr || '',
-        pubkey: pubKey|| '',
-        timestamp: timestamp || 0,
-        ca_hash: caHash,
-        chainId: originChainId,
-      })
-      return token;
-    } else {
-      await getAAConnectToken(walletInfo?.extraInfo?.portkeyInfo);
-    }
+      if (walletType === WalletTypeEnum.discover) {
+        const { pubKey, signatureStr, timestamp } = await getSignatureAndPublicKey();
+        const token = await getConnectToken({
+          grant_type: 'signature',
+          client_id: 'CAServer_App',
+          scope: 'CAServer',
+          signature: signatureStr || '',
+          pubkey: pubKey || '',
+          timestamp: timestamp || 0,
+          ca_hash: caHash,
+          chainId: originChainId,
+        });
+        if (token) {
+          setToken(token);
+        }
+        return token;
+      } else {
+        const token = await getAAConnectToken(walletInfo?.extraInfo?.portkeyInfo);
+        if (token) {
+          setToken(token);
+        }
+      }
     } catch (e: any) {
-      console.log('connect failed', e.message)
+      console.log('connect failed', e.message);
     }
   }, [getSignatureAndPublicKey, isConnected, walletInfo, walletType]);
   const logout = useCallback(async () => {
-      logoutPortkeyApi();
-      await disConnectWallet();
+    logoutPortkeyApi();
+    await disConnectWallet();
   }, [disConnectWallet]);
   useEffect(() => {
     (async () => {
       if (!isConnected) return;
-      try{
+      try {
         setSynced(false);
         const token = await sync();
         console.log('jwt token:', token);
@@ -62,8 +69,8 @@ export default function useAccount() {
         setSynced(true);
       }
     })();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
   const isLogin = useMemo(() => isConnected && synced, [isConnected, synced]);
-  return { login, sync, logout, isLogin, isLocking, isConnected };
+  return { login, sync, logout, isLogin, isLocking, isConnected, token };
 }

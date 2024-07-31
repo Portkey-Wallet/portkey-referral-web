@@ -31,14 +31,16 @@ import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
 import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
-import { CurrentNetWork } from '@/constants/network';
+import { CurrentNetWork, ApiHost } from '@/constants/network';
 import googleAnalytics from '@/utils/googleAnalytics';
 import { IRewardProgress, IActivityDetail, IActivityBaseInfoItem } from '@/types/referral';
+import { referralSignalr } from '@/socket/referralsocket';
+import { randomId } from '@portkey/utils';
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
   const [, copyToClipboard] = useCopyToClipboard();
-  const { isLogin, login, logout } = useAccount();
+  const { isLogin, login, logout, token } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
   const [rewardProgress, setRewardProgress] = useState<IRewardProgress>();
@@ -63,13 +65,64 @@ const Referral: React.FC = () => {
   }, [isLogin]);
 
   const fetchRewardProgress = useCallback(async () => {
+    // try {
+    //   const res = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
+    //   setRewardProgress(res);
+    // } catch (error) {
+    //   console.error('referralRewardProgress error : ', error);
+    // }
+    const clientId = randomId();
     try {
-      const res = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
-      setRewardProgress(res);
+      referralSignalr.setPortkeyToken(token);
+      console.log('clientId: ', clientId);
+      await referralSignalr.doOpen({
+        url: `/HamsterDataReporting`,
+        // url: `/dataReporting`,
+        clientId,
+      });
     } catch (error) {
-      console.error('referralRewardProgress error : ', error);
+      //
     }
-  }, []);
+    console.log('signal url : ', `${ApiHost}/HamsterDataReporting`);
+    // const { remove: removeReferralSignalr } = referralSignalr.onRewardProgressChanged(async data => {
+    //   console.log('onRewardProgressChanged : ', data);
+    // });
+    // await referralSignalr.requestRewardProgress(clientId);
+
+    const { remove: removeReferralSignalr } = referralSignalr.onReferralRecordListChanged(async data => {
+      console.log('onRewardProgressChanged : ', data);
+    });
+    await referralSignalr.requestReferralRecordList(clientId);
+    /*
+    const { remove: removeAchTx } = this.rampSignalr.onRampOrderChanged(async data => {
+      if (data.displayStatus === SELL_ORDER_DISPLAY_STATUS.TRANSFERRED) {
+        signalFinishPromiseResolve(data);
+        return;
+      }
+
+      if (data.displayStatus !== SELL_ORDER_DISPLAY_STATUS.CREATED) {
+        return;
+      }
+
+      try {
+        const result = await generateTransaction(data);
+        await this.service.sendSellTransaction({
+          merchantName: data.merchantName,
+          orderId,
+          rawTransaction: result.rawTransaction,
+          signature: result.signature,
+          publicKey: result.publicKey,
+        });
+        isTransferred = true;
+      } catch (e) {
+        signalFinishPromiseResolve(null);
+        return;
+      }
+    });
+
+    await this.rampSignalr.requestRampOrderStatus(clientId, orderId);
+    */
+  }, [token]);
 
   const fetchActivityDetail = useCallback(async () => {
     try {
@@ -90,11 +143,13 @@ const Referral: React.FC = () => {
     }
   }, [isLogin, isPortkeyApp, setLoading]);
   useEffect(() => {
-    if (isLogin) {
+    console.log('isLogin : ', isLogin);
+    console.log('token : ', token);
+    if (isLogin && token) {
       fetchRewardProgress();
     }
     fetchActivityDetail();
-  }, [fetchActivityDetail, fetchRewardProgress, isLogin]);
+  }, [fetchActivityDetail, fetchRewardProgress, isLogin, token]);
 
   const onLogout = useCallback(async () => {
     await logout();

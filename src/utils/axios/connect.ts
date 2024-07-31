@@ -13,7 +13,7 @@ import { ChainId } from '@portkey/types';
 import { create } from 'apisauce';
 import { stringify } from 'querystring';
 
-const BEARER = 'Bearer';
+export const BEARER = 'Bearer';
 const DAY = 24 * 60 * 60 * 1000;
 
 export type RefreshTokenConfig = {

@@ -1,6 +1,6 @@
 import { ISignalr, IListen } from '@portkey/socket';
 
-export const DefaultReferralListenList = ['onLeaderBoardChanged'];
+export const DefaultReferralListenList = ['RewardProgressChanged', 'ReferralRecordListChanged'];
 
 export type DefaultReferralListenListType = typeof DefaultReferralListenList;
 
