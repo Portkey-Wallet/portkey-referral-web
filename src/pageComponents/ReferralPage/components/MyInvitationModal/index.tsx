@@ -7,7 +7,6 @@ import referralApi from '@/utils/axios/referral';
 import { useEffectOnce } from '@/hooks/commonHooks';
 import { useResponsive } from '@/hooks/useResponsive';
 import { IRewardProgress } from '@/types/referral';
-import { ActivityEnums } from '@/utils/axios/referral';
 
 const ContainerHeight = 434;
 
@@ -25,6 +24,7 @@ interface MyInvitationSection {
 }
 
 interface MyInvitationProps {
+  myRewardProgress: IRewardProgress;
   open: boolean;
   onClose: () => void;
 }
@@ -34,8 +34,7 @@ interface MyInvitationList {
   hasNextPage: boolean;
 }
 
-const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
-  const [myRewardProgress, setMyRewardProgress] = useState<IRewardProgress>();
+const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose, myRewardProgress }) => {
   const [sections, setSections] = useState<MyInvitationSection[]>([]);
   const { isLG } = useResponsive();
   const currentList = useRef<MyInvitationList>({
@@ -43,17 +42,14 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
     hasNextPage: true,
   });
 
-  const fetchRewardProgress = useCallback(async () => {
-    try {
-      const rewardProgress = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
-      console.log('rewardProgress : ', rewardProgress);
-      setMyRewardProgress(rewardProgress);
-    } catch (error) {
-      console.error('rewardProgress error : ', error);
+  const fetchInvitationList = useCallback(async (init?: boolean) => {
+    if (init) {
+      currentList.current = {
+        skip: 0,
+        hasNextPage: true,
+      };
+      setSections([]);
     }
-  }, []);
-
-  const fetchInvitationList = useCallback(async () => {
     if (!currentList.current.hasNextPage) {
       return;
     }
@@ -69,29 +65,30 @@ const MyInvitationModal: React.FC<MyInvitationProps> = ({ open, onClose }) => {
       if (!referralRecords.length) {
         return;
       }
+      const localSections = init ? [] : sections;
       referralRecords.forEach((record: MyInvitationItem) => {
         const date = record.referralDate;
-        const sectionIndex = sections.findIndex((section) => section.date === date);
+        const sectionIndex = localSections.findIndex((section) => section.date === date);
         if (sectionIndex === -1) {
-          sections.push({
+          localSections.push({
             date,
             items: [record],
           });
         } else {
-          sections[sectionIndex].items.push(record);
+          localSections[sectionIndex].items.push(record);
         }
       });
-      setSections([...sections]);
-      console.log('sections : ', sections);
+      setSections([...localSections]);
+      console.log('sections : ', localSections);
     } catch (error) {
       console.error('referralRecordList error : ', error);
     }
   }, [sections]);
 
-  useEffectOnce(() => {
-    fetchInvitationList();
-    fetchRewardProgress();
-  });
+  useEffect(() => {
+    fetchInvitationList(true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myRewardProgress]);
 
   const showRewardProgress = useMemo(() => {
     return !!myRewardProgress?.data.length;

@@ -42,7 +42,9 @@ const MyInvitationBlock: React.FC<MyInvitationBlockProps> = ({ rewardProgress })
         <div className={styles.view_all_text}>View All</div>
         <Image className={styles.right_arrow} src={directionRight} alt="view all" />
       </a>
-      {isMyInvitationModalVisible && <MyInvitationModal open={isMyInvitationModalVisible} onClose={onClose} />}
+      {isMyInvitationModalVisible && (
+        <MyInvitationModal open={isMyInvitationModalVisible} onClose={onClose} myRewardProgress={rewardProgress} />
+      )}
     </div>
   );
 };

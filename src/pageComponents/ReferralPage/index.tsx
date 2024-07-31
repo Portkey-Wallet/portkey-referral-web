@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -34,6 +34,9 @@ import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
 import googleAnalytics from '@/utils/googleAnalytics';
 import { IRewardProgress, IActivityDetail, IActivityBaseInfoItem } from '@/types/referral';
+import equal from 'fast-deep-equal';
+
+const REFRESH_REWARD_PROGRESS_INTERVAL = 1000 * 10;
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
@@ -47,6 +50,7 @@ const Referral: React.FC = () => {
   const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const { setLoading } = useLoading();
   const [referralLink, setReferralLink] = useState('');
+  const refreshRewardProgressTimerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     (async () => {
@@ -65,11 +69,17 @@ const Referral: React.FC = () => {
   const fetchRewardProgress = useCallback(async () => {
     try {
       const res = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
+      console.log('aaaa fetch data : ', res);
+      console.log('aaaa rewardProgress : ', rewardProgress);
+      if (equal(res, rewardProgress)) {
+        return;
+      }
+      console.log('aaaa update data : ', res);
       setRewardProgress(res);
     } catch (error) {
       console.error('referralRewardProgress error : ', error);
     }
-  }, []);
+  }, [rewardProgress]);
 
   const fetchActivityDetail = useCallback(async () => {
     try {
@@ -89,12 +99,22 @@ const Referral: React.FC = () => {
       }
     }
   }, [isLogin, isPortkeyApp, setLoading]);
+
+  const clearRewardProgressTimer = useCallback(() => {
+    refreshRewardProgressTimerRef.current && clearInterval(refreshRewardProgressTimerRef.current);
+    refreshRewardProgressTimerRef.current = undefined;
+  }, []);
+
   useEffect(() => {
+    clearRewardProgressTimer();
     if (isLogin) {
       fetchRewardProgress();
+      refreshRewardProgressTimerRef.current = setInterval(() => {
+        fetchRewardProgress();
+      }, REFRESH_REWARD_PROGRESS_INTERVAL);
     }
     fetchActivityDetail();
-  }, [fetchActivityDetail, fetchRewardProgress, isLogin]);
+  }, [clearRewardProgressTimer, fetchActivityDetail, fetchRewardProgress, isLogin]);
 
   const onLogout = useCallback(async () => {
     await logout();
