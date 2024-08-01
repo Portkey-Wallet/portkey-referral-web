@@ -31,16 +31,17 @@ export const useReferralHome = () => {
 export const useReferralRank = () => {
   const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>([]);
   const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
+  const [invitations, setInvitations] = useState<string>('');
   const pageRef = useRef<{ hasNext: boolean; skip: number; limit: number }>(INIT_PAGE);
   const next = useCallback(
-    async (init?: boolean) => {
+    async (init?: boolean, activityEnum?: number) => {
       if (!pageRef.current?.hasNext) return;
       if (init) {
         setReferralRankList([]);
         setMyRank(null);
       }
       const result = await referralApi.referralRecordRank({
-        activityEnums: ActivityEnums.Invitation,
+        activityEnums: activityEnum ?? ActivityEnums.Hamster,
         skip: pageRef.current?.skip,
         limit: pageRef.current?.limit,
       });
@@ -50,14 +51,15 @@ export const useReferralRank = () => {
         hasNext: result.hasNext,
       };
       init && setMyRank(result.currentUserReferralRecordsRankDetail);
+      init && setInvitations(result.invitations);
       const newRankList = init ? result.referralRecordsRank : referralRankList.concat(result.referralRecordsRank);
       setReferralRankList([...newRankList]);
     },
     [referralRankList],
   );
-  const init = useCallback(() => {
+  const init = useCallback((activityEnum?: number) => {
     pageRef.current = INIT_PAGE;
-    return next(true);
+    return next(true, activityEnum);
   }, [next]);
-  return { referralRankList, myRank, init, next };
+  return { referralRankList, myRank, invitations, init, next };
 };

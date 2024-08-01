@@ -1,37 +1,78 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { List, Avatar } from 'antd';
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react';
+import { List, Avatar, Popover, ConfigProvider, Modal as AntdModal } from 'antd';
 import styles from './styles.module.scss';
 import RankItem, { showRankImage, RankImages } from '../RankItem';
-import { directionRight } from '@/assets/images';
+import { directionRight, suggestCircle, close } from '@/assets/images';
 import Image from 'next/image';
 import LeaderBoardModal from '../LeaderboardModal';
 import { formatStr2EllipsisStr, formatAelfAddress } from '@/utils';
 import { useReferralRank } from '../../hook';
 import { useResponsive } from '@/hooks/useResponsive';
+import { IActivityBaseInfoItem, IReferralRecordsRankDetail } from '@/types/referral';
+import { ActivityEnums } from '@/utils/axios/referral';
+import referralApi from '@/utils/axios/referral';
+
+const REFRESH_INTERVAL = 1000 * 10;
 
 const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
-  const { referralRankList: originalReferralRankList, init, next, myRank } = useReferralRank();
+  const [referralRankList, setReferralRankList] = useState<IReferralRecordsRankDetail[]>([]);
+  const [myRank, setMyRank] = useState<IReferralRecordsRankDetail | null>(null);
+  const [invitations, setInvitations] = useState<string>('');
   const [showLeaderBoardModal, setShowLeaderBoardModal] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [activityBaseInfoItems, setActivityBaseInfoItems] = useState<IActivityBaseInfoItem[]>();
   const { isLG } = useResponsive();
+  const timerRef = useRef<NodeJS.Timeout>();
 
-  const referralRankList = useMemo(() => {
-    const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
-    return sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex);
-  }, [originalReferralRankList]);
+  const fetchRecordTopRank = useCallback(async () => {
+    try {
+      const result = await referralApi.referralRecordRank({
+        activityEnums: ActivityEnums.Hamster,
+        skip: 0,
+        limit: 20,
+      });  
+      setMyRank(result.currentUserReferralRecordsRankDetail);
+      setInvitations(result.invitations);
+      const originalReferralRankList = result.referralRecordsRank;
+      const sliceIndex = originalReferralRankList.findIndex((item) => item.rank > 10);
+      setReferralRankList(sliceIndex === -1 ? originalReferralRankList : originalReferralRankList.slice(0, sliceIndex));
+    } catch (error) {
+      console.error('referralRecordRank error : ', error);
+    }
+    
+  }, []);
+
+  const fetchActivityBaseInfo = useCallback(async () => {
+    try {
+      const res = await referralApi.getActivityBaseInfo();
+      setActivityBaseInfoItems(res?.data);
+    } catch (error) {
+      console.error('referralActivityBaseInfo error : ', error);
+    }
+  }, []);
+
+  const clearTimer = useCallback(() => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = undefined;
+    }
+  }, []);
 
   useEffect(() => {
-    init();
+    clearTimer();
+    fetchRecordTopRank();
+    timerRef.current = setInterval(() => {
+      fetchRecordTopRank();
+    }, REFRESH_INTERVAL);
+    return () => {
+      clearTimer();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin]);
 
   useEffect(() => {
-    if (referralRankList.length < 0) return;
-    const lastItem = referralRankList[referralRankList.length - 1];
-    if (lastItem && lastItem.rank <= 10) {
-      next();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [referralRankList]);
+    fetchActivityBaseInfo();
+  }, [fetchActivityBaseInfo]);
 
   const onViewAll = useCallback(() => {
     setShowLeaderBoardModal(true);
@@ -44,6 +85,58 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
   const listRightItemWidth = useMemo(() => {
     return isLG ? styles.list_item_right_width_h5 : styles.list_item_right_width_pc;
   }, [isLG]);
+
+  const suggestionModal = useMemo(() => {
+    const modalStyles = {
+      header: {
+        backgroundColor: '#161630',
+      },
+      content: {
+        backgroundColor: '#161630',
+        paddingTop: 0,
+        paddingLeft: 0,
+        paddingRight: 0,
+        paddingBottom: 0,
+      },
+    };
+    return (
+      <ConfigProvider
+        modal={{
+          styles: modalStyles,
+        }}>
+        <AntdModal
+          open={showSuggestions}
+          keyboard={false}
+          maskClosable={false}
+          destroyOnClose={true}
+          closeIcon={<Image src={close} width={20} height={20} alt="close" />}
+          onCancel={() => {
+            setShowSuggestions(false);
+          }}
+          width={335}
+          footer={null}
+          centered
+          className={styles.modal_web}
+          wrapClassName={`${styles['modal-wrap']}`}
+          title={
+            <div className={styles.titleWrap}>
+              <div className={styles.titleText}>Invited</div>
+            </div>
+          }>
+          <div>
+            <div className={styles.suggestion_content_modal}>{invitations}</div>
+            <a
+              className={styles.suggestion_button_modal}
+              onClick={() => {
+                setShowSuggestions(false);
+              }}>
+              <div className={styles.suggestion_button_text_modal}>OK</div>
+            </a>
+          </div>
+        </AntdModal>
+      </ConfigProvider>
+    );
+  }, [invitations, showSuggestions]);
 
   const myRankDom = useMemo(() => {
     return (
@@ -96,7 +189,40 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
           <div className={styles.list_item_middle}>
             <div className={styles.list_item_title}>Wallet Address</div>
           </div>
-          <div className={`${styles.list_item_right} ${listRightItemWidth}`}>Invited</div>
+          <div className={`${styles.list_item_right} ${listRightItemWidth}`}>
+            <div>Invited</div>
+            {Boolean(invitations) && (isLG ? (
+              <Image
+                className={styles.suggestion_image}
+                src={suggestCircle}
+                width={14}
+                height={14}
+                alt="invited"
+                onClick={() => {
+                  setShowSuggestions(true);
+                }}
+              />
+            ) : (
+              <Popover
+                content={<div className={styles.suggestion_popover}>{invitations}</div>}
+                color="rgba(0, 0, 0, 0.80)"
+                overlayStyle={{
+                  width: '240px',
+                }}
+                trigger="click">
+                <Image
+                  className={styles.suggestion_image}
+                  src={suggestCircle}
+                  width={14}
+                  height={14}
+                  alt="invited"
+                  onClick={() => {
+                    setShowSuggestions(true);
+                  }}
+                />
+              </Popover>
+            ))}
+          </div>
         </div>
         <List
           className={styles.list}
@@ -108,6 +234,7 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
               avatar={item.avatar}
               caAddress={item.caAddress}
               referralTotalCount={item.referralTotalCount}
+              recordDesc={item.recordDesc}
               walletName={item?.walletName?.length > 0 ? item.walletName[0].toUpperCase() : ''}
             />
           )}
@@ -119,12 +246,14 @@ const TopRanks: React.FC<{ isLogin: boolean }> = ({ isLogin }) => {
       </a>
       {showLeaderBoardModal && (
         <LeaderBoardModal
+          activityItems={activityBaseInfoItems}
           open={showLeaderBoardModal}
           onClose={() => {
             setShowLeaderBoardModal(false);
           }}
         />
       )}
+      {showSuggestions && isLG && suggestionModal}
     </div>
   );
 };
