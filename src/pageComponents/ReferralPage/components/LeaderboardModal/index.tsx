@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import CommonModal from '@/components/CommonModal';
 import Image from 'next/image';
 import RankItem from '../LeaderBoardRankItem';
+import { showRankImage, RankImages } from '../RankItem';
 import { List, Dropdown, Avatar } from 'antd';
 import type { MenuProps } from 'antd';
 import { directionDown } from '@/assets/images';
@@ -113,7 +114,17 @@ const LeaderBoardModal: React.FC<LeaderBoardModalProps> = ({
       myRank?.caAddress && (
         <div className={styles.myRankWrap}>
           <div className={styles.myRankTextWrap}>
-            <div className={styles.myRankText}>{myRank.rank > 0 ? myRank.rank : '--'}</div>
+            {showRankImage(myRank?.rank) ? (
+              <Image
+                width={25}
+                className={styles.rank_image}
+                src={RankImages[myRank?.rank - 1]}
+                priority
+                alt="invitation rank"
+              />
+            ) : (
+              <div className={styles.rank_text}>{myRank?.rank > 0 ? myRank?.rank : '--'}</div>
+            )}
           </div>
           <div className={styles.myRankMiddleWrap}>
             <Avatar
