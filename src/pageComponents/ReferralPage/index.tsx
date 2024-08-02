@@ -77,13 +77,11 @@ const Referral: React.FC = () => {
       console.log('clientId: ', clientId);
       await referralSignalr.doOpen({
         url: `/HamsterDataReporting`,
-        // url: `/dataReporting`,
         clientId,
       });
     } catch (error) {
-      //
+      console.error('referralSignalr doOpen error : ', error);
     }
-    console.log('signal url : ', `${ApiHost}/HamsterDataReporting`);
     // const { remove: removeReferralSignalr } = referralSignalr.onRewardProgressChanged(async data => {
     //   console.log('onRewardProgressChanged : ', data);
     // });
@@ -92,7 +90,11 @@ const Referral: React.FC = () => {
     const { remove: removeReferralSignalr } = referralSignalr.onReferralRecordListChanged(async data => {
       console.log('onRewardProgressChanged : ', data);
     });
-    await referralSignalr.requestReferralRecordList(clientId);
+    try {
+      await referralSignalr.requestReferralRecordList(clientId);
+    } catch (error) {
+      console.log('requestReferralRecordList error: ', error);
+    }
     /*
     const { remove: removeAchTx } = this.rampSignalr.onRampOrderChanged(async data => {
       if (data.displayStatus === SELL_ORDER_DISPLAY_STATUS.TRANSFERRED) {
