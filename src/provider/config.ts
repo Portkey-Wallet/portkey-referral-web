@@ -32,7 +32,7 @@ const didConfig: GlobalConfigProps = {
     },
   },
   loginConfig: {
-    loginMethodsOrder: ["Email", "Google", "Apple", "Scan"]
+    loginMethodsOrder: ["Email", "Google", "Apple", "Scan", "Telegram"]
   }
 };
 
