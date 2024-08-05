@@ -84,6 +84,9 @@ const Referral: React.FC = () => {
   const fetchActivityDetail = useCallback(async () => {
     try {
       const res = await referralApi.getActivityDetail({ activityEnums: ActivityEnums.Hamster });
+      if (res?.activityConfig?.activityTitle) {
+        document.title = res?.activityConfig?.activityTitle;
+      }
       setActivityDetail(res);
     } catch (error) {
       console.error('referralActivityDetail error : ', error);
