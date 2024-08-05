@@ -145,6 +145,7 @@ const Invitee: React.FC = () => {
 
   const getInviteeConfig = useCallback(async () => {
     const res = await portkeyGet(PORTKEY_API.GET.INVITEE_CONFIG);
+    document.title = res.activityTitle ?? 'Portkey Referral Program';
     setConfigAllData(res.data);
   }, []);
 
