@@ -33,6 +33,8 @@ export const BackEndNetWorkMap: {
     portkeyWebsiteUrl: 'https://test.portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
     defaultChain: 'tDVW',
+    // TODO: change it
+    tgMiniAppPath: 'https://t.me/TestCryptoGift_bot/webapp1',
   },
   mainnet: {
     name: 'aelf Mainnet',
@@ -44,6 +46,8 @@ export const BackEndNetWorkMap: {
     portkeyWebsiteUrl: 'https://portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
     defaultChain: 'tDVV',
+    // TODO: change it
+    tgMiniAppPath: 'https://t.me/TestCryptoGift_bot/webapp1',
   },
 };
 

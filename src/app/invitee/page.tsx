@@ -79,9 +79,9 @@ const Invitee: React.FC = () => {
   const signInRef = useRef<ISignIn>(null);
   const searchParams = useSearchParams();
   const [src, setSrc] = useState<StaticImageData>();
-  const referralCode = searchParams.get('referral_code');
-  const projectCode = searchParams.get('project_code');
-  const networkType = searchParams.get('networkType') || '';
+  const referralCode = searchParams?.get('referral_code');
+  const projectCode = searchParams?.get('project_code');
+  const networkType = searchParams?.get('networkType') || '';
   const { setLoading } = useLoading();
   const [configAllData, setConfigAllData] = useState<any>();
   const [step, setStep] = useState<StepEnum>(StepEnum.UnLogin);

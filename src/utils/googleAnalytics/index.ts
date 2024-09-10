@@ -106,7 +106,7 @@ class Analytics {
     });
   }
 
-  async portkeyLoginEvent(loginMethod: LoginMethod, loginType: AccountAllType, additionalParams = {}) {
+  async portkeyLoginEvent(loginMethod: LoginMethod, loginType?: AccountAllType, additionalParams = {}) {
     try {
       const params = { timestamp: Date.now(), loginType, loginMethod };
 

@@ -13,4 +13,5 @@ export type NetworkItem = {
   portkeyWebsiteUrl: string;
   loginType?: TSupportAccountType[];
   defaultChain?: TChainId;
+  tgMiniAppPath?: string;
 };
