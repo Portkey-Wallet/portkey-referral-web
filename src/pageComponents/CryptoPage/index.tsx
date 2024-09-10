@@ -68,7 +68,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const isFirstRender = useRef(true);
   const timerRef = useRef<NodeJS.Timeout>();
 
-  const { isLogin, login, logout, walletInfo } = useAccount();
+  const { isLogin, login, logout, walletInfo, isLocking } = useAccount();
   const walletInfoRef = useRef(walletInfo);
   const router = useRouter();
 
@@ -134,7 +134,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   });
 
   useLayoutEffect(() => {
-    if (!isLogin) login();
+    if (isLocking) login();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
