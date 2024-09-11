@@ -33,7 +33,6 @@ const didConfig: GlobalConfigProps = {
       websiteIcon: WEBSITE_ICON,
     },
     Telegram: {
-      // TODO: change it
       botId: TG_BOT_ID,
     },
   },

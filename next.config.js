@@ -8,9 +8,10 @@ const rewrites = require('./rewrites/index');
 //     },
 // }
 
+const projectType = process.env.NEXT_PUBLIC_PROJECT_TYPE;
+
 module.exports = {
-  basePath: '/cryptoGift',
-  assetPrefix: '/cryptoGift',
+  assetPrefix: projectType === 'referral' ? '/' : '/cryptoGift',
   reactStrictMode: false,
   async rewrites() {
     return rewrites;
@@ -30,7 +31,7 @@ module.exports = {
   // },
   productionBrowserSourceMaps: true,
   publicRuntimeConfig: {
-    basePath: '/cryptoGift',
+    basePath: projectType === 'referral' ? '/' : '/cryptoGift',
   },
   images: {
     remotePatterns: [
