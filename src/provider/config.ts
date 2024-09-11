@@ -13,6 +13,7 @@ const CHAIN_ID = 'AELF' as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
+  connectUrl: ConnectHost,
   serviceUrl: ApiHost,
   requestDefaults: {
     baseURL: ApiHost,
@@ -22,6 +23,7 @@ ConfigProvider.setGlobalConfig({
 const didConfig: GlobalConfigProps = {
   graphQLUrl: '/graphql',
   connectUrl: ConnectHost,
+  serviceUrl: ApiHost,
   requestDefaults: {
     baseURL: ApiHost,
     timeout: 30000,
@@ -71,6 +73,8 @@ const wallets = [
     autoLogoutOnChainMismatch: true,
   }),
 ];
+
+console.log('setGlobalConfig2', didConfig);
 
 export const config: IConfigProps = {
   didConfig,

@@ -1,7 +1,7 @@
 'use client';
 import clsx from 'clsx';
 import { useState, useCallback, useRef, useMemo, useEffect, useLayoutEffect } from 'react';
-import { ISignIn, singleMessage, did, ConfigProvider, TelegramPlatform } from '@portkey/did-ui-react';
+import { singleMessage, did, TelegramPlatform } from '@portkey/did-ui-react';
 
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -20,13 +20,11 @@ import alarm from '/public/cryptoGift/images/cryptoGift/alarm.svg';
 import styles from './styles.module.scss';
 import './global.scss';
 
-import { privacyPolicy, termsOfService } from '@/constants/pageData';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, LoginTypes } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
-import { BackEndNetworkType } from '@/types/network';
 import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
 import BreakWord from '@/components/BreakWord';
 import { useFetchAndStoreCaHolderInfo } from '@/hooks/giftWallet';
@@ -50,28 +48,6 @@ const boxClosed = '/cryptoGift/cryptoGift/images/cryptoGift/boxClosed.png';
 const boxEmpty = '/cryptoGift/cryptoGift/images/cryptoGift/boxEmpty.png';
 const boxOpened = '/cryptoGift/cryptoGift/images/cryptoGift/boxOpened.png';
 
-ConfigProvider.setGlobalConfig({
-  graphQLUrl: '/graphql',
-  serviceUrl: ApiHost,
-  requestDefaults: {
-    baseURL: ApiHost,
-  },
-  loginConfig: {
-    loginMethodsOrder: LoginTypes,
-  },
-});
-
-console.log('setGlobalConfig1', {
-  graphQLUrl: '/graphql',
-  serviceUrl: ApiHost,
-  requestDefaults: {
-    baseURL: ApiHost,
-  },
-  loginConfig: {
-    loginMethodsOrder: LoginTypes,
-  },
-});
-
 interface ICryptoGiftProps {
   cryptoGiftId: string;
 }
@@ -92,8 +68,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const [initializing, setInitializing] = useState(true);
 
   const [, copyToClipboard] = useCopyToClipboard();
-  const searchParams = useSearchParams();
-  const networkType = searchParams?.get('networkType') || '';
   const [cryptoDetail, setCryptoGiftDetail] = useState<TCryptoDetail>();
   const { claimAgainCountdownSecond, expiredTime, rootTime } = useCryptoDetailTimer();
 
@@ -149,21 +123,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     if (isLocking) login();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
-
-    ConfigProvider.setGlobalConfig({
-      graphQLUrl: `${networkType && nodeInfo ? `${window.location.origin}/${networkType}/graphql` : '/graphql'}`,
-      serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
-      requestDefaults: {
-        baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
-      },
-      loginConfig: {
-        loginMethodsOrder: nodeInfo.loginType || LoginTypes,
-      },
-    });
-  }, [networkType]);
 
   useEffect(() => {
     if (isWeChat) return setIsShowMask(true);
@@ -680,26 +639,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
           {!initializing && !isWeChat && !isPortkeyApp && !TelegramPlatform.isTelegramPlatform() && renderDownLoadDom()}
         </div>
       </div>
-
-      {/* {!isPortkeyApp && (
-          <PortkeyProvider networkType={CurrentNetWork.networkType}>
-            <SignIn
-              defaultChainId={CurrentNetWork.defaultChain}
-              className={styles['invitee-sign-in']}
-              defaultLifeCycle={{
-                SignUp: undefined,
-              }}
-              termsOfService={termsOfService}
-              privacyPolicy={privacyPolicy}
-              uiType="Modal"
-              pin={DEFAULT_CRYPTO_GIFT_WALLET_PIN}
-              ref={signInRef}
-              onFinish={onFinish}
-              onCancel={onCancel}
-            />
-          </PortkeyProvider>
-        )} */}
-
       {/* mask */}
       {isShowMask && <OpenInBrowser isWeChat={isWeChat} />}
     </div>
