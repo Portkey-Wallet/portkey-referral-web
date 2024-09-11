@@ -10,7 +10,7 @@ const rewrites = require('./rewrites/index');
 
 module.exports = {
   basePath: '/cryptoGift',
-  assetPrefix: './cryptoGift',
+  assetPrefix: '/cryptoGift',
   reactStrictMode: false,
   async rewrites() {
     return rewrites;
@@ -29,6 +29,9 @@ module.exports = {
   //   },
   // },
   productionBrowserSourceMaps: true,
+  publicRuntimeConfig: {
+    basePath: getBasePath(),
+  },
   images: {
     remotePatterns: [
       {
