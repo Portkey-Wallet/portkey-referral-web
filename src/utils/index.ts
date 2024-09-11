@@ -34,3 +34,7 @@ export const formatAelfAddress = (address = ''): string => {
   const suffix = '_AELF';
   return `${pre}${address}${suffix}`;
 };
+
+export const isInPortkeyTgBot = () => {
+  return window.location.hostname.includes('tgbot');
+};

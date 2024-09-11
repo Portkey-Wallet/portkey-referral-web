@@ -6,8 +6,9 @@ import { TChainId, SignInDesignEnum, NetworkEnum, DEFAULT_PIN } from '@aelf-web-
 import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv } from '@/constants/network';
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
+import { isInPortkeyTgBot } from '@/utils';
 
-const APP_NAME = 'referral.portkey.finance';
+const APP_NAME = isInPortkeyTgBot() ? 'Portkey bot' : 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
 const CHAIN_ID = 'AELF' as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
@@ -73,8 +74,6 @@ const wallets = [
     autoLogoutOnChainMismatch: true,
   }),
 ];
-
-console.log('setGlobalConfig2', didConfig);
 
 export const config: IConfigProps = {
   didConfig,
