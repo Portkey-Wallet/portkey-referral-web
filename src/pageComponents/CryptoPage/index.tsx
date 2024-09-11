@@ -551,11 +551,11 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
 
     return (
       <div className={styles.successSectionWrap}>
-        <BaseImage
+        <Image
+          preview={false}
           src={boxOpened}
           className={styles.cryptoGiftImg}
           alt="cryptoGiftImg"
-          priority
           width={343}
           height={240}
         />
