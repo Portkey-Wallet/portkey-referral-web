@@ -10,10 +10,7 @@ import bgLine1 from '/public/cryptoGift/images/cryptoGift/bgLine1.svg';
 import bgLine2 from '/public/cryptoGift/images/cryptoGift/bgLine2.svg';
 import bgLine3 from '/public/cryptoGift/images/cryptoGift/bgLine3.svg';
 import bgPortkeyLogo from '/public/cryptoGift/images/cryptoGift/bgPortkeyLogo.svg';
-import boxCannotClaimed from '/public/cryptoGift/images/cryptoGift/boxCannotClaimed.png';
-import boxClosed from '/public/cryptoGift/images/cryptoGift/boxClosed.png';
-import boxEmpty from '/public/cryptoGift/images/cryptoGift/boxEmpty.png';
-import boxOpened from '/public/cryptoGift/images/cryptoGift/boxOpened.png';
+
 import portkeyLogo from '/public/cryptoGift/images/cryptoGift/portkeyLogo.svg';
 import logoutIcon from '/public/cryptoGift/images/cryptoGift/logout.svg';
 import cryptoSuccess from '/public/cryptoGift/images/cryptoGift/success.svg';
@@ -47,7 +44,11 @@ import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/common
 import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
 import useAccount from '@/hooks/useAccount';
-import { openWithBlank } from '@/utils/router';
+
+const boxCannotClaimed = '/cryptoGift/cryptoGift/images/cryptoGift/boxCannotClaimed.png';
+const boxClosed = '/cryptoGift/cryptoGift/images/cryptoGift/boxClosed.png';
+const boxEmpty = '/cryptoGift/cryptoGift/images/cryptoGift/boxEmpty.png';
+const boxOpened = '/cryptoGift/cryptoGift/images/cryptoGift/boxOpened.png';
 
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
@@ -371,14 +372,13 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     return (
       <>
         <div className={styles.cryptoGiftTopDom} />
-        <BaseImage
+        <Image
+          preview={false}
+          alt="cryptoGiftImg"
           src={src}
           className={styles.cryptoGiftImg}
-          alt="boxCannotClaimed"
-          priority
           width={343}
-          height={240}
-        />
+          height={240}></Image>
       </>
     );
   }, [cryptoDetail?.cryptoGiftPhase]);
