@@ -1,5 +1,4 @@
 module.exports = [
-  { source: '/cryptoGift/api/:path*', destination: 'https://aa-portkey-test.portkey.finance/api/:path*' },
   { source: '/api/:path*', destination: 'https://aa-portkey-test.portkey.finance/api/:path*' },
   { source: '/service/:path*', destination: 'https://aa-portkey-test.portkey.finance/:path*' },
   { source: '/connect/:path*', destination: 'https://auth-aa-portkey-test.portkey.finance/connect/:path*' },
@@ -7,7 +6,6 @@ module.exports = [
     source: '/graphql/:path*',
     destination: 'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql/:path*',
   },
-  { source: '/cryptoGift/cms/:path*', destination: 'https://cms-test.portkey.finance/:path*' }, // cms-test-aa.portkey.finance
   { source: '/cms/:path*', destination: 'https://cms-test.portkey.finance/:path*' }, // cms-test-aa.portkey.finance
   { source: '/cryptoGift/_next/:path*', destination: '/_next/:path*' },
 ];
