@@ -61,6 +61,17 @@ ConfigProvider.setGlobalConfig({
   },
 });
 
+console.log('setGlobalConfig1', {
+  graphQLUrl: '/graphql',
+  serviceUrl: ApiHost,
+  requestDefaults: {
+    baseURL: ApiHost,
+  },
+  loginConfig: {
+    loginMethodsOrder: LoginTypes,
+  },
+});
+
 interface ICryptoGiftProps {
   cryptoGiftId: string;
 }
@@ -219,8 +230,11 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const onSignUp = useCallback(async () => {
     try {
       const walletInfo = await login();
+      if (!walletInfo) return;
       // TODO: change type
-      googleAnalytics.portkeyLoginEvent(walletInfo || walletInfoRef?.current?.extraInfo?.portkeyInfo?.createType);
+      googleAnalytics.portkeyLoginEvent(
+        walletInfo?.extraInfo?.portkeyInfo?.createType || walletInfoRef?.current?.extraInfo?.portkeyInfo?.createType,
+      );
 
       await sleep(300);
 
@@ -229,7 +243,8 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       } else {
         latestOnRefreshCryptoGiftDetail.current(
           false,
-          walletInfo || walletInfoRef?.current?.extraInfo?.portkeyInfo.caInfo.caHash,
+          walletInfo?.extraInfo?.portkeyInfo?.caInfo?.caHash ||
+            walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
           true,
         );
       }
