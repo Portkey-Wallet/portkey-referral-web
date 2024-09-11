@@ -9,6 +9,8 @@ const rewrites = require('./rewrites/index');
 // }
 
 module.exports = {
+  basePath: '/cryptoGift',
+  assetPrefix: './cryptoGift',
   reactStrictMode: false,
   async rewrites() {
     return rewrites;
