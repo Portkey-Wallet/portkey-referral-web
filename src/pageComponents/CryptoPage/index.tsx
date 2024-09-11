@@ -5,7 +5,7 @@ import { ISignIn, singleMessage, did, ConfigProvider, TelegramPlatform } from '@
 
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
-import portkeyLogoBlack from '/cryptoGift/portkeyLogoBlack.svg';
+import portkeyLogoBlack from '/public/cryptoGift/portkeyLogoBlack.svg';
 import styles from './styles.module.scss';
 import './global.scss';
 import {
