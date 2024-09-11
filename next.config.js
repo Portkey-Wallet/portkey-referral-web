@@ -30,7 +30,7 @@ module.exports = {
   // },
   productionBrowserSourceMaps: true,
   publicRuntimeConfig: {
-    basePath: getBasePath(),
+    basePath: '/cryptoGift',
   },
   images: {
     remotePatterns: [
