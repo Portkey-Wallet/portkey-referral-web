@@ -6,23 +6,23 @@ import { ISignIn, singleMessage, did, ConfigProvider, TelegramPlatform } from '@
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
 import portkeyLogoBlack from '/public/cryptoGift/portkeyLogoBlack.svg';
+import bgLine1 from '/public/cryptoGift/images/cryptoGift/bgLine1.svg';
+import bgLine2 from '/public/cryptoGift/images/cryptoGift/bgLine2.svg';
+import bgLine3 from '/public/cryptoGift/images/cryptoGift/bgLine3.svg';
+import bgPortkeyLogo from '/public/cryptoGift/images/cryptoGift/bgPortkeyLogo.svg';
+import boxCannotClaimed from '/public/cryptoGift/images/cryptoGift/boxCannotClaimed.png';
+import boxClosed from '/public/cryptoGift/images/cryptoGift/boxClosed.png';
+import boxEmpty from '/public/cryptoGift/images/cryptoGift/boxEmpty.png';
+import boxOpened from '/public/cryptoGift/images/cryptoGift/boxOpened.png';
+import portkeyLogo from '/public/cryptoGift/images/cryptoGift/portkeyLogo.svg';
+import logoutIcon from '/public/cryptoGift/images/cryptoGift/logout.svg';
+import cryptoSuccess from '/public/cryptoGift/images/cryptoGift/success.svg';
+import cryptoShare from '/public/cryptoGift/images/cryptoGift/share.svg';
+import alarm from '/public/cryptoGift/images/cryptoGift/alarm.svg';
+
 import styles from './styles.module.scss';
 import './global.scss';
-import {
-  bgLine1,
-  bgLine2,
-  bgLine3,
-  bgPortkeyLogo,
-  boxCannotClaimed,
-  boxClosed,
-  boxEmpty,
-  boxOpened,
-  portkeyLogo,
-  logoutIcon,
-  cryptoSuccess,
-  cryptoShare,
-  alarm,
-} from '@/assets/images';
+
 import { privacyPolicy, termsOfService } from '@/constants/pageData';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useRouter, useSearchParams } from 'next/navigation';

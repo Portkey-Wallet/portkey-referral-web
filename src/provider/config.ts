@@ -3,10 +3,9 @@ import { PortkeyAAWallet } from '@aelf-web-login/wallet-adapter-portkey-aa';
 import { NightElfWallet } from '@aelf-web-login/wallet-adapter-night-elf';
 import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
 import { TChainId, SignInDesignEnum, NetworkEnum, DEFAULT_PIN } from '@aelf-web-login/wallet-adapter-base';
-import { ApiHost, ConnectHost, NetworkEnv } from '@/constants/network';
+import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv } from '@/constants/network';
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
-import { TG_BOT_ID } from '@/constants/tg';
 
 const APP_NAME = 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
@@ -33,7 +32,7 @@ const didConfig: GlobalConfigProps = {
       websiteIcon: WEBSITE_ICON,
     },
     Telegram: {
-      botId: TG_BOT_ID,
+      botId: CurrentNetWork.tgBotId,
     },
   },
   loginConfig: {
