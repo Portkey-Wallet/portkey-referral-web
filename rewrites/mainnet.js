@@ -7,4 +7,5 @@ module.exports = [
     destination: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql/:path*',
   },
   { source: '/cms/:path*', destination: 'https://cms.portkey.finance/:path*' }, // cms-aa-portkey.finance
+  { source: '/cryptoGift/_next/:path*', destination: '/_next/:path*' },
 ];

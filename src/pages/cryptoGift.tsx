@@ -1,4 +1,9 @@
+'use client';
+import dynamic from 'next/dynamic';
 import Script from 'next/script';
+import { useMemo } from 'react';
+
+const CryptoGiftPage = dynamic(() => import('../pageComponents/CryptoPage'), { ssr: false });
 
 export const metadata = {
   title: 'Portkey Crypto Gift',
@@ -14,9 +19,13 @@ export const viewport = {
   userScalable: 'no',
 };
 
-export default function ClientLayout({ children }: { children: React.ReactNode }) {
+export default function CryptoGift() {
+  const Provider = useMemo(() => {
+    return dynamic(() => import('../provider'), { ssr: false });
+  }, []);
+
   return (
-    <html lang="en">
+    <>
       {/* Global site tag (gtag.js) - Google Analytics  */}
       <Script src="https://www.googletagmanager.com/gtag/js?id=G-28MESJ5HTM" strategy="afterInteractive" />
       <Script id="google-analytics" strategy="afterInteractive">
@@ -28,8 +37,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       gtag('config', 'G-28MESJ5HTM');
     `}
       </Script>
-
-      <body>{children}</body>
-    </html>
+      <Script strategy="afterInteractive" src="/telegram-web-app.js" />
+      <Provider>
+        <CryptoGiftPage />
+      </Provider>
+    </>
   );
 }

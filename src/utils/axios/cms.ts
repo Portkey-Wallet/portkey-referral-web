@@ -10,11 +10,12 @@ import Axios from 'axios';
 import { BASE_CMS_URL, CMS_API } from './api';
 import { interceptorsBind } from './utils';
 import { create } from 'apisauce';
+import { CurrentNetWork } from '@/constants/network';
 
 // Please invoke axiosInit before any usages of the useAxios hook
 export default function initAxios() {
   const axios = Axios.create({
-    baseURL: BASE_CMS_URL,
+    baseURL: CurrentNetWork.cmsUrl,
     timeout: 50000,
   });
   interceptorsBind(axios);
@@ -25,7 +26,7 @@ export default function initAxios() {
 }
 
 const api = create({
-  baseURL: BASE_CMS_URL,
+  baseURL: CurrentNetWork.cmsUrl,
 });
 
 const cmsGet = async (url: string, params?: any, config?: any) => {
