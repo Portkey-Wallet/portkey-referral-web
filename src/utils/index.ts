@@ -1,3 +1,5 @@
+import { CRYPTO_GIFT_APP_NAME_IN_TG } from '@/constants/storage';
+
 export const sleep = (time: number) => {
   return new Promise((resolve) => {
     const timer = setTimeout(() => {
@@ -37,4 +39,8 @@ export const formatAelfAddress = (address = ''): string => {
 
 export const isInPortkeyTgBot = () => {
   return window.location.hostname.includes('tgbot');
+};
+
+export const hasConnectedInTg = (): boolean => {
+  return !!localStorage.getItem(CRYPTO_GIFT_APP_NAME_IN_TG);
 };

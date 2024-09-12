@@ -37,7 +37,7 @@ import { formatSecond2CountDownTime } from '@/utils/time';
 import { useLoading } from '@/hooks/global';
 import { divDecimalsStr } from '@/utils/converter';
 import CommonButton from '@/components/CommonButton';
-import { sleep } from '@/utils';
+import { hasConnectedInTg, sleep } from '@/utils';
 import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
 import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
@@ -56,7 +56,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const isFirstRender = useRef(true);
   const timerRef = useRef<NodeJS.Timeout>();
 
-  const { isLogin, login, logout, walletInfo, isLocking } = useAccount();
+  const { isLogin, login, logout, walletInfo, isLocking, isConnected } = useAccount();
   const walletInfoRef = useRef(walletInfo);
   const router = useRouter();
 
@@ -120,8 +120,12 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   });
 
   useLayoutEffect(() => {
+    // web
     if (isLocking) login();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // tg
+    if (TelegramPlatform.isTelegramPlatform() && hasConnectedInTg()) login();
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

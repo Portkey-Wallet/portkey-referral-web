@@ -10,3 +10,5 @@ export const INVITEE_CA_ADDRESS = 'invitee_caAddress';
 export const INVITEE_IS_NEW_ACCOUNT = 'invitee_is_new_account';
 export const DEFAULT_INVITEE_WALLET_PIN = process.env.NEXT_PUBLIC_DEFAULT_INVITEE_WALLET_PIN || '';
 export const DEFAULT_INVITEE_WALLET_KEY = process.env.NEXT_PUBLIC_DEFAULT_INVITEE_WALLET_KEY || '';
+
+export const CRYPTO_GIFT_APP_NAME_IN_TG = 'Portkey bot';

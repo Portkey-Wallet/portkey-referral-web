@@ -7,8 +7,9 @@ import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv } from '@/constants/ne
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
 import { isInPortkeyTgBot } from '@/utils';
+import { CRYPTO_GIFT_APP_NAME_IN_TG } from '@/constants/storage';
 
-const APP_NAME = isInPortkeyTgBot() ? 'Portkey bot' : 'referral.portkey.finance';
+const APP_NAME = isInPortkeyTgBot() ? CRYPTO_GIFT_APP_NAME_IN_TG : 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
 const CHAIN_ID = CurrentNetWork.defaultChain as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
