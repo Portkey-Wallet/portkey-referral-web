@@ -5,6 +5,8 @@ import { asyncLocalStorage } from '../asyncStorage';
 
 export type TAllLoginKey = AccountType | 'Scan';
 
+export type AccountAllType = AccountType | 'Facebook' | 'Twitter';
+
 // Get via https://developers.google.com/analytics/devguides/collection/protocol/ga4/sending-events?client_type=gtag#recommended_parameters_for_reports
 
 const DEFAULT_ENGAGEMENT_TIME_MSEC = 100;
@@ -104,7 +106,7 @@ class Analytics {
     });
   }
 
-  async portkeyLoginEvent(loginMethod: LoginMethod, loginType: AccountType, additionalParams = {}) {
+  async portkeyLoginEvent(loginMethod: LoginMethod, loginType?: AccountAllType, additionalParams = {}) {
     try {
       const params = { timestamp: Date.now(), loginType, loginMethod };
 

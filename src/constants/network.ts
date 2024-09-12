@@ -29,10 +29,12 @@ export const BackEndNetWorkMap: {
     apiUrl: 'https://aa-portkey-test.portkey.finance',
     graphqlUrl: 'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
     connectUrl: 'https://auth-aa-portkey-test.portkey.finance',
-    cmsUrl: 'https://cms-test-aa.portkey.finance/graphql',
+    cmsUrl: 'https://cms-test-aa.portkey.finance',
     portkeyWebsiteUrl: 'https://test.portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
     defaultChain: 'tDVW',
+    tgMiniAppPath: 'https://t.me/PortkeyTestnet_Bot/crypto_gift',
+    tgBotId: '7493109909',
   },
   mainnet: {
     name: 'aelf Mainnet',
@@ -40,10 +42,12 @@ export const BackEndNetWorkMap: {
     apiUrl: 'https://aa-portkey.portkey.finance',
     connectUrl: 'https://auth-aa-portkey.portkey.finance',
     graphqlUrl: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
-    cmsUrl: 'https://cms-aa-portkey.finance/graphql',
+    cmsUrl: 'https://cms-aa-portkey.finance',
     portkeyWebsiteUrl: 'https://portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
     defaultChain: 'tDVV',
+    tgMiniAppPath: 'https://t.me/PortkeyMainnet_Bot/crypto_gift',
+    tgBotId: '7489967024',
   },
 };
 

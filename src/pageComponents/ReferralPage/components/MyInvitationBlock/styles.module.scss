@@ -2,8 +2,8 @@
 
 .container {
   max-width: 600px;
+  margin-top: 40px;
   width: 100%;
-  height: 132px;
   background: #23236b;
   border-radius: 6px;
   overflow: hidden;
@@ -29,24 +29,68 @@
     right: 0;
     bottom: 0;
   }
-  .header_bg {
-    width: 145px;
+  .header_wrap {
+    width: 177px;
     height: 28px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .header_bg {
+      width: 177px;
+      height: 28px;
+      position: absolute;
+    }
+    .header_title {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 24px;
+      position: absolute;
+    }
+  }
+  .estimated_reward {
+    margin-top: 14px;
+    color: white;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+    word-wrap: break-word;
   }
   .invitation_amount {
-    margin-top: 14px;
-    align-self: stretch;
-    text-align: center;
-    color: white;
-    font-size: 32px;
-    font-weight: 500;
-    line-height: 40px;
-    word-wrap: break-word;
+    margin-top: 4px;
+    color: #f5a641;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 32px;
+  }
+  .reward_wrap {
+    margin-top: 4px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding-left: 12px;
+    padding-right: 12px;
+    .reward_name {
+      color: #979aa1;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 16px;
+    }
+    .reward_value {
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 22px;
+    }
   }
   .view_all_wrap {
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-top: 16px;
+    margin-bottom: 16px;
     .view_all_text {
       text-align: right;
       color: #979aa1;

@@ -12,12 +12,13 @@ import { interceptorsBind } from './utils';
 import { create } from 'apisauce';
 import { RefreshTokenConfig, isValidRefreshTokenConfig, queryAuthorization } from './connect';
 import { DIDWalletInfo } from '@portkey/did-ui-react';
+import { CurrentNetWork } from '@/constants/network';
 
 const AElf = require('aelf-sdk');
 // Please invoke axiosInit before any usages of the useAxios hook
 export default function initAxios() {
   const axios = Axios.create({
-    baseURL: BASE_PORTKEY_URL,
+    baseURL: CurrentNetWork.apiUrl + BASE_PORTKEY_URL,
     timeout: 50000,
   });
   interceptorsBind(axios);
@@ -25,11 +26,11 @@ export default function initAxios() {
   const cache = new LRU({ max: 10 });
 
   configure({ axios, cache });
-  return axios
+  return axios;
 }
 
 const api = create({
-  baseURL: BASE_PORTKEY_URL,
+  baseURL: CurrentNetWork.apiUrl + BASE_PORTKEY_URL,
   axiosInstance: initAxios(),
 });
 
@@ -62,21 +63,21 @@ const getConnectToken = async (refreshTokenConfig?: RefreshTokenConfig) => {
 };
 const getAAConnectToken = async (didWallet: DIDWalletInfo) => {
   const timestamp = Date.now();
-    const message = Buffer.from(`${didWallet.walletInfo.address}-${timestamp}`).toString('hex');
-    const signature = AElf.wallet.sign(message, didWallet.walletInfo.keyPair).toString('hex');
-    const pubKey = (didWallet.walletInfo.keyPair as any).getPublic('hex');
-   return await getConnectToken({
-      grant_type: 'signature',
-      client_id: 'CAServer_App',
-      scope: 'CAServer',
-      signature: signature || '',
-      pubkey: pubKey|| '',
-      timestamp: timestamp || 0,
-      ca_hash: didWallet.caInfo.caHash,
-      chainId: didWallet.chainId,
-    });
-}
-const logoutPortkeyApi = () =>{
+  const message = Buffer.from(`${didWallet.walletInfo.address}-${timestamp}`).toString('hex');
+  const signature = AElf.wallet.sign(message, didWallet.walletInfo.keyPair).toString('hex');
+  const pubKey = (didWallet.walletInfo.keyPair as any).getPublic('hex');
+  return await getConnectToken({
+    grant_type: 'signature',
+    client_id: 'CAServer_App',
+    scope: 'CAServer',
+    signature: signature || '',
+    pubkey: pubKey || '',
+    timestamp: timestamp || 0,
+    ca_hash: didWallet.caInfo.caHash,
+    chainId: didWallet.chainId,
+  });
+};
+const logoutPortkeyApi = () => {
   api.deleteHeader('Authorization');
-}
+};
 export { PORTKEY_API, portkeyGet, portkeyPost, getConnectToken, getAAConnectToken, logoutPortkeyApi };

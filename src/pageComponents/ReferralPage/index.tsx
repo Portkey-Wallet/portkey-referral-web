@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { PortkeyProvider, singleMessage } from '@portkey/did-ui-react';
 import { useCopyToClipboard } from 'react-use';
 import BaseImage from '@/components/BaseImage';
@@ -9,6 +9,8 @@ import styles from './styles.module.scss';
 import QRCode from '@/components/QRCode';
 import MyInvitationBlock from './components/MyInvitationBlock';
 import QrcodeModal from './components/QrcodeModal';
+import ReferralTask from './components/ReferralTask';
+import RulesModal from './components/RulesModal';
 import TopRank from './components/TopRank';
 import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
@@ -19,10 +21,11 @@ import {
   sloganReference,
   userProfile,
   interactiveCopyWhite,
+  suggestClose,
 } from '@/assets/images';
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useSearchParams } from 'next/navigation';
-import referralApi from '@/utils/axios/referral';
+import referralApi, { ActivityEnums } from '@/utils/axios/referral';
 import { useResponsive } from '@/hooks/useResponsive';
 import useAccount from '@/hooks/useAccount';
 import Image from 'next/image';
@@ -30,44 +33,63 @@ import { useEnvironment } from '@/hooks/environment';
 import { useLoading } from '@/hooks/global';
 import { CurrentNetWork } from '@/constants/network';
 import googleAnalytics from '@/utils/googleAnalytics';
+import { IRewardProgress, IActivityDetail, IActivityBaseInfoItem } from '@/types/referral';
+import equal from 'fast-deep-equal';
+
+const REFRESH_REWARD_PROGRESS_INTERVAL = 1000 * 10;
 
 const Referral: React.FC = () => {
   const searchParams = useSearchParams();
-  const shortLink = searchParams.get('shortLink') || '';
   const [, copyToClipboard] = useCopyToClipboard();
   const { isLogin, login, logout } = useAccount();
   const { isLG } = useResponsive();
   const { isPortkeyApp } = useEnvironment();
-  const [myInvitedCount, setMyInvitedCount] = useState(0);
+  const [rewardProgress, setRewardProgress] = useState<IRewardProgress>();
+  const [activityDetail, setActivityDetail] = useState<IActivityDetail>();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isRulesModalOpen, setIsRulesModalOpen] = useState(false);
   const { setLoading } = useLoading();
-  const [referralLink, setReferralLink] = useState(shortLink);
+  const [referralLink, setReferralLink] = useState('');
+  const refreshRewardProgressTimerRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     (async () => {
-      if (shortLink?.length > 0) {
-        return;
-      }
       if (!isLogin) {
         return;
       }
       try {
         const res = await referralApi.getReferralShortLink();
         setReferralLink(res?.shortLink);
-        console.log('aaa getReferralShortLink : ', res);
       } catch (error: any) {
         console.log('aaaa getReferralShortLink error: ', error.message);
       }
     })();
-  }, [isLogin, shortLink]);
+  }, [isLogin]);
 
-  const fetchTotalCount = useCallback(async () => {
+  const fetchRewardProgress = useCallback(async () => {
     try {
-      const totalCount = await referralApi.referralTotalCount();
-      console.log('referralTotalCount : ', totalCount);
-      setMyInvitedCount(totalCount ?? 0);
+      const res = await referralApi.getRewardProgress({ activityEnums: ActivityEnums.Hamster });
+      console.log('aaaa fetch data : ', res);
+      console.log('aaaa rewardProgress : ', rewardProgress);
+      if (equal(res, rewardProgress)) {
+        return;
+      }
+      console.log('aaaa update data : ', res);
+      setRewardProgress(res);
     } catch (error) {
-      console.error('referralTotalCount error : ', error);
+      console.error('referralRewardProgress error : ', error);
+    }
+  }, [rewardProgress]);
+
+  const fetchActivityDetail = useCallback(async () => {
+    try {
+      const res = await referralApi.getActivityDetail({ activityEnums: ActivityEnums.Hamster });
+      if (res?.activityConfig?.activityTitle) {
+        document.title = res?.activityConfig?.activityTitle;
+      }
+      setActivityDetail(res);
+    } catch (error) {
+      console.error('referralActivityDetail error : ', error);
     }
   }, []);
   useEffect(() => {
@@ -80,11 +102,25 @@ const Referral: React.FC = () => {
       }
     }
   }, [isLogin, isPortkeyApp, setLoading]);
+
+  const clearRewardProgressTimer = useCallback(() => {
+    refreshRewardProgressTimerRef.current && clearInterval(refreshRewardProgressTimerRef.current);
+    refreshRewardProgressTimerRef.current = undefined;
+  }, []);
+
   useEffect(() => {
+    clearRewardProgressTimer();
     if (isLogin) {
-      fetchTotalCount();
+      fetchRewardProgress();
+      refreshRewardProgressTimerRef.current = setInterval(() => {
+        fetchRewardProgress();
+      }, REFRESH_REWARD_PROGRESS_INTERVAL);
     }
-  }, [fetchTotalCount, isLogin]);
+    fetchActivityDetail();
+    return () => {
+      clearRewardProgressTimer();
+    };
+  }, [clearRewardProgressTimer, fetchActivityDetail, fetchRewardProgress, isLogin]);
 
   const onLogout = useCallback(async () => {
     await logout();
@@ -100,13 +136,23 @@ const Referral: React.FC = () => {
     }
   }, [copyToClipboard, referralLink]);
 
+  const activityDate = useMemo(() => {
+    if (activityDetail?.activityConfig?.startDateFormat && activityDetail?.activityConfig?.endDateFormat) {
+      return `${activityDetail?.activityConfig?.startDateFormat} - ${activityDetail?.activityConfig?.endDateFormat}`;
+    }
+    return '';
+  }, [activityDetail]);
+
   const SloganDOM = useMemo(() => {
     return (
       <div className={`${styles.sloganWrapper} ${isLG ? styles.sloganWrapperWidthH5 : styles.sloganWrapperWidthPC}`}>
-        <BaseImage src={sloganReference} alt={sloganReference.src} height={isLG ? 94 : 100} />
+        <div className={styles.sloganReferenceWrap}>
+          <BaseImage src={sloganReference} alt={sloganReference.src} height={isLG ? 94 : 100} />
+          {Boolean(activityDate) && <div className={styles.activityDate}>{activityDate}</div>}
+        </div>
       </div>
     );
-  }, [isLG]);
+  }, [activityDate, isLG]);
 
   const qrcodeDom = useMemo(() => {
     return (
@@ -177,7 +223,15 @@ const Referral: React.FC = () => {
         <div className={styles.referralBlueContainer}>
           <header className="row-center">
             <div className={clsx(['flex-row-center', styles.referralHeader])}>
-              <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+              <div className={styles.portkeyLogoWrap}>
+                <BaseImage className={styles.portkeyLogo} src={portkeyLogoWhite} priority alt="portkeyLogo" />
+                {Boolean(activityDetail?.activityConfig.imageUrl) && (
+                  <>
+                    <BaseImage src={suggestClose} className={styles.suggestClose} alt="and" width={12} />
+                    <BaseImage src={activityDetail?.activityConfig.imageUrl ?? ''} width={51} height={36} alt="activity" />
+                  </>
+                )}
+              </div>
               {isLogin && !isPortkeyApp && (
                 <Dropdown menu={{ items }} placement="bottomRight">
                   <a className={styles.profileButton}>
@@ -204,17 +258,23 @@ const Referral: React.FC = () => {
               alt="bgColorBox"
               priority
             />
+            {activityDetail?.rulesConfig?.isRulesShow && (
+              <a
+                className={isPortkeyApp ? styles.rule_h5 : styles.rule_pc}
+                onClick={() => {
+                  setIsRulesModalOpen(true);
+                }}>
+                <div className={styles.rules_text}>Rules</div>
+              </a>
+            )}
           </div>
         </div>
-        <div className={`${styles.referralBlackWrapper} ${isLG ? styles.referralBlackWrapperMarginTopH5 : styles.referralBlackWrapperMarginTopPC}`}>
-          {isLogin ? (
-            <>
-              <MyInvitationBlock invitationAmount={myInvitedCount} />
-              {referralLink?.length > 0 && (isLG ? inviteButton : qrcodeDom)}
-            </>
-          ) : (
-            loginButton
-          )}
+        <div
+          className={`${styles.referralBlackWrapper} ${isLG ? styles.referralBlackWrapperMarginTopH5 : styles.referralBlackWrapperMarginTopPC}`}>
+          {!isLogin && loginButton}
+          {isLogin && referralLink?.length > 0 && (isLG ? inviteButton : qrcodeDom)}
+          {activityDetail?.activityConfig && <ReferralTask activityConfig={activityDetail?.activityConfig} />}
+          {isLogin && rewardProgress && <MyInvitationBlock rewardProgress={rewardProgress} />}
           <TopRank isLogin={isLogin} />
         </div>
         {isModalOpen && (
@@ -222,6 +282,15 @@ const Referral: React.FC = () => {
             shortLink={referralLink}
             handleCancel={() => {
               setIsModalOpen(false);
+            }}
+          />
+        )}
+        {isRulesModalOpen && (
+          <RulesModal
+            rulesText={activityDetail?.rulesConfig?.rulesDesc || ''}
+            open={isRulesModalOpen}
+            onClose={() => {
+              setIsRulesModalOpen(false);
             }}
           />
         )}
