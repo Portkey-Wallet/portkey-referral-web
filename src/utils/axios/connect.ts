@@ -12,6 +12,7 @@ import { interceptorsBind } from './utils';
 import { ChainId } from '@portkey/types';
 import { create } from 'apisauce';
 import { stringify } from 'querystring';
+import { ConnectHost } from '@/constants/network';
 
 const BEARER = 'Bearer';
 const DAY = 24 * 60 * 60 * 1000;
@@ -41,7 +42,7 @@ export default function initAxios() {
 }
 
 const api = create({
-  baseURL: BASE_CMS_URL,
+  baseURL: ConnectHost + BASE_CONNECT_URL,
   axiosInstance: initAxios(),
 });
 
@@ -53,12 +54,16 @@ const cmsGet = async (url: string, params?: any, config?: any) => {
 };
 const queryAuthorization = async (config: RefreshTokenConfig) => {
   const { ..._config } = config;
-  const result = await api.post<{access_token: string}>('/token', stringify({ ..._config, chain_id: config.chainId }), {
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    // method: 'POST',
-    // data: stringify({ ..._config, chain_id: config.chainId }),
-  });
-  
+  const result = await api.post<{ access_token: string }>(
+    '/token',
+    stringify({ ..._config, chain_id: config.chainId }),
+    {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      // method: 'POST',
+      // data: stringify({ ..._config, chain_id: config.chainId }),
+    },
+  );
+
   return `${BEARER} ${result.data?.access_token}`;
 };
 const isValidRefreshTokenConfig = (config: RefreshTokenConfig) => {
