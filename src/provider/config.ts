@@ -12,14 +12,6 @@ const APP_NAME = isInPortkeyTgBot() ? 'Portkey bot' : 'referral.portkey.finance'
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
 const CHAIN_ID = CurrentNetWork.defaultChain as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
-ConfigProvider.setGlobalConfig({
-  graphQLUrl: '/graphql',
-  connectUrl: ConnectHost,
-  serviceUrl: ApiHost,
-  requestDefaults: {
-    baseURL: ApiHost,
-  },
-});
 
 const didConfig: GlobalConfigProps = {
   graphQLUrl: '/graphql',
@@ -49,6 +41,7 @@ const baseConfig = {
   chainId: CHAIN_ID,
   keyboard: true,
   noCommonBaseModal: false,
+  // TODO: should be removed
   defaultPin: DEFAULT_PIN,
   cancelAutoLoginInTelegram: true,
   design: SignInDesignEnum.SocialDesign, // "SocialDesign" | "CryptoDesign" | "Web2Design"
