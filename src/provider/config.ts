@@ -10,7 +10,7 @@ import { isInPortkeyTgBot } from '@/utils';
 
 const APP_NAME = isInPortkeyTgBot() ? 'Portkey bot' : 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
-const CHAIN_ID = 'AELF' as TChainId;
+const CHAIN_ID = CurrentNetWork.defaultChain as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
 ConfigProvider.setGlobalConfig({
   graphQLUrl: '/graphql',
