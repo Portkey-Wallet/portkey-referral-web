@@ -97,6 +97,11 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
           setBtnLoading(false);
         }
 
+        // auto sign up
+        if(result.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota){
+          onSignUp();
+        }
+
         if (result?.remainingWaitingSeconds || result?.remainingExpirationSeconds)
           rootTime.current = {
             claimAgainCountdownSecond: result?.remainingWaitingSeconds,
@@ -120,12 +125,8 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   });
 
   useLayoutEffect(() => {
-    // web
     if (isLocking) login();
-    // tg
-    if (TelegramPlatform.isTelegramPlatform() && hasConnectedInTg()) login();
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
