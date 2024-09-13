@@ -179,7 +179,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     }
   }, [onJumpToStore, router]);
 
-  const reportAccount = useCallback(async (walletInfo: any) => {
+  const reportAccount = useCallback(async (walletInfo?: any) => {
     await getAAConnectToken(walletInfo || walletInfoRef?.current?.extraInfo?.portkeyInfo);
     const path = PORTKEY_API.POST.REPORT_ACCOUNT;
     const params: {
