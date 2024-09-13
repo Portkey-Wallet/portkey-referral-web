@@ -176,6 +176,22 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     setBtnLoading(true);
     timerRef.current = setInterval(() => {
       if (!walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash) return;
+      // login
+      const path = PORTKEY_API.POST.REPORT_ACCOUNT;
+
+      const params: {
+        clientType: 'TgBot';
+        projectCode: string;
+        operationType: any;
+        caHash?: string;
+      } = {
+        clientType: 'TgBot',
+        projectCode: CRYPTO_GIFT_PROJECT_CODE,
+        operationType:  walletInfoRef?.current?.extraInfo?.portkeyInfo?.createType ,
+        caHash: walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
+      };
+      portkeyPost(path, params);
+
       latestOnRefreshCryptoGiftDetail.current(
         false,
         walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,

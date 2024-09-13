@@ -20,10 +20,11 @@ export const PORTKEY_API = {
     CA_HOLDER_INDEX: '/search/caholderindex',
     CRYPTO_GIFT_DETAIL: '/cryptogift/detail',
     LOGIN_CRYPTO_GIFT_DETAIL: '/cryptogift/login/detail',
-    INVITEE_CONFIG: '/growth/be-invited-configs'
+    INVITEE_CONFIG: '/growth/be-invited-configs',
   },
   POST: {
     GRAB: '/cryptogift/grab',
     LOGIN_USER_GRAB: '/redpackage/logged/grab',
+    REPORT_ACCOUNT: '/report/account',
   },
 };
