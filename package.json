@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "PORT=3003 next dev",
+    "dev-https": "PORT=3003 next dev  --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
