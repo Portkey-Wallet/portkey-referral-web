@@ -1,4 +1,5 @@
 import { CRYPTO_GIFT_APP_NAME_IN_TG } from '@/constants/storage';
+import { OperationType } from '@/types/cryptoGift';
 
 export const sleep = (time: number) => {
   return new Promise((resolve) => {
@@ -43,4 +44,10 @@ export const isInPortkeyTgBot = () => {
 
 export const hasConnectedInTg = (): boolean => {
   return !!localStorage.getItem(CRYPTO_GIFT_APP_NAME_IN_TG);
+};
+
+export const getOperationType = (operationTypeStr: string) => {
+  return operationTypeStr.toLocaleLowerCase().includes('recover')
+    ? OperationType.SocialRecovery
+    : OperationType.Register;
 };

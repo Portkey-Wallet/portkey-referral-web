@@ -22,7 +22,7 @@ import './global.scss';
 
 import '@portkey/did-ui-react/dist/assets/index.css';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
+import { getAAConnectToken, PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, LoginTypes } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
@@ -30,13 +30,20 @@ import BreakWord from '@/components/BreakWord';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 import { useEnvironment } from '@/hooks/environment';
 import { useDownload } from '@/hooks/download';
-import { AssetsType, CryptoGiftPhase, RedPackageGrabStatus, TCryptoDetail } from '@/types/cryptoGift';
+import {
+  AssetsType,
+  ClientType,
+  CryptoGiftPhase,
+  OperationType,
+  RedPackageGrabStatus,
+  TCryptoDetail,
+} from '@/types/cryptoGift';
 import { CRYPTO_GIFT_PROJECT_CODE } from '@/constants/project';
 import { formatSecond2CountDownTime } from '@/utils/time';
 import { useLoading } from '@/hooks/global';
 import { divDecimalsStr } from '@/utils/converter';
 import CommonButton from '@/components/CommonButton';
-import { hasConnectedInTg, sleep } from '@/utils';
+import { getOperationType, hasConnectedInTg, sleep } from '@/utils';
 import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
 import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
@@ -172,25 +179,29 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     }
   }, [onJumpToStore, router]);
 
+  const reportAccount = useCallback(async (walletInfo: any) => {
+    await getAAConnectToken(walletInfo || walletInfoRef?.current?.extraInfo?.portkeyInfo);
+    const path = PORTKEY_API.POST.REPORT_ACCOUNT;
+    const params: {
+      clientType: ClientType;
+      projectCode: string;
+      operationType: OperationType;
+      caHash?: string;
+    } = {
+      clientType: TelegramPlatform.isTelegramPlatform() ? ClientType.TgBot : ClientType.H5,
+      projectCode: CRYPTO_GIFT_PROJECT_CODE,
+      operationType: getOperationType(walletInfoRef?.current?.extraInfo?.portkeyInfo?.createType),
+      caHash: walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
+    };
+    portkeyPost(path, params);
+  }, []);
+
   const tgLoggedAccountGetCryptoDetail = useCallback(async () => {
     setBtnLoading(true);
     timerRef.current = setInterval(() => {
       if (!walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash) return;
       // login
-      const path = PORTKEY_API.POST.REPORT_ACCOUNT;
-
-      const params: {
-        clientType: 'TgBot';
-        projectCode: string;
-        operationType: any;
-        caHash?: string;
-      } = {
-        clientType: 'TgBot',
-        projectCode: CRYPTO_GIFT_PROJECT_CODE,
-        operationType:  walletInfoRef?.current?.extraInfo?.portkeyInfo?.createType ,
-        caHash: walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
-      };
-      portkeyPost(path, params);
+      reportAccount();
 
       latestOnRefreshCryptoGiftDetail.current(
         false,
@@ -325,6 +336,9 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     return (
       <>
         <Avatar
+          onClick={() => {
+            reportAccount();
+          }}
           alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ' '}>
@@ -341,6 +355,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     cryptoDetail?.prompt,
     cryptoDetail?.sender?.avatar,
     cryptoDetail?.sender?.nickname,
+    login,
   ]);
 
   const renderCryptoBoxImgDom = useCallback(() => {
