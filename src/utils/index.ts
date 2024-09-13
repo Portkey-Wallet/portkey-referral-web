@@ -1,5 +1,6 @@
 import { CRYPTO_GIFT_APP_NAME_IN_TG } from '@/constants/storage';
 import { OperationType } from '@/types/cryptoGift';
+import * as uuid from 'uuid';
 
 export const sleep = (time: number) => {
   return new Promise((resolve) => {
@@ -51,3 +52,5 @@ export const getOperationType = (operationTypeStr: string) => {
     ? OperationType.SocialRecovery
     : OperationType.Register;
 };
+
+export const randomId = () => uuid.v4().replace(/-/g, '');

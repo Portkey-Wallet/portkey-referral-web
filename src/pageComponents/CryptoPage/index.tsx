@@ -24,6 +24,7 @@ import '@portkey/did-ui-react/dist/assets/index.css';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getAAConnectToken, PORTKEY_API, portkeyGet, portkeyPost } from '@/utils/axios/index';
 import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, LoginTypes } from '@/constants/network';
+
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
 import BreakWord from '@/components/BreakWord';
@@ -48,6 +49,7 @@ import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/common
 import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
 import useAccount from '@/hooks/useAccount';
+import { useLocalRandomDeviceId } from './hooks';
 
 const boxCannotClaimed = '/cryptoGift/cryptoGift/images/cryptoGift/boxCannotClaimed.png';
 const boxClosed = '/cryptoGift/cryptoGift/images/cryptoGift/boxClosed.png';
@@ -61,6 +63,7 @@ interface ICryptoGiftProps {
 const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const isFirstRender = useRef(true);
   const timerRef = useRef<NodeJS.Timeout>();
+  const randomDeviceId = useLocalRandomDeviceId();
 
   const { isLogin, login, logout, walletInfo, isLocking, isConnected } = useAccount();
   const walletInfoRef = useRef(walletInfo);
@@ -89,7 +92,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
         init && setInitializing(true);
         const path = isLogin ? PORTKEY_API.GET.LOGIN_CRYPTO_GIFT_DETAIL : PORTKEY_API.GET.CRYPTO_GIFT_DETAIL;
 
-        const params: { id: string; caHash?: string } = { id: cryptoGiftId };
+        const params: { id: string; caHash?: string; random?: string } = { id: cryptoGiftId, random: randomDeviceId };
         if (walletInfoRef?.current?.extraInfo?.portkeyInfo.caInfo.caHash)
           params.caHash = walletInfoRef?.current?.extraInfo?.portkeyInfo.caInfo.caHash;
         if (caHash) params.caHash = caHash;
@@ -120,7 +123,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
         init && setInitializing(false);
       }
     },
-    [cryptoGiftId, isLogin, rootTime],
+    [cryptoGiftId, isLogin, rootTime, randomDeviceId],
   );
 
   const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
@@ -161,15 +164,16 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
 
   useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
+    const referralInfo = {
+      referralCode: `${cryptoGiftId}#${idCode}`,
+      projectCode: CRYPTO_GIFT_PROJECT_CODE,
+      random: randomDeviceId,
+    };
 
     did.setConfig({
-      referralInfo: {
-        referralCode: `${cryptoGiftId}#${idCode}`,
-        projectCode: CRYPTO_GIFT_PROJECT_CODE,
-      },
+      referralInfo,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [randomDeviceId]);
 
   const onViewDetails = useCallback(() => {
     if (TelegramPlatform.isTelegramPlatform()) {
@@ -250,6 +254,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
           id: cryptoGiftId,
           caHash: walletInfo?.extraInfo?.portkeyInfo?.caInfo?.caHash || '',
           userCaAddress: walletInfo?.address,
+          random: randomDeviceId,
         });
 
         if (result.errorCode === '10001') return latestOnRefreshCryptoGiftDetail.current(false, undefined, true);
@@ -259,15 +264,19 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
           setBtnLoading(false);
         }
       } else {
-        const { identityCode } = (await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId })) || {};
+        const { identityCode } =
+          (await portkeyPost(PORTKEY_API.POST.GRAB, { id: cryptoGiftId, random: randomDeviceId })) || {};
 
         if (!identityCode) throw Error('Claim failed');
 
+        const referralInfo = {
+          referralCode: `${cryptoGiftId}#${identityCode}`,
+          projectCode: CRYPTO_GIFT_PROJECT_CODE,
+          random: randomDeviceId,
+        };
+
         did.setConfig({
-          referralInfo: {
-            referralCode: `${cryptoGiftId}#${identityCode}`,
-            projectCode: CRYPTO_GIFT_PROJECT_CODE,
-          },
+          referralInfo,
         });
         setItem(cryptoGiftId, identityCode);
         await sleep(500);
@@ -279,6 +288,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       latestOnRefreshCryptoGiftDetail.current();
     }
   }, [
+    randomDeviceId,
     cryptoGiftId,
     isLogin,
     latestOnRefreshCryptoGiftDetail,
