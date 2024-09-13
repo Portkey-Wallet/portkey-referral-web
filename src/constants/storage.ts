@@ -12,3 +12,5 @@ export const DEFAULT_INVITEE_WALLET_PIN = process.env.NEXT_PUBLIC_DEFAULT_INVITE
 export const DEFAULT_INVITEE_WALLET_KEY = process.env.NEXT_PUBLIC_DEFAULT_INVITEE_WALLET_KEY || '';
 
 export const CRYPTO_GIFT_APP_NAME_IN_TG = 'Portkey bot';
+export const CRYPTO_GIFT_RANDOM_DEVICE_ID_KEY = 'RandomDeviceId';
+
