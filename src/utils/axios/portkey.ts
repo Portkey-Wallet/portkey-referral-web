@@ -42,7 +42,7 @@ const portkeyGet = async (url: string, params?: any, config?: any) => {
 };
 const portkeyPost = async (url: string, params?: any, config?: any) => {
   const res = await api.post(url, params, config);
-  console.log('portkeyGet!!', res);
+  console.log('portkeyPost!!', res);
 
   if (res.ok) {
     return res.data as any;
