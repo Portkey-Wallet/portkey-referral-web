@@ -2,6 +2,7 @@
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import { useMemo } from 'react';
+import '../script/telegram-web-app';
 
 const CryptoGiftPage = dynamic(() => import('../pageComponents/CryptoPage'), { ssr: false });
 
@@ -37,7 +38,6 @@ export default function CryptoGift() {
       gtag('config', 'G-28MESJ5HTM');
     `}
       </Script>
-      <Script strategy="afterInteractive" src="/telegram-web-app.js" />
       <Provider>
         <CryptoGiftPage />
       </Provider>
