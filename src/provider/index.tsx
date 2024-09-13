@@ -3,6 +3,7 @@ import { WebLoginProvider, init, useConnectWallet } from '@aelf-web-login/wallet
 import { config } from './config';
 import React from 'react';
 import '@/utils/detectProvide';
+import '../script/telegram-web-app';
 
 const Provider = ({ children }: { children: React.ReactNode }) => {
   const bridgeAPI = init(config); // upper config

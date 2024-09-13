@@ -2,7 +2,6 @@
 import dynamic from 'next/dynamic';
 import Script from 'next/script';
 import { useMemo } from 'react';
-import '../script/telegram-web-app';
 
 const CryptoGiftPage = dynamic(() => import('../pageComponents/CryptoPage'), { ssr: false });
 
