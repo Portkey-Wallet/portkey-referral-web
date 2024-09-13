@@ -7,19 +7,12 @@ import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv } from '@/constants/ne
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
 import { isInPortkeyTgBot } from '@/utils';
+import { CRYPTO_GIFT_APP_NAME_IN_TG } from '@/constants/storage';
 
-const APP_NAME = isInPortkeyTgBot() ? 'Portkey bot' : 'referral.portkey.finance';
+const APP_NAME = isInPortkeyTgBot() ? CRYPTO_GIFT_APP_NAME_IN_TG : 'referral.portkey.finance';
 const WEBSITE_ICON = 'https://referral.portkey.finance/favicon.ico';
 const CHAIN_ID = CurrentNetWork.defaultChain as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
-ConfigProvider.setGlobalConfig({
-  graphQLUrl: '/graphql',
-  connectUrl: ConnectHost,
-  serviceUrl: ApiHost,
-  requestDefaults: {
-    baseURL: ApiHost,
-  },
-});
 
 const didConfig: GlobalConfigProps = {
   graphQLUrl: '/graphql',
@@ -44,11 +37,13 @@ const didConfig: GlobalConfigProps = {
 };
 
 const baseConfig = {
-  // showVconsole: true,
+  // todo： change it
+  showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: CHAIN_ID,
   keyboard: true,
   noCommonBaseModal: false,
+  // TODO: should be removed
   defaultPin: DEFAULT_PIN,
   cancelAutoLoginInTelegram: true,
   design: SignInDesignEnum.SocialDesign, // "SocialDesign" | "CryptoDesign" | "Web2Design"

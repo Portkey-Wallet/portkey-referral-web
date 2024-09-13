@@ -27,7 +27,6 @@ import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, LoginTypes } fr
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { Dropdown, MenuProps, Image, Avatar, message } from 'antd';
 import BreakWord from '@/components/BreakWord';
-import { useFetchAndStoreCaHolderInfo } from '@/hooks/giftWallet';
 import { getItem, removeItem, setItem } from '@/utils/storage';
 import { useEnvironment } from '@/hooks/environment';
 import { useDownload } from '@/hooks/download';
@@ -37,7 +36,7 @@ import { formatSecond2CountDownTime } from '@/utils/time';
 import { useLoading } from '@/hooks/global';
 import { divDecimalsStr } from '@/utils/converter';
 import CommonButton from '@/components/CommonButton';
-import { sleep } from '@/utils';
+import { hasConnectedInTg, sleep } from '@/utils';
 import { useDebounceCallback, useEffectOnce, useLatestRef } from '@/hooks/commonHooks';
 import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
@@ -56,11 +55,10 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const isFirstRender = useRef(true);
   const timerRef = useRef<NodeJS.Timeout>();
 
-  const { isLogin, login, logout, walletInfo, isLocking } = useAccount();
+  const { isLogin, login, logout, walletInfo, isLocking, isConnected } = useAccount();
   const walletInfoRef = useRef(walletInfo);
   const router = useRouter();
 
-  const { caHolderInfo, setCaHolderInfo, fetchAndStoreCaHolderInfo } = useFetchAndStoreCaHolderInfo();
   const { isPortkeyApp, isWeChat, isMobile } = useEnvironment();
   const { onJumpToPortkeyWeb, onJumpToStore } = useDownload();
   const [isShowMask, setIsShowMask] = useState(false);
@@ -97,6 +95,11 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
           setBtnLoading(false);
         }
 
+        // auto sign up
+        if (result.cryptoGiftPhase === CryptoGiftPhase.GrabbedQuota) {
+          onSignUp();
+        }
+
         if (result?.remainingWaitingSeconds || result?.remainingExpirationSeconds)
           rootTime.current = {
             claimAgainCountdownSecond: result?.remainingWaitingSeconds,
@@ -110,7 +113,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
         init && setInitializing(false);
       }
     },
-    [caHolderInfo?.caHash, cryptoGiftId],
+    [cryptoGiftId, isLogin, rootTime],
   );
 
   const latestOnRefreshCryptoGiftDetail = useLatestRef(onRefreshCryptoGiftDetail);
@@ -138,9 +141,8 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   }, [isPortkeyApp, isWeChat]);
 
   const init = useCallback(async () => {
-    await fetchAndStoreCaHolderInfo();
     latestOnRefreshCryptoGiftDetail.current(true);
-  }, [fetchAndStoreCaHolderInfo, latestOnRefreshCryptoGiftDetail]);
+  }, [latestOnRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     if (!initializing) return;
@@ -148,7 +150,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
 
     init();
     isFirstRender.current = false;
-  }, [fetchAndStoreCaHolderInfo, init, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
+  }, [init, initializing, latestOnRefreshCryptoGiftDetail, onRefreshCryptoGiftDetail]);
 
   useLayoutEffect(() => {
     const idCode = getItem(cryptoGiftId);
@@ -261,11 +263,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     try {
       setLoading(true);
       await logout();
-      // setCaHolderInfo(undefined);
-
-      // removeItem(CRYPTO_GIFT_CA_HOLDER_INFO);
-      // removeItem(DEFAULT_CRYPTO_GIFT_WALLET_KEY);
-      // removeItem(CRYPTO_GIFT_CA_ADDRESS);
 
       await latestOnRefreshCryptoGiftDetail.current();
       singleMessage.success('logout success');
