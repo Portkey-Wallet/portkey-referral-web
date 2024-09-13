@@ -37,7 +37,6 @@ export default function CryptoGift() {
       gtag('config', 'G-28MESJ5HTM');
     `}
       </Script>
-      <Script strategy="afterInteractive" src="/telegram-web-app.js" />
       <Provider>
         <CryptoGiftPage />
       </Provider>

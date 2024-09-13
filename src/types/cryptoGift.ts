@@ -43,3 +43,16 @@ export type TCryptoDetail = {
   nftTokenId: string;
   assetType: AssetsType;
 };
+
+export enum OperationType {
+  Register = 'Register',
+  SocialRecovery = 'SocialRecovery',
+}
+
+export enum ClientType {
+  TgBot = 'TgBot',
+  Android = 'Android',
+  IOS = 'IOS',
+  Extension = 'Extension',
+  H5 = 'H5',
+}
