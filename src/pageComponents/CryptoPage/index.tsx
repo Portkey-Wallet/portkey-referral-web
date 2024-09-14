@@ -346,9 +346,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     return (
       <>
         <Avatar
-          onClick={() => {
-            reportAccount();
-          }}
           alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ' '}>
