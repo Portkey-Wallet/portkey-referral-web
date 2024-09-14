@@ -50,6 +50,7 @@ import googleAnalytics from '@/utils/googleAnalytics';
 import { useCryptoDetailTimer } from '@/hooks/useCryptoDetailTimer';
 import useAccount from '@/hooks/useAccount';
 import { useLocalRandomDeviceId } from './hooks';
+import VConsoleWrap from '@/components/VConsoleWrap';
 
 const boxCannotClaimed = '/cryptoGift/cryptoGift/images/cryptoGift/boxCannotClaimed.png';
 const boxClosed = '/cryptoGift/cryptoGift/images/cryptoGift/boxClosed.png';
@@ -345,12 +346,14 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
 
     return (
       <>
-        <Avatar
-          alt={cryptoDetail?.sender?.nickname?.[0] || ''}
-          className={styles.cryptoGiftSenderImg}
-          src={cryptoDetail?.sender?.avatar || ' '}>
-          {cryptoDetail?.sender?.nickname?.[0] || ''}
-        </Avatar>
+        <VConsoleWrap>
+          <Avatar
+            alt={cryptoDetail?.sender?.nickname?.[0] || ''}
+            className={styles.cryptoGiftSenderImg}
+            src={cryptoDetail?.sender?.avatar || ' '}>
+            {cryptoDetail?.sender?.nickname?.[0] || ''}
+          </Avatar>
+        </VConsoleWrap>
 
         <div className={styles.cryptoGiftSenderTitle}>{cryptoDetail?.prompt || '-- sent you a crypto gift'}</div>
         <div className={styles.cryptoGiftSenderMemo}>{`"${cryptoDetail?.memo || 'Best wishes!'}"`}</div>
