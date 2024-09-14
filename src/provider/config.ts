@@ -38,7 +38,7 @@ const didConfig: GlobalConfigProps = {
 
 const baseConfig = {
   // todo： change it
-  // showVconsole: true,
+  showVconsole: true,
   networkType: NETWORK_TYPE,
   chainId: CHAIN_ID,
   keyboard: true,

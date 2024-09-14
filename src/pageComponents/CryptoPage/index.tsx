@@ -206,7 +206,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       if (!walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash) return;
       // login
       reportAccount();
-
       latestOnRefreshCryptoGiftDetail.current(
         false,
         walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
@@ -233,6 +232,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       if (TelegramPlatform.isTelegramPlatform()) {
         tgLoggedAccountGetCryptoDetail();
       } else {
+        reportAccount(walletInfo);
         latestOnRefreshCryptoGiftDetail.current(
           false,
           walletInfo?.extraInfo?.portkeyInfo?.caInfo?.caHash ||
@@ -346,9 +346,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     return (
       <>
         <Avatar
-          onClick={() => {
-            reportAccount();
-          }}
           alt={cryptoDetail?.sender?.nickname?.[0] || ''}
           className={styles.cryptoGiftSenderImg}
           src={cryptoDetail?.sender?.avatar || ' '}>
