@@ -635,7 +635,10 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     return (
       <div className={styles.bgWrap}>
         <BaseImage src={bgPortkeyLogo} className={styles.bgPortkeyLogo} alt="bgLines" priority />
-        <BaseImage src={bgLine1} className={styles.bgLine1} alt="bgLines" priority />
+        <VConsoleWrap>
+          <BaseImage src={bgLine1} className={styles.bgLine1} alt="bgLines" priority />
+        </VConsoleWrap>
+
         <BaseImage src={bgLine2} className={styles.bgLine2} alt="bgLines" priority />
         <BaseImage src={bgLine3} className={styles.bgLine3} alt="bgLines" priority />
       </div>
