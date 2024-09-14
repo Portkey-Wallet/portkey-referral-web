@@ -30,7 +30,7 @@ export type RefreshTokenConfig = {
 // Please invoke axiosInit before any usages of the useAxios hook
 export default function initAxios() {
   const axios = Axios.create({
-    baseURL: BASE_CONNECT_URL,
+    baseURL: ConnectHost + BASE_CONNECT_URL,
     timeout: 50000,
   });
   interceptorsBind(axios);
@@ -46,12 +46,6 @@ const api = create({
   axiosInstance: initAxios(),
 });
 
-const cmsGet = async (url: string, params?: any, config?: any) => {
-  const res = await api.get(url, params, config);
-  if (res.ok) {
-    return res.data as any;
-  }
-};
 const queryAuthorization = async (config: RefreshTokenConfig) => {
   const { ..._config } = config;
   const result = await api.post<{ access_token: string }>(
