@@ -174,7 +174,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     did.setConfig({
       referralInfo,
     });
-  }, [randomDeviceId]);
+  }, [cryptoGiftId, randomDeviceId]);
 
   const onViewDetails = useCallback(() => {
     if (TelegramPlatform.isTelegramPlatform()) {
@@ -206,7 +206,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     timerRef.current = setInterval(() => {
       if (!walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash) return;
       // login
-      reportAccount();
+      reportAccount(walletInfoRef?.current);
       latestOnRefreshCryptoGiftDetail.current(
         false,
         walletInfoRef?.current?.extraInfo?.portkeyInfo?.caInfo?.caHash,
@@ -215,7 +215,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       clearInterval(timerRef.current);
     }, 3000);
     return () => timerRef.current && clearInterval(timerRef.current);
-  }, [latestOnRefreshCryptoGiftDetail]);
+  }, [latestOnRefreshCryptoGiftDetail, reportAccount]);
 
   useEffect(() => () => timerRef.current && clearInterval(timerRef.current), []);
 
@@ -245,7 +245,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
       console.log('error', error);
       setBtnLoading(false);
     }
-  }, [latestOnRefreshCryptoGiftDetail, login, tgLoggedAccountGetCryptoDetail]);
+  }, [latestOnRefreshCryptoGiftDetail, login, reportAccount, tgLoggedAccountGetCryptoDetail]);
 
   const onClaim = useCallback(async () => {
     try {
@@ -365,7 +365,6 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
     cryptoDetail?.prompt,
     cryptoDetail?.sender?.avatar,
     cryptoDetail?.sender?.nickname,
-    login,
   ]);
 
   const renderCryptoBoxImgDom = useCallback(() => {
