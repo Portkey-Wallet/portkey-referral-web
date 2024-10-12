@@ -61,15 +61,15 @@ const wallets = [
     autoShowUnlock: true,
     noNeedForConfirm: true,
   }),
-  new PortkeyDiscoverWallet({
-    networkType: NETWORK_TYPE,
-    chainId: CHAIN_ID,
-    autoRequestAccount: true,
-    autoLogoutOnDisconnected: true,
-    autoLogoutOnNetworkMismatch: true,
-    autoLogoutOnAccountMismatch: true,
-    autoLogoutOnChainMismatch: true,
-  }),
+  // new PortkeyDiscoverWallet({
+  //   networkType: NETWORK_TYPE,
+  //   chainId: CHAIN_ID,
+  //   autoRequestAccount: true,
+  //   autoLogoutOnDisconnected: true,
+  //   autoLogoutOnNetworkMismatch: true,
+  //   autoLogoutOnAccountMismatch: true,
+  //   autoLogoutOnChainMismatch: true,
+  // }),
 ];
 
 export const config: IConfigProps = {
