@@ -27,7 +27,7 @@ export const BackEndNetWorkMap: {
     name: 'aelf Testnet',
     networkType: 'TESTNET',
     apiUrl: 'https://aa-portkey-test.portkey.finance',
-    graphqlUrl: 'https://dapp-aa-portkey-test.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
+    graphqlUrl: 'https://dapp-aa-portkey-test.portkey.finance/aefinder-v2/api/app/graphql/portkey',
     connectUrl: 'https://auth-aa-portkey-test.portkey.finance',
     cmsUrl: 'https://cms-test-aa.portkey.finance',
     portkeyWebsiteUrl: 'https://test.portkey.finance',
