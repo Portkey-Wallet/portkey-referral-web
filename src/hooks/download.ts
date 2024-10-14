@@ -16,9 +16,9 @@ export const useDownload = () => {
 
   const onJumpToStore = useCallback(() => {
     let url = portkeyDownloadPage;
-    if (!isMobile) url = extensionStoreUrl;
-    if (isAndroid) url = androidStoreUrl;
-    if (isIOS) url = iOSStoreUrl;
+    if (!isMobile && extensionStoreUrl) url = extensionStoreUrl;
+    if (isAndroid && androidStoreUrl) url = androidStoreUrl;
+    if (isIOS && iOSStoreUrl) url = iOSStoreUrl;
 
     openWithBlank(url);
   }, [androidStoreUrl, extensionStoreUrl, iOSStoreUrl, isAndroid, isIOS, isMobile]);
