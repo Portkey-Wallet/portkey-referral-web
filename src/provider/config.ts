@@ -3,7 +3,7 @@ import { PortkeyAAWallet } from '@aelf-web-login/wallet-adapter-portkey-aa';
 import { NightElfWallet } from '@aelf-web-login/wallet-adapter-night-elf';
 import { IConfigProps } from '@aelf-web-login/wallet-adapter-bridge';
 import { TChainId, SignInDesignEnum, NetworkEnum, DEFAULT_PIN } from '@aelf-web-login/wallet-adapter-base';
-import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv } from '@/constants/network';
+import { ApiHost, ConnectHost, CurrentNetWork, NetworkEnv, GraphqlHost } from '@/constants/network';
 import { ConfigProvider } from '@portkey/did-ui-react';
 import { GlobalConfigProps } from '@portkey/did-ui-react/dist/_types/src/components/config-provider/types';
 import { isInPortkeyTgBot } from '@/utils';
@@ -15,7 +15,7 @@ const CHAIN_ID = CurrentNetWork.defaultChain as TChainId;
 const NETWORK_TYPE = NetworkEnv === 'mainnet' ? NetworkEnum.MAINNET : NetworkEnum.TESTNET;
 
 const didConfig: GlobalConfigProps = {
-  graphQLUrl: '/graphql',
+  graphQLUrl: GraphqlHost,
   connectUrl: ConnectHost,
   serviceUrl: ApiHost,
   requestDefaults: {
@@ -61,15 +61,15 @@ const wallets = [
     autoShowUnlock: true,
     noNeedForConfirm: true,
   }),
-  new PortkeyDiscoverWallet({
-    networkType: NETWORK_TYPE,
-    chainId: CHAIN_ID,
-    autoRequestAccount: true,
-    autoLogoutOnDisconnected: true,
-    autoLogoutOnNetworkMismatch: true,
-    autoLogoutOnAccountMismatch: true,
-    autoLogoutOnChainMismatch: true,
-  }),
+  // new PortkeyDiscoverWallet({
+  //   networkType: NETWORK_TYPE,
+  //   chainId: CHAIN_ID,
+  //   autoRequestAccount: true,
+  //   autoLogoutOnDisconnected: true,
+  //   autoLogoutOnNetworkMismatch: true,
+  //   autoLogoutOnAccountMismatch: true,
+  //   autoLogoutOnChainMismatch: true,
+  // }),
 ];
 
 export const config: IConfigProps = {
