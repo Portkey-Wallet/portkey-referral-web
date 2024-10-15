@@ -1,5 +1,5 @@
 import { useConnectWallet } from '@aelf-web-login/wallet-adapter-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getCaHashAndOriginChainIdByWallet } from '@/utils/portkey';
 import { getAAConnectToken, getConnectToken, logoutPortkeyApi } from '@/utils/axios';
 import useDiscoverProvider from './useDiscoverProvider';
@@ -8,6 +8,13 @@ import { singleMessage } from '@portkey/did-ui-react';
 
 export default function useAccount() {
   const { connectWallet, disConnectWallet, walletInfo, walletType, isConnected, isLocking } = useConnectWallet();
+  const isLockingRef = useRef(false);
+
+  useEffect(() => {
+    isLockingRef.current = isLocking;
+  }, [isLocking]);
+
+  console.log('useAccount', isLocking);
   const [synced, setSynced] = useState<boolean>(false);
   const { getSignatureAndPublicKey } = useDiscoverProvider();
   const login = useCallback(async () => {
@@ -64,5 +71,5 @@ export default function useAccount() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConnected]);
   const isLogin = useMemo(() => isConnected && synced, [isConnected, synced]);
-  return { login, sync, logout, isLogin, isLocking, isConnected, walletInfo, walletType };
+  return { login, sync, logout, isLogin, isLocking, isLockingRef, isConnected, walletInfo, walletType };
 }

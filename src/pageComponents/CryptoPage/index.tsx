@@ -66,7 +66,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   const timerRef = useRef<NodeJS.Timeout>();
   const randomDeviceId = useLocalRandomDeviceId();
 
-  const { isLogin, login, logout, walletInfo, isLocking, isConnected } = useAccount();
+  const { isLogin, login, logout, walletInfo, isLocking, isLockingRef, isConnected } = useAccount();
   const walletInfoRef = useRef(walletInfo);
   const router = useRouter();
 
@@ -134,7 +134,10 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
   });
 
   useLayoutEffect(() => {
-    if (isLocking) login();
+    (async () => {
+      await sleep(300);
+      if (isLockingRef.current) login();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -632,7 +635,7 @@ const CryptoGift: React.FC<ICryptoGiftProps> = ({ cryptoGiftId }) => {
 
   const BGDOM = useMemo(() => {
     return (
-      <div className={styles.bgWrap}>
+      <div className={styles.bgWrap} onClick={onSignUp}>
         <BaseImage src={bgPortkeyLogo} className={styles.bgPortkeyLogo} alt="bgLines" priority />
         <VConsoleWrap>
           <BaseImage src={bgLine1} className={styles.bgLine1} alt="bgLines" priority />
