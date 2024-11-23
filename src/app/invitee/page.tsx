@@ -29,7 +29,7 @@ import { openWithBlank } from '@/utils/router';
 import { useSearchParams } from 'next/navigation';
 import { CMS_API, cmsGet, getAAConnectToken, getConnectToken } from '@/utils/axios';
 import { isPortkey, isBrowser } from '@/utils/portkey';
-import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost } from '@/constants/network';
+import { ApiHost, BackEndNetWorkMap, CurrentNetWork, DomainHost, GraphqlHost } from '@/constants/network';
 import OpenInBrowser from '@/components/OpenInBrowser';
 import { detectBrowserName } from '@portkey/onboarding';
 import { BackEndNetworkType } from '@/types/network';
@@ -54,7 +54,7 @@ import { useEffectOnce } from '@/hooks/commonHooks';
 
 const AElf = require('aelf-sdk');
 ConfigProvider.setGlobalConfig({
-  graphQLUrl: '/graphql',
+  graphQLUrl: GraphqlHost,
   serviceUrl: ApiHost,
   requestDefaults: {
     baseURL: ApiHost,
@@ -94,7 +94,7 @@ const Invitee: React.FC = () => {
     const nodeInfo = BackEndNetWorkMap[networkType as BackEndNetworkType] || CurrentNetWork;
 
     ConfigProvider.setGlobalConfig({
-      graphQLUrl: `${networkType && nodeInfo ? `${window.location.origin}/${networkType}/graphql` : '/graphql'}`,
+      graphQLUrl: GraphqlHost,
       serviceUrl: nodeInfo?.domain || nodeInfo?.apiUrl || DomainHost,
       requestDefaults: {
         baseURL: networkType && nodeInfo ? `${window.location.origin}/${networkType}` : '',
