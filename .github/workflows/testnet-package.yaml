@@ -50,7 +50,7 @@ jobs:
           github-token: ${{ secrets.TOK }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
-              owner: 'portkey',
+              owner: 'Portkey-Wallet',
               repo: 'devops',
               workflow_id: 'deployment_testnet.yaml',
               ref: 'master',
