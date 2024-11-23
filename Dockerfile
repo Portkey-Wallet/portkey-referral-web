@@ -31,8 +31,7 @@ RUN echo "...Building for ${ENVIRONMENT} / ${APP_ENV}"
 
 # more standardised build script, refer to package.json
 RUN NODE_OPTIONS=--max-old-space-size=8192 \
-  NEXT_PUBLIC_STANDALONE=1 \
-  NEXT_PUBLIC_APP_ENV="$APP_ENV" \
+  NEXT_PUBLIC_NETWORK_ENV="$APP_ENV" \
   npx next build
 
 # Production image, copy all the files and run next
