@@ -52,8 +52,10 @@ RUN ls .next
 
 # https://nextjs.org/docs/14/pages/api-reference/next-config-js/output
 # COPY --from=builder --chown=nextjs:nodejs ${web}/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs ${web}/public ./public/
-COPY --from=builder --chown=nextjs:nodejs ${web}/.next/static ./.next/static
+# COPY --from=builder --chown=nextjs:nodejs ${web}/public ./public/
+# COPY --from=builder --chown=nextjs:nodejs ${web}/.next/static ./.next/static
+
+COPY --from=builder --chown=nextjs:nodejs . .
 
 USER nextjs
 
