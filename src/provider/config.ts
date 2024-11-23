@@ -42,7 +42,7 @@ const baseConfig = {
   chainId: CHAIN_ID,
   keyboard: true,
   noCommonBaseModal: false,
-  defaultPin: DEFAULT_PIN, // TODO: should be removed
+  defaultPin: DEFAULT_PIN, // TODO:  should be removed
   omitTelegramScript: true,
   cancelAutoLoginInTelegram: true,
   design: SignInDesignEnum.SocialDesign, // "SocialDesign" | "CryptoDesign" | "Web2Design"
