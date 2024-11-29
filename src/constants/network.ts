@@ -39,10 +39,10 @@ export const BackEndNetWorkMap: {
   mainnet: {
     name: 'aelf Mainnet',
     networkType: 'MAINNET',
-    apiUrl: 'https://aa-portkey.portkey.finance',
-    connectUrl: 'https://auth-aa-portkey.portkey.finance',
+    apiUrl: 'https://k8s-aa-portkey.portkey.finance',
+    connectUrl: 'https://k8s-auth-aa-portkey.portkey.finance',
     graphqlUrl: 'https://dapp-aa-portkey.portkey.finance/Portkey_V2_DID/PortKeyIndexerCASchema/graphql',
-    cmsUrl: 'https://cms-portkey.finance',
+    cmsUrl: 'https://k8s-cms-portkey.finance',
     portkeyWebsiteUrl: 'https://portkey.finance',
     loginType: ['Google', 'Email', 'Apple', 'Telegram', 'Scan'],
     defaultChain: 'tDVV',
